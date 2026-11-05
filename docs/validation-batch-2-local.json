@@ -1,0 +1,118 @@
+{
+  "two": {
+    "label": "2 synthetic Chromium clients publishing and receiving audio",
+    "capturedAt": "2026-11-04T12:32:50.896Z",
+    "samples": 10,
+    "intervalSeconds": 1,
+    "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. ps %CPU is an OS estimate, not an interval profiler.",
+    "processes": [
+      {
+        "name": "application",
+        "meanRssMiB": 26,
+        "peakRssMiB": 28.59,
+        "meanPsCpuPercent": 0.06,
+        "peakPsCpuPercent": 0.3
+      },
+      {
+        "name": "LiveKit",
+        "meanRssMiB": 71.56,
+        "peakRssMiB": 78.5,
+        "meanPsCpuPercent": 3.65,
+        "peakPsCpuPercent": 4.6
+      }
+    ]
+  },
+  "four": {
+    "label": "4 synthetic Chromium clients, each receiving 3 audio streams",
+    "capturedAt": "2026-11-04T12:33:02.601Z",
+    "samples": 10,
+    "intervalSeconds": 1,
+    "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. ps %CPU is an OS estimate, not an interval profiler.",
+    "processes": [
+      {
+        "name": "application",
+        "meanRssMiB": 24.45,
+        "peakRssMiB": 32.3,
+        "meanPsCpuPercent": 0.47,
+        "peakPsCpuPercent": 4.4
+      },
+      {
+        "name": "LiveKit",
+        "meanRssMiB": 72.21,
+        "peakRssMiB": 83.3,
+        "meanPsCpuPercent": 8.23,
+        "peakPsCpuPercent": 12.8
+      }
+    ]
+  },
+  "receivedAudioAtFourClients": [
+    [
+      {
+        "bytes": 130241,
+        "samples": 506880,
+        "energy": 0.011885838013509481
+      },
+      {
+        "bytes": 134830,
+        "samples": 525120,
+        "energy": 0.01276840137055498
+      },
+      {
+        "bytes": 275129,
+        "samples": 1070880,
+        "energy": 0.016779526310280696
+      }
+    ],
+    [
+      {
+        "bytes": 275273,
+        "samples": 1075680,
+        "energy": 0.023737346732074727
+      },
+      {
+        "bytes": 134830,
+        "samples": 525120,
+        "energy": 0.01276840137055498
+      },
+      {
+        "bytes": 130241,
+        "samples": 506880,
+        "energy": 0.011885838013509481
+      }
+    ],
+    [
+      {
+        "bytes": 136838,
+        "samples": 529440,
+        "energy": 0.011216244824793697
+      },
+      {
+        "bytes": 130241,
+        "samples": 506880,
+        "energy": 0.011885838013509481
+      },
+      {
+        "bytes": 136591,
+        "samples": 529440,
+        "energy": 0.004367688853749068
+      }
+    ],
+    [
+      {
+        "bytes": 132654,
+        "samples": 513600,
+        "energy": 0.010129041957449755
+      },
+      {
+        "bytes": 132639,
+        "samples": 513600,
+        "energy": 0.004197320632084822
+      },
+      {
+        "bytes": 132639,
+        "samples": 513600,
+        "energy": 0.008185895302005662
+      }
+    ]
+  ]
+}

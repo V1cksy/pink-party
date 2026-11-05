@@ -4,7 +4,7 @@ A small, pink gaming hangout: check the next session, take a seat in one voice r
 
 ![Pink Party local interface](docs/interface.png)
 
-Batch 1 runs natively on a Mac and accepts connections from that machine only. LiveKit provides voice transport; this project implements the interface, admission checks, SDK integration, configuration and startup scripts. See [validation](docs/validation.md) for measured results and limits, and [learning notes](docs/learning.md) for contribution records and a code walkthrough.
+Local mode runs natively on a Mac and accepts connections from that machine only. Batch 2 adds an invited-user Tailscale mode; actual Tailscale and separate-home audio validation are pending native installation and account setup. LiveKit provides voice transport; this project implements the interface, admission checks, SDK integration, configuration and startup scripts. See [validation](docs/validation.md) for measured results and limits, and [learning notes](docs/learning.md) for contribution records and a code walkthrough.
 
 ## Requirements and setup
 
@@ -25,6 +25,12 @@ Open **http://localhost:3000**. Enter a display name and the `JOIN_CODE` from `.
 
 `npm start` validates configuration and session data, writes a private LiveKit configuration, starts LiveKit, waits for its authenticated API, and starts the application. It stops both services when either exits. Press **Ctrl+C** in that terminal to stop both. It does not install a background service.
 
+## Private access with Tailscale
+
+Follow [private setup and operations](docs/remote-access.md) for native installation, account sign-in, the invited-user allowlist, tailnet rules and HTTPS consent. After setup, stop local mode, run `npm run start:private`, then `npm run serve:private` in another terminal. Use the HTTPS address printed by Serve. Stop both terminals with Ctrl+C; `npm start` returns to loopback-only local mode.
+
+Private mode uses verified Serve identity headers and an exact login allowlist. It has no development-code fallback. WSS signaling passes through the same authenticated HTTPS proxy; encrypted voice media uses only the configured Tailscale IPv4 on UDP 7882. The app and LiveKit control API stay on loopback. HTTPS availability alone does not prove remote audio. See [batch 2 evidence](docs/validation-batch-2.md) for automated results and the remaining physical-device call test.
+
 ## Configuration
 
 `npm run setup` generates random local credentials in `.env` with owner-only permissions. Running it again preserves an existing file. `.env.example` shows the variable names and placeholders. No `VITE_` secret variables are used.
@@ -39,7 +45,7 @@ The application and startup supervisor read `.env`. The browser receives only it
 
 Edit `data/session.json` to change the sample session, then restart. Use an ISO timestamp with an explicit offset, a valid IANA timezone such as `Europe/Madrid`, and `synthetic: true`. The UI displays the timezone and UTC offset explicitly.
 
-## How it connects
+## How local mode connects
 
 ```mermaid
 flowchart LR
@@ -51,11 +57,11 @@ flowchart LR
     B <-->|Encrypted WebRTC audio over UDP :7882| L
 ```
 
-All listeners bind to `127.0.0.1`. TCP media and TURN are disabled; UDP media is filtered to the loopback address. No router changes, public exposure, external STUN server or cloud service is needed. The web page and microphone secure context use `localhost`.
+In local mode, all listeners bind to `127.0.0.1`. TCP media and TURN are disabled; UDP media is filtered to the loopback address. No router changes, public exposure, external STUN server or cloud service is needed. The web page and microphone secure context use `localhost`.
 
 `POST /api/voice-token` checks the request host and origin, JSON size/type, display name and join code. It limits join attempts to 60 per minute across this local app and eight concurrent admission requests. The server creates the room with a four-person maximum and checks its current occupancy. LiveKit enforces the final cap, including competing connections with already issued tokens.
 
-Tokens allow joining only `pink-party`, publishing microphone audio, and subscribing. They do not grant video, screen sharing, data publishing or room administration. The 60-second expiry limits initial admission; it does **not** end an established call. LiveKit can refresh tokens during a connection. The join code is a simple local development admission mechanism. Future remote access needs a separate identity and access design.
+Tokens allow joining only `pink-party`, publishing microphone audio, and subscribing. They do not grant video, screen sharing, data publishing or room administration. The 60-second expiry limits initial admission; it does **not** end an established call. LiveKit can refresh tokens during a connection. The join code is a simple local development admission mechanism. Private mode uses the separate identity and access design described above.
 
 `GET /api/session` returns the sample data. `GET /api/health` returns 200 when the application can authenticate to LiveKit, or 503 when voice is unavailable. It does not prove microphone or media connectivity.
 
@@ -105,7 +111,7 @@ rm -f .env
 
 These paths contain dependencies, builds, test artifacts and local credentials. Keep `.env` privately if you want to preserve the same code and keys. Browser downloads can be removed separately with `npx playwright uninstall chromium`. The project installs no login item or persistent service; Homebrew packages remain available for other projects.
 
-Later batches: private HTTPS access from separate homes, remote identity, Linux deployment, monitoring and incident exercises, tested backup restoration, then a cloud extension. These operations have not been completed in this batch.
+Complete the pending Tailscale/physical-device validation before claiming separate-home voice. Later batches cover Linux deployment, monitoring and incident exercises, tested backup restoration, then a cloud extension. These later operations remain unimplemented.
 
 ## Primary references
 

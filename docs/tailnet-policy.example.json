@@ -1,0 +1,49 @@
+{
+  "groups": {
+    "group:pink-party": ["peach@example.com", "berry@example.com"]
+  },
+  "hosts": {
+    "pink-party-host": "100.100.100.100"
+  },
+  "grants": [
+    {
+      "src": ["group:pink-party"],
+      "dst": ["pink-party-host"],
+      "ip": ["tcp:443", "udp:7882"]
+    }
+  ],
+  "tests": [
+    {
+      "src": "peach@example.com",
+      "proto": "tcp",
+      "accept": ["pink-party-host:443"],
+      "deny": [
+        "pink-party-host:3000",
+        "pink-party-host:7880",
+        "pink-party-host:7881",
+        "pink-party-host:7882"
+      ]
+    },
+    {
+      "src": "peach@example.com",
+      "proto": "udp",
+      "accept": ["pink-party-host:7882"],
+      "deny": [
+        "pink-party-host:443",
+        "pink-party-host:3000",
+        "pink-party-host:7880",
+        "pink-party-host:7881"
+      ]
+    },
+    {
+      "src": "stranger@example.com",
+      "proto": "tcp",
+      "deny": ["pink-party-host:443"]
+    },
+    {
+      "src": "stranger@example.com",
+      "proto": "udp",
+      "deny": ["pink-party-host:7882"]
+    }
+  ]
+}

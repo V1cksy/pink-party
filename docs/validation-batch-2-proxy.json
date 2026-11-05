@@ -1,0 +1,49 @@
+{
+  "syntheticIdentity": true,
+  "syntheticTls": true,
+  "transport": "real native LiveKit, loopback media",
+  "upgrades": [
+    "wss://localhost:3443/livekit/rtc/v1",
+    "wss://localhost:3443/livekit/rtc/v1",
+    "wss://localhost:3443/livekit/rtc/v1"
+  ],
+  "receivedAudio": [
+    [
+      {
+        "bytes": 164972,
+        "samples": 654240,
+        "energy": 0.01319329458527322
+      }
+    ],
+    [
+      {
+        "bytes": 165008,
+        "samples": 659040,
+        "energy": 0.021462648338320917
+      }
+    ]
+  ],
+  "resources": {
+    "label": "2 synthetic clients through synthetic HTTPS/identity proxy, real loopback media",
+    "capturedAt": "2026-11-04T12:35:04.766Z",
+    "samples": 10,
+    "intervalSeconds": 1,
+    "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. ps %CPU is an OS estimate, not an interval profiler.",
+    "processes": [
+      {
+        "name": "fixture proxy and application",
+        "meanRssMiB": 77.69,
+        "peakRssMiB": 87.8,
+        "meanPsCpuPercent": 0.19,
+        "peakPsCpuPercent": 0.7
+      },
+      {
+        "name": "LiveKit",
+        "meanRssMiB": 68.29,
+        "peakRssMiB": 80.2,
+        "meanPsCpuPercent": 3.23,
+        "peakPsCpuPercent": 3.6
+      }
+    ]
+  }
+}
