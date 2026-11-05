@@ -26,7 +26,11 @@ try {
     process.exitCode = 1;
   });
   server.listen(WEB_PORT, '127.0.0.1', () =>
-    console.log('Pink Party → http://localhost:3000'),
+    console.log(
+      settings.privateAccess
+        ? 'Pink Party private backend ready. Start npm run serve:private in another terminal.'
+        : 'Pink Party → http://localhost:3000',
+    ),
   );
   for (const signal of ['SIGINT', 'SIGTERM'] as const)
     process.on(signal, () => {

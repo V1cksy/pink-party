@@ -1,13 +1,11 @@
 import { spawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
-import { mkdir, writeFile, access } from 'node:fs/promises';
+import { mkdir, writeFile, access, chmod } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { RoomServiceClient } from 'livekit-server-sdk';
-import {
-  loadSettings,
-  LIVEKIT_HTTP,
-  MAX_PARTICIPANTS,
-} from '../server/config.ts';
+import { loadSettings, LIVEKIT_HTTP, livekitConfig } from '../server/config.ts';
+import { networkInterfaces } from 'node:os';
+import { verifyPrivateNetwork } from './tailscale.ts';
 import { readSession } from '../server/session.ts';
 
 const children: ChildProcess[] = [];
@@ -27,6 +25,7 @@ for (const signal of ['SIGINT', 'SIGTERM'] as const)
   process.on(signal, () => stop(0));
 
 function launch(command: string, args: string[]) {
+  if (stopping) return;
   const child = spawn(command, args, { stdio: 'inherit' });
   children.push(child);
   child.on('error', () => {
@@ -61,37 +60,27 @@ async function assertFree(port: number) {
 try {
   const settings = loadSettings(process.env);
   await readSession();
+  if (settings.privateAccess) {
+    await verifyPrivateNetwork(settings.privateAccess);
+    const present = Object.values(networkInterfaces())
+      .flat()
+      .some((n) => n?.address === settings.privateAccess?.tailscaleIp);
+    if (!present)
+      throw new Error(
+        'Tailscale IPv4 is not assigned to a native interface. Connect the native Tailscale app, then retry.',
+      );
+  }
   await access('dist/index.html').catch(() => {
     throw new Error('Built interface missing. Run npm run build first.');
   });
   await assertFree(3000);
   await assertFree(7880);
   await mkdir('.local', { recursive: true, mode: 0o700 });
-  await writeFile(
-    '.local/livekit.yaml',
-    `port: 7880
-bind_addresses: [127.0.0.1]
-rtc:
-  node_ip: 127.0.0.1
-  use_external_ip: false
-  enable_loopback_candidate: true
-  tcp_port: 0
-  udp_port: 7882
-  ips:
-    includes: [127.0.0.1/32]
-  stun_servers: []
-room:
-  auto_create: false
-  max_participants: ${MAX_PARTICIPANTS}
-turn:
-  enabled: false
-keys:
-  ${settings.apiKey}: ${settings.apiSecret}
-logging:
-  level: error
-`,
-    { mode: 0o600 },
-  );
+  await chmod('.local', 0o700);
+  await writeFile('.local/livekit.yaml', livekitConfig(settings), {
+    mode: 0o600,
+  });
+  await chmod('.local/livekit.yaml', 0o600);
   launch('livekit-server', ['--config', '.local/livekit.yaml']);
   const voice = new RoomServiceClient(
     LIVEKIT_HTTP,
@@ -114,8 +103,7 @@ logging:
     throw new Error(
       'LiveKit did not become ready during startup. Check its startup output and local ports.',
     );
-  if (!stopping)
-    launch(process.execPath, ['--env-file=.env', 'server/index.ts']);
+  if (!stopping) launch(process.execPath, ['server/index.ts']);
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Startup failed.');
   stop(1);

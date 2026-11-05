@@ -6,14 +6,11 @@ import { HttpError, issueVoiceToken } from './admission.ts';
 import type { VoiceService } from './admission.ts';
 import type { Settings } from './config.ts';
 import type { Session } from './session.ts';
+import { voiceUrl } from './config.ts';
+import { checkAccess } from './access.ts';
+import { proxySignaling, proxyUpgrade } from './signaling.ts';
+import type { Duplex } from 'node:stream';
 
-const allowedHosts = new Set(['localhost:3000', '127.0.0.1:3000']);
-const allowedOrigins = new Set([
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-]);
 const contentTypes: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript',
@@ -61,20 +58,24 @@ export function createApp(options: {
   let windowStart = Date.now();
   let attempts = 0;
   let inFlight = 0;
+  const sockets = new Set<Duplex>();
   const server = createServer(async (req, res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(self)');
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' ws://127.0.0.1:7880; media-src 'self' blob:; worker-src 'self' blob:; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+      `default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self' ${voiceUrl(options.settings)}; media-src 'self' blob:; worker-src 'self' blob:; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'`,
     );
     try {
-      if (!allowedHosts.has(req.headers.host ?? ''))
-        throw new HttpError(403, 'Use http://localhost:3000.');
-      if (req.headers.origin && !allowedOrigins.has(req.headers.origin))
-        throw new HttpError(403, 'Request origin is not allowed.');
+      const login = checkAccess(req, options.settings);
       const path = new URL(req.url ?? '/', 'http://localhost').pathname;
+      if (options.settings.privateAccess && path.startsWith('/livekit/'))
+        return proxySignaling(req, res);
+      if (req.method === 'GET' && path === '/api/access')
+        return json(res, 200, {
+          mode: options.settings.privateAccess ? 'private' : 'local',
+        });
       if (req.method === 'GET' && path === '/api/session')
         return json(res, 200, options.session);
       if (req.method === 'GET' && path === '/api/health') {
@@ -87,10 +88,7 @@ export function createApp(options: {
       }
       if (req.method === 'POST' && path === '/api/voice-token') {
         if (!req.headers.origin)
-          throw new HttpError(
-            403,
-            'Join from the Pink Party page on localhost.',
-          );
+          throw new HttpError(403, 'Join from the configured Pink Party page.');
         if (Date.now() - windowStart >= 60_000) {
           windowStart = Date.now();
           attempts = 0;
@@ -109,6 +107,7 @@ export function createApp(options: {
               await readBody(req),
               options.settings,
               options.voice,
+              login,
             ),
           );
         } finally {
@@ -156,6 +155,25 @@ export function createApp(options: {
       });
     }
   });
+  server.on('upgrade', (req, socket, head) => {
+    try {
+      checkAccess(req, options.settings);
+      if (!options.settings.privateAccess)
+        throw new HttpError(403, 'Private signaling is disabled.');
+      sockets.add(socket);
+      socket.on('close', () => sockets.delete(socket));
+      proxyUpgrade(req, socket, head);
+    } catch (error) {
+      const status = error instanceof HttpError ? error.status : 500;
+      socket.end(`HTTP/1.1 ${status} Rejected\r\nConnection: close\r\n\r\n`);
+    }
+  });
+  // HTTP closeAllConnections does not include upgraded WebSocket sockets.
+  const closeHttp = server.closeAllConnections.bind(server);
+  server.closeAllConnections = () => {
+    closeHttp();
+    for (const socket of sockets) socket.destroy();
+  };
   server.requestTimeout = 10_000;
   server.headersTimeout = 10_000;
   server.timeout = 15_000;

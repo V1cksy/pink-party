@@ -1,11 +1,15 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-export async function measureResources(label: string, seconds = 10) {
-  const processes = [
+export async function measureResources(
+  label: string,
+  seconds = 10,
+  services = [
     { name: 'application', port: 3000 },
     { name: 'LiveKit', port: 7880 },
-  ].map((item) => ({
+  ],
+) {
+  const processes = services.map((item) => ({
     ...item,
     pid: execFileSync('lsof', ['-tiTCP:' + item.port, '-sTCP:LISTEN'], {
       encoding: 'utf8',

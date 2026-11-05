@@ -5,7 +5,7 @@ import {
   ROOM_NAME,
   MAX_PARTICIPANTS,
   TOKEN_TTL_SECONDS,
-  LIVEKIT_WS,
+  voiceUrl,
 } from './config.ts';
 
 export class HttpError extends Error {
@@ -16,10 +16,10 @@ export class HttpError extends Error {
   }
 }
 
-export function validateAdmission(body: unknown, expectedCode: string): string {
+export function validateName(body: unknown): string {
   if (!body || typeof body !== 'object' || Array.isArray(body))
-    throw new HttpError(400, 'Enter a display name and join code.');
-  const { displayName, joinCode } = body as Record<string, unknown>;
+    throw new HttpError(400, 'Enter a display name.');
+  const { displayName } = body as Record<string, unknown>;
   if (
     typeof displayName !== 'string' ||
     !displayName.trim() ||
@@ -31,6 +31,12 @@ export function validateAdmission(body: unknown, expectedCode: string): string {
       'Use a display name of 1–32 characters without control characters or angle brackets.',
     );
   }
+  return displayName.trim();
+}
+
+export function validateAdmission(body: unknown, expectedCode: string): string {
+  const name = validateName(body);
+  const { joinCode } = body as Record<string, unknown>;
   if (
     typeof joinCode !== 'string' ||
     joinCode.length > 128 ||
@@ -43,7 +49,7 @@ export function validateAdmission(body: unknown, expectedCode: string): string {
       403,
       'That join code did not match. Check your local .env file.',
     );
-  return displayName.trim();
+  return name;
 }
 
 export interface VoiceService {
@@ -60,8 +66,19 @@ export async function issueVoiceToken(
   body: unknown,
   settings: Settings,
   voice: VoiceService,
+  verifiedLogin?: string,
 ) {
-  const name = validateAdmission(body, settings.joinCode);
+  if (
+    settings.privateAccess &&
+    (!verifiedLogin || !settings.privateAccess.logins.includes(verifiedLogin))
+  )
+    throw new HttpError(
+      403,
+      'A verified invited Tailscale identity is required.',
+    );
+  const name = settings.privateAccess
+    ? validateName(body)
+    : validateAdmission(body, settings.joinCode);
   try {
     await voice.createRoom({
       name: ROOM_NAME,
@@ -95,5 +112,5 @@ export async function issueVoiceToken(
     canPublishData: false,
     canUpdateOwnMetadata: false,
   });
-  return { token: await token.toJwt(), url: LIVEKIT_WS };
+  return { token: await token.toJwt(), url: voiceUrl(settings) };
 }

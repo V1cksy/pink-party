@@ -16,6 +16,7 @@ const playback = element<HTMLButtonElement>('playback-button');
 const name = element<HTMLInputElement>('display-name');
 const code = element<HTMLInputElement>('join-code');
 let lastState = 'disconnected';
+let accessReady = false;
 function render(view: VoiceView) {
   const inRoom = ['connected', 'reconnecting'].includes(view.state);
   const active = inRoom || view.state === 'connecting';
@@ -27,7 +28,7 @@ function render(view: VoiceView) {
   form.hidden = inRoom;
   name.disabled = active;
   code.disabled = active;
-  join.disabled = active;
+  join.disabled = active || !accessReady;
   join.textContent =
     view.state === 'connecting' ? 'Connecting…' : 'Join voice room';
   element('room-controls').hidden = !active;
@@ -90,6 +91,28 @@ playback.addEventListener('click', () => void voice.enablePlayback());
 window.addEventListener('pagehide', () => void voice.leave());
 
 async function loadSession() {
+  join.disabled = true;
+  try {
+    const response = await fetch('/api/access', {
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) throw new Error('Access denied');
+    const access = await response.json();
+    if (access.mode === 'private') {
+      code.required = false;
+      code.value = '';
+      code.parentElement!.hidden = true;
+      element('admission-note').textContent =
+        'Invited Tailscale account verified. Keep Tailscale connected while you talk.';
+      element('access-badge').textContent = 'Private hangout';
+    }
+    accessReady = true;
+    join.disabled = false;
+  } catch {
+    element('admission-note').textContent =
+      'Access unavailable. Check Tailscale and your invitation with the host, then refresh.';
+    return;
+  }
   try {
     const response = await fetch('/api/session', {
       signal: AbortSignal.timeout(5000),

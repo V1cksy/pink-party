@@ -207,7 +207,7 @@ export class VoiceController {
         failedJoin ? 'error' : 'disconnected',
         failedJoin
           ? 'Could not connect to voice. The room may be full or LiveKit may be unavailable. Check the services, then join again.'
-          : 'Voice disconnected. Check the local services and join again.',
+          : 'Voice disconnected. Check Tailscale and the host’s services, then join again.',
       );
     });
     room.on(RoomEvent.MediaDevicesError, (error) => {
@@ -338,7 +338,7 @@ export class VoiceController {
         this.emit({
           playbackBlocked: true,
           message:
-            'Playback is still blocked. Allow sound for localhost in your browser, then click Enable sound.',
+            'Playback is still blocked. Allow sound for this site in your browser, then click Enable sound.',
         });
     }
   }
