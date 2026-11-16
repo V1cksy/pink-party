@@ -12,6 +12,8 @@ The voice room is also a networking lab. Its tests follow a connection from HTTP
 
 The [Linux deployment](docs/linux-deployment.md) adds a dedicated service account, root-owned application files, restricted writable state and automatic startup. Practical checks exercise backend crashes, invalid configuration, journal diagnosis and recovery. The [Linux validation record](docs/validation-linux.md) links the configuration and actual results.
 
+A separate systemd timer records web/control health even when the application is stopped. A [controlled outage report](docs/incident-linux-monitoring.md) follows scheduled detection, diagnosis and recovery with observed timestamps. The monitor does not test voice reception.
+
 The implementation includes:
 
 - Loopback application and LiveKit control listeners. In private mode, media binds only to the configured Tailscale IPv4 on UDP 7882. See [configuration](server/config.ts) and [startup checks](scripts/start.ts).
@@ -84,7 +86,7 @@ Additional commands and prerequisites:
 | `npm run diagnose` / `npm run diagnose:private` | Check running services. Health does not prove media reception.     |
 | `npm run measure:private -- 10`                 | Sample app, LiveKit and Tailscale components separately.           |
 
-Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. Monitoring exercises, tested backup recovery and cloud deployment remain future work.
+Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. Tested backup recovery and cloud deployment remain future work.
 
 ## Project notes
 
@@ -94,11 +96,12 @@ Raw private evidence and failed-test artifacts stay ignored. See the [operations
 - [Interface design](docs/design.md): design choices, research sources and verification.
 - [Learning record](docs/learning.md): confirmed owner practice and code walkthrough.
 - [Linux deployment](docs/linux-deployment.md) and [validation](docs/validation-linux.md): systemd configuration, permissions, failure exercises and local VM audio checks.
+- [Monitoring incident](docs/incident-linux-monitoring.md): controlled outage, scheduled detection, diagnosis and recovery.
 
 ## Contributions
 
 The owner chose the gaming-hangout scope and pink design, completed Tailscale onboarding and HTTPS consent, and performed the confirmed Chrome listening checks. Codex generated the application, configuration, tests and documentation, and carried out the recorded technical verification and interface revision. The earlier technical work included a separate review. The [learning record](docs/learning.md) distinguishes assisted work from personally confirmed practice.
 
-Codex also installed the Linux VM, implemented its deployment and service configuration, and ran the recorded Linux checks and practical exercises. Independent owner practice on Linux remains unconfirmed.
+Codex also installed the Linux VM, implemented its deployment, service and scheduled monitoring configuration, and ran the recorded Linux checks and incident exercise. Independent owner practice on Linux remains unconfirmed.
 
 LiveKit and its SDKs provide voice transport. The interface uses self-hosted Nunito Sans under the [SIL Open Font License](public/fonts/OFL.txt). The farmhouse is an original SVG illustration; it does not use Stardew Valley game assets.

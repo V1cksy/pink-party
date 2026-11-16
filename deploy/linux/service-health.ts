@@ -30,20 +30,59 @@ export async function serviceListener(port: number): Promise<number> {
   return pids[0];
 }
 
-export async function healthyService(): Promise<boolean> {
+export type HealthObservation = {
+  status: 'up' | 'down';
+  reason:
+    | 'web-control-ready'
+    | 'service-not-active'
+    | 'service-query-failed'
+    | 'listener-not-owned'
+    | 'health-request-failed';
+};
+
+export async function inspectServiceHealth(
+  tools = {
+    activeState: async () =>
+      (
+        await exec(
+          'systemctl',
+          ['show', 'pink-party.service', '--property=ActiveState', '--value'],
+          { timeout: 2000 },
+        )
+      ).stdout.trim(),
+    listener: serviceListener,
+    request: () =>
+      fetch('http://127.0.0.1:3000/api/health', {
+        signal: AbortSignal.timeout(1000),
+        redirect: 'error',
+      }),
+  },
+): Promise<HealthObservation> {
   try {
-    await exec('systemctl', ['is-active', '--quiet', 'pink-party.service'], {
-      timeout: 2000,
-    });
-    await serviceListener(3000);
-    const response = await fetch('http://127.0.0.1:3000/api/health', {
-      signal: AbortSignal.timeout(1000),
-    });
-    await response.body?.cancel();
-    return response.ok;
+    if ((await tools.activeState()) !== 'active')
+      return { status: 'down', reason: 'service-not-active' };
   } catch {
-    return false;
+    return { status: 'down', reason: 'service-query-failed' };
   }
+  try {
+    await tools.listener(3000);
+    await tools.listener(7880);
+  } catch {
+    return { status: 'down', reason: 'listener-not-owned' };
+  }
+  try {
+    const response = await tools.request();
+    const body = await response.json();
+    if (response.ok && body.status === 'ok' && body.voice === 'ready')
+      return { status: 'up', reason: 'web-control-ready' };
+  } catch {
+    // Only fixed diagnostic codes leave this boundary; never response bodies.
+  }
+  return { status: 'down', reason: 'health-request-failed' };
+}
+
+export async function healthyService(): Promise<boolean> {
+  return (await inspectServiceHealth()).status === 'up';
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

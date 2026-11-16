@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-test('Linux verifier rejects invalid configuration before any service command (injected root/platform/tools)', async (t) => {
+test('Linux service exercises reject invalid configuration before any service command (injected root/platform/tools)', async (t) => {
   const dir = await mkdtemp(join(tmpdir(), 'pink-party-linux-preflight-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
   const marker = join(dir, 'unexpected-command');
@@ -26,27 +26,29 @@ cp.spawnSync = () => { writeFileSync(${JSON.stringify(marker)}, ''); throw new E
 syncBuiltinESMExports();
 `,
   );
-  const result = spawnSync(
-    process.execPath,
-    [
-      '--import',
-      preload,
-      fileURLToPath(new URL('../deploy/linux/verify.ts', import.meta.url)),
-    ],
-    {
-      encoding: 'utf8',
-      timeout: 5000,
-      env: { ...process.env, PINK_PARTY_MODE: 'invalid-fixture-mode' },
-    },
-  );
-  assert.equal(result.status, 1);
-  assert.equal(
-    await access(marker).then(
-      () => true,
-      () => false,
-    ),
-    false,
-    'Rejected configuration attempted a service command',
-  );
-  assert.match(result.stderr, /PINK_PARTY_MODE must be local or private/);
+  for (const script of ['verify.ts', 'incident.ts']) {
+    const result = spawnSync(
+      process.execPath,
+      [
+        '--import',
+        preload,
+        fileURLToPath(new URL(`../deploy/linux/${script}`, import.meta.url)),
+      ],
+      {
+        encoding: 'utf8',
+        timeout: 5000,
+        env: { ...process.env, PINK_PARTY_MODE: 'invalid-fixture-mode' },
+      },
+    );
+    assert.equal(result.status, 1);
+    assert.equal(
+      await access(marker).then(
+        () => true,
+        () => false,
+      ),
+      false,
+      'Rejected configuration attempted a service command',
+    );
+    assert.match(result.stderr, /PINK_PARTY_MODE must be local or private/);
+  }
 });

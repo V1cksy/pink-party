@@ -50,4 +50,4 @@ The initial hardened unit permitted Unix, IPv4 and IPv6 sockets. LiveKit exited 
 
 This provides a tested Linux deployment and service-recovery record. It does not establish professional Linux experience, owner-performed deployment, cloud deployment or physical audio on Linux. Linux Tailscale/HTTPS and calls from another device remain untested. Earlier Mac private-network evidence is in [batch 3](validation-batch-3.md).
 
-Scheduled monitoring, a full incident exercise and tested backup restoration remain future work. The crash and invalid-configuration checks above are specific recovery exercises. Public evidence omits generated credentials, VM identifiers and private logs.
+Scheduled monitoring and a controlled incident exercise were subsequently completed in [batch 5](incident-linux-monitoring.md), with separate [inspected data](validation-monitoring.json). The earlier crash and invalid-configuration checks above remain batch-4 evidence. Tested backup restoration and cloud deployment remain future work. Public evidence omits generated credentials, VM identifiers and private logs.

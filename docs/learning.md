@@ -12,6 +12,19 @@ On 16 November 2026, the owner asked Codex to implement the Linux portfolio stag
 
 These results establish a working project artifact and recorded exercises performed with assistance. They do not record the owner operating Linux or demonstrating independent understanding. Any later owner practice should be added from the owner's actual observations.
 
+## Scheduled monitoring and incident exercise
+
+On 16 November 2026, the owner authorised Codex to implement scheduled Linux monitoring and perform a documented incident exercise. Codex added an independent systemd timer, reused service-cgroup ownership checks, bounded the history and journal, and ran a controlled service stop. Codex inspected status, sockets and journal evidence, restored the service and verified scheduled recovery. A separate failed-activation exercise checked that monitoring continued after a rejected deployment and that normal service and credentials were restored. The [incident report](incident-linux-monitoring.md) records the actual timeline and limits; [operations](linux-deployment.md#scheduled-monitoring) provides repeatable commands.
+
+This adds assisted project evidence for systemd timers, health monitoring, log retention, incident diagnosis and recovery. The probe covers web/control readiness; synthetic media reception is verified separately. The owner has not confirmed independent monitoring or incident practice, and that practice is not required before further implementation.
+
+Questions for a later walkthrough:
+
+- Why must the monitor remain independent of the application unit?
+- How can a monitor execution succeed while the application is down, and how would you notice a failed monitor?
+- Which timestamps measure service restoration and which measure scheduled recovery detection?
+- What can an internal health probe miss, and what would an external watchdog or media test add?
+
 ## Follow a join request
 
 1. `index.html` contains the page and labelled controls; `src/main.ts` connects them to the voice controller and renders session data and real participant state.

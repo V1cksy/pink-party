@@ -49,6 +49,7 @@ The dated Ubuntu image is checksum-pinned too. If the provider removes it, updat
 | `/etc/pink-party/pink-party.env`                 | Generated credentials, root-owned mode `0600` in a root-only directory. systemd reads them into the service environment. |
 | `/var/lib/pink-party`                            | Service-owned mode `0700`; the app's `.local` symlink points here for generated LiveKit configuration.                   |
 | `/etc/systemd/system/pink-party.service`         | Installed [service definition](../deploy/linux/pink-party.service).                                                      |
+| `/var/lib/pink-party-monitor/history.json`       | Root-only monitor history, separate from application state; at most 2880 samples.                                        |
 
 The service account has no login shell. The unit removes capabilities, prevents gaining privileges, hides home directories and makes the filesystem read-only apart from its state directory and private temporary storage. The service cgroup has a 512 MiB memory cap. LiveKit needs `AF_NETLINK` to enumerate interfaces; this socket family does not grant network-administration capabilities.
 
@@ -85,6 +86,51 @@ One final teardown left Lima's host agent waiting after shutdown. If this recurs
 
 To deploy changes, rerun `bash deploy/linux/deploy.sh` on the Mac. It uses the current working tree, including uncommitted public changes. Keep `/etc/pink-party` and `/var/lib/pink-party` when recovering an update. Credentials are not rotated by deployment.
 
+## Scheduled monitoring
+
+Deployment enables [pink-party-monitor.timer](../deploy/linux/pink-party-monitor.timer) at guest boot. It runs a separate [oneshot service](../deploy/linux/pink-party-monitor.service) 30 seconds after boot, then 30 seconds after each check finishes, with one-second scheduling accuracy. It has no `Requires`, `Wants`, `PartOf` or `BindsTo` relationship with the application. Stopping Pink Party leaves the timer running and does not cause an automatic application restart.
+
+The [probe](../deploy/linux/service-health.ts) checks the application's active state, verifies that TCP 3000 and 7880 belong to its service cgroup, and requests `/api/health`. That endpoint calls LiveKit's authenticated control API. An `up` result establishes local web/control readiness; UDP reception, ICE, decoded audio and physical listening require their separate tests. Every sample explicitly says `media: not-tested`.
+
+Commands have two-second timeouts and the HTTP request has a one-second timeout. The monitor unit has a 15-second execution timeout and a 96 MiB cgroup cap. It runs as root to inspect socket PIDs across service accounts, loads no credentials, and cannot access the application credential or state directories. It can write only its own state directory and private temporary storage under its filesystem restrictions.
+
+[monitor.ts](../deploy/linux/monitor.ts) atomically replaces a root-only history file containing the newest 2880 samples, roughly a day at the normal cadence. It logs the initial state and changes of status/reason; repeated identical results remain in history. The [journal configuration](../deploy/linux/journald-monitor.conf) sets an 8 MiB size budget for persistent/runtime storage, 1 MiB files and seven-day retention. Journald removes archived files; active files can keep usage above the budget temporarily. These settings do not guarantee seven days of logs. Installation pauses monitoring while replacing code/runtime, then resumes it independently of application health. Failure cleanup also attempts to resume a paused timer and reports any failure.
+
+Inside Linux:
+
+```sh
+sudo systemctl list-timers pink-party-monitor.timer --no-pager
+sudo systemctl status pink-party-monitor.timer pink-party-monitor.service --no-pager
+sudo journalctl --namespace=pink-party-monitor -u pink-party-monitor.service -n 30 --no-pager
+sudo /opt/pink-party/node/bin/node --input-type=module -e 'import {readFileSync} from "node:fs"; console.log(JSON.parse(readFileSync("/var/lib/pink-party-monitor/history.json", "utf8")).slice(-5));'
+```
+
+The oneshot is normally `inactive (dead)` between checks. A recorded application outage exits successfully; monitor execution/storage errors fail the monitoring unit. Inspect `Result`, `ExecMainStatus`, timer activity and sample freshness to distinguish these cases. Corrupt history is retained for diagnosis and causes a visible monitor failure. After privately saving and inspecting it, move the history file aside and let the timer create a new one.
+
+This is local recording without external notifications, automatic remediation or an outside watchdog. It cannot observe a powered-off VM, host failure or its own disabled timer. Stop it for planned maintenance with `sudo systemctl stop pink-party-monitor.timer pink-party-monitor.service`; resume with `sudo systemctl start pink-party-monitor.timer`. Both application and timer stay enabled for the next guest boot. No monitoring is expected while the VM is intentionally stopped.
+
+## Repeat the scheduled incident exercise
+
+Close room clients and run service exercises sequentially. This command deliberately interrupts the local lab:
+
+```sh
+sudo /opt/pink-party/node/bin/node --env-file=/etc/pink-party/pink-party.env /opt/pink-party/app/deploy/linux/incident.ts
+```
+
+The [runner](../deploy/linux/incident.ts) requires a healthy local deployment and enabled, active timer. It waits for a fresh scheduled baseline, timestamps `systemctl stop pink-party.service`, and waits up to 75 seconds for a scheduled down sample. It diagnoses the inactive unit, absent process/listeners and actual stop journal while confirming the timer remains active. It then starts the service, verifies owned health and waits for the first scheduled up sample after the start request. It never invokes the monitor to manufacture detection or recovery.
+
+The runner shares the service verifier's lock and restores the normal service in cleanup. After interruption, inspect the service, timer and `/run/pink-party-verification.lock` before removing a stale lock. No credential or unit override is needed. A successful run writes `/var/lib/pink-party-monitor/incident.json`; raw service logs and any error details remain private in that directory. Publish only inspected summaries such as the [incident report](incident-linux-monitoring.md) and [validation data](validation-monitoring.json).
+
+For manual diagnosis during an outage, use `systemctl show pink-party.service -p ActiveState -p SubState -p MainPID`, `journalctl -u pink-party.service`, and `ss -ltnup`. Compare those findings with the latest scheduled sample before choosing a recovery action. Measure from timestamps in the same guest; polling intervals and timer scheduling affect observed times.
+
+The separate [installer regression exercise](../deploy/linux/test-monitor-install.sh) deliberately deploys a backend that exits after a successful interface build. Run it sequentially with the other service exercises:
+
+```sh
+sudo bash /opt/pink-party/app/deploy/linux/test-monitor-install.sh
+```
+
+It requires a healthy application and active timer, verifies failed activation is rejected while scheduled monitoring continues to record down, then redeploys the original source and checks health, timer activity and unchanged credentials. Its cleanup attempts restoration on failure. After interruption, inspect the root-only `/var/tmp/pink-party-monitor-install.*` workspace before deleting it; the `good` directory can be passed to its installer for recovery. The summary is `/var/lib/pink-party-monitor/install-validation.json`. This interrupts the lab and does not test backup restoration.
+
 ## Repeat the practical checks
 
 With an empty room, inside the guest:
@@ -108,3 +154,4 @@ Keep raw logs and state private. Publish only inspected results such as [validat
 - [Lima installation](https://lima-vm.io/docs/installation/), [VZ support](https://lima-vm.io/docs/config/vmtype/) and [disabling port forwarding](https://lima-vm.io/docs/config/port/#disabling-port-forwarding).
 - [Ubuntu image checksums](https://cloud-images.ubuntu.com/releases/noble/release-20261017/SHA256SUMS), [Node.js checksums](https://nodejs.org/dist/v24.22.2/SHASUMS256.txt) and [LiveKit release](https://github.com/livekit/livekit/releases/tag/v1.13.11).
 - [systemd sandbox directives](https://www.freedesktop.org/software/systemd/man/systemd.exec.html), [restart behavior](https://www.freedesktop.org/software/systemd/man/systemd.service.html) and [resource control](https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html).
+- [systemd timer scheduling](https://www.freedesktop.org/software/systemd/man/systemd.timer.html) and [journal storage limits](https://www.freedesktop.org/software/systemd/man/journald.conf.html).

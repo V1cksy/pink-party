@@ -38,7 +38,20 @@ fetch 'https://nodejs.org/dist/v24.22.2/node-v24.22.2-linux-arm64.tar.xz' \
 fetch 'https://github.com/livekit/livekit/releases/download/v1.13.11/livekit_1.13.11_linux_arm64.tar.gz' \
   livekit.tar.gz 2af6ce091d6b3c79d1677f8ff1bbb91a8007f40b2325c059b52d38383c0830b6
 build_dir=$(mktemp -d /opt/pink-party/build.XXXXXX)
-trap 'rm -rf "$build_dir"' EXIT
+monitor_paused=false
+cleanup() {
+  local result=$?
+  rm -rf "$build_dir"
+  if [[ $monitor_paused == true ]]; then
+    systemctl daemon-reload || result=1
+    if ! systemctl enable --now pink-party-monitor.timer; then
+      echo 'Monitoring could not resume; inspect pink-party-monitor.timer.' >&2
+      result=1
+    fi
+  fi
+  exit "$result"
+}
+trap cleanup EXIT
 install -d -m 0755 "$build_dir/node" "$build_dir/bin" "$build_dir/app"
 tar -xJf /var/cache/pink-party/node.tar.xz --strip-components=1 -C "$build_dir/node"
 tar -xzf /var/cache/pink-party/livekit.tar.gz -C "$build_dir/bin" livekit-server
@@ -76,13 +89,23 @@ chmod -R u=rwX,go=rX "$build_dir/app"
 ln -s /var/lib/pink-party .local
 
 # Keep the running version available until its replacement has built successfully.
+# Avoid running a check while its runtime/code is being replaced.
+if systemctl cat pink-party-monitor.timer >/dev/null 2>&1; then
+  monitor_paused=true
+  systemctl stop pink-party-monitor.timer pink-party-monitor.service
+fi
 if systemctl cat pink-party.service >/dev/null 2>&1; then
   systemctl stop pink-party.service
 fi
 rm -rf /opt/pink-party/previous
 install -d -m 0755 /opt/pink-party/previous
-if [[ -f /etc/systemd/system/pink-party.service ]]; then
-  cp /etc/systemd/system/pink-party.service /opt/pink-party/previous/pink-party.service
+for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer; do
+  if [[ -f /etc/systemd/system/$unit ]]; then
+    cp "/etc/systemd/system/$unit" /opt/pink-party/previous/
+  fi
+done
+if [[ -f /etc/systemd/journald@pink-party-monitor.conf.d/limits.conf ]]; then
+  cp /etc/systemd/journald@pink-party-monitor.conf.d/limits.conf /opt/pink-party/previous/journald-monitor.conf
 fi
 for component in app node bin; do
   if [[ -e /opt/pink-party/$component ]]; then
@@ -91,9 +114,18 @@ for component in app node bin; do
   mv "$build_dir/$component" "/opt/pink-party/$component"
 done
 cd /opt/pink-party/app
-install -o root -g root -m 0644 deploy/linux/pink-party.service /etc/systemd/system/pink-party.service
-systemd-analyze verify /etc/systemd/system/pink-party.service
+for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer; do
+  install -o root -g root -m 0644 "deploy/linux/$unit" "/etc/systemd/system/$unit"
+done
+install -d -m 0755 /etc/systemd/journald@pink-party-monitor.conf.d
+install -o root -g root -m 0644 deploy/linux/journald-monitor.conf \
+  /etc/systemd/journald@pink-party-monitor.conf.d/limits.conf
+systemd-analyze verify /etc/systemd/system/pink-party.service \
+  /etc/systemd/system/pink-party-monitor.service /etc/systemd/system/pink-party-monitor.timer
 systemctl daemon-reload
+systemctl try-restart systemd-journald@pink-party-monitor.service
+systemctl enable --now pink-party-monitor.timer
+monitor_paused=false
 systemctl reset-failed pink-party.service
 systemctl enable --now pink-party.service
 for attempt in {1..30}; do

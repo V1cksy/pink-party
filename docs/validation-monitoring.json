@@ -1,0 +1,159 @@
+{
+  "recordedAt": "2026-11-16",
+  "scope": "Codex-run assisted local Ubuntu ARM64 lab; inspected public evidence",
+  "configuration": {
+    "initialAfterBootSeconds": 30,
+    "secondsAfterPreviousCheckCompletes": 30,
+    "accuracySeconds": 1,
+    "executionTimeoutSeconds": 15,
+    "memoryCapMiB": 96,
+    "historySampleLimit": 2880,
+    "historyReadLimitBytes": 1048576,
+    "historyDirectoryRootOnly": true,
+    "historyFileMode": "0600",
+    "noApplicationUnitDependency": true,
+    "noCredentialEnvironmentLoaded": true,
+    "applicationCredentialsAndStateInaccessibleToMonitor": true,
+    "journalNamespace": "pink-party-monitor",
+    "journalPersistentAndRuntimeBudgetMiB": 8,
+    "journalFileMiB": 1,
+    "journalRetentionDays": 7,
+    "journalDiskUsageAtInspectionMiB": 1,
+    "journalBudgetCaveat": "Archived files are removed; active files can temporarily keep usage above the configured budget."
+  },
+  "incident": {
+    "scope": "Codex-run controlled local VM outage; web/control only; synthetic data",
+    "startedAt": "2026-11-16T18:01:25.703Z",
+    "fault": "Explicit systemctl stop; no configuration or credential change",
+    "timeline": {
+      "baselineObservedAt": "2026-11-16T18:01:48.780Z",
+      "stopRequestedAt": "2026-11-16T18:01:49.139Z",
+      "stopCompletedAt": "2026-11-16T18:01:49.192Z",
+      "downObservedAt": "2026-11-16T18:02:19.774Z",
+      "diagnosedAt": "2026-11-16T18:02:20.219Z",
+      "startRequestedAt": "2026-11-16T18:02:20.220Z",
+      "healthVerifiedAt": "2026-11-16T18:02:21.345Z",
+      "recoveryObservedAt": "2026-11-16T18:02:50.743Z"
+    },
+    "diagnosis": {
+      "serviceState": "inactive",
+      "mainProcessAbsent": true,
+      "socketsAbsent": true,
+      "monitorTimerStillActive": true,
+      "journalConfirmsExplicitStop": true,
+      "configurationChanged": false
+    },
+    "observations": {
+      "baseline": {
+        "observedAt": "2026-11-16T18:01:48.780Z",
+        "status": "up",
+        "reason": "web-control-ready",
+        "durationMs": 57,
+        "media": "not-tested"
+      },
+      "down": {
+        "observedAt": "2026-11-16T18:02:19.774Z",
+        "status": "down",
+        "reason": "service-not-active",
+        "durationMs": 8,
+        "media": "not-tested"
+      },
+      "recovery": {
+        "observedAt": "2026-11-16T18:02:50.743Z",
+        "status": "up",
+        "reason": "web-control-ready",
+        "durationMs": 52,
+        "media": "not-tested"
+      }
+    },
+    "timingMs": {
+      "detectionAfterStopRequested": 30635,
+      "healthAfterStartRequested": 1125,
+      "recoveryObservationAfterStartRequested": 30523,
+      "observedDownToUp": 30969,
+      "stopCompletedToHealthy": 32153
+    },
+    "passed": true,
+    "normalServiceRestored": true
+  },
+  "verification": {
+    "unitDefinitionsAccepted": true,
+    "statusAndStopJournalInspected": true,
+    "scheduledTransitionJournalMatchesHistory": true,
+    "macCheck": {
+      "command": "npm run check",
+      "offlineTestsPassed": 17,
+      "typecheck": true,
+      "productionBuild": true,
+      "formatting": true
+    },
+    "linuxCheck": {
+      "command": "sudo bash /opt/pink-party/app/deploy/linux/test.sh",
+      "offlineTestsPassed": 17,
+      "typecheck": true,
+      "productionBuild": true,
+      "formatting": true
+    },
+    "browser": {
+      "stats": {
+        "startTime": "2026-11-16T18:03:23.537Z",
+        "duration": 42064.779,
+        "expected": 13,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "clients": 4,
+      "streamsPerClient": [3, 3, 3, 3],
+      "allStreamsHaveDecodedAudio": true,
+      "twoWaySyntheticAudioPassed": true,
+      "scope": "Headless Chromium within one local VM; after the controlled outage; no physical listening or separate-home claim"
+    },
+    "existingBundleSizeWarning": true,
+    "installedDeploymentSourceMatchesReviewedFiles": 17,
+    "shellSyntaxPassed": true,
+    "independentReviewPasses": 3,
+    "substantiveReviewFindingsResolved": true
+  },
+  "installerRegression": {
+    "capturedAt": "2026-11-16T18:07:36.175Z",
+    "failedActivationRejected": true,
+    "timerActiveDuringApplicationFailure": true,
+    "scheduledDownRecorded": true,
+    "normalApplicationRestored": true,
+    "credentialsPreserved": true
+  },
+  "restoredState": {
+    "capturedAt": "2026-11-16T18:08:20.696Z",
+    "normalOwnedHealth": true,
+    "scheduledRecoveryAfterFailedActivation": true,
+    "recovery": {
+      "observedAt": "2026-11-16T18:07:59.751Z",
+      "status": "up",
+      "reason": "web-control-ready",
+      "durationMs": 46,
+      "media": "not-tested"
+    },
+    "applicationAndTimerEnabled": true,
+    "noExerciseOverride": true,
+    "noExerciseLock": true,
+    "loopbackSocketsOnly": true
+  },
+  "finalState": {
+    "capturedAt": "2026-11-16T18:12:05.674890+00:00",
+    "serviceStopped": true,
+    "monitorTimerStopped": true,
+    "monitorOneshotStopped": true,
+    "linuxSocketsReleased": true,
+    "applicationAndTimerEnabledAtNextGuestBoot": true,
+    "vmStopped": true,
+    "vzStoppedAt": "2026-11-16T19:09:27+01:00",
+    "hostAgentCleanupRequired": true,
+    "guestPoweredOffBeforeForceCleanup": true,
+    "nativeMacPrivateConfigurationChanged": false,
+    "staleStopClientAndShutdownHelperCleared": true,
+    "noRemainingPinkPartyHostAgent": true,
+    "macLoopbackApplicationPortsFree": true,
+    "guestStopVerifiedAt": "2026-11-16T18:08:45.103Z"
+  }
+}

@@ -1,0 +1,11 @@
+[Unit]
+Description=Check Pink Party independently every 30 seconds
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=30s
+AccuracySec=1s
+Unit=pink-party-monitor.service
+
+[Install]
+WantedBy=timers.target

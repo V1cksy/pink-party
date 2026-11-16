@@ -1,0 +1,29 @@
+[Unit]
+Description=Record Pink Party web and control health (not voice media)
+
+[Service]
+Type=oneshot
+# Root can inspect socket PIDs across service UIDs. No application secrets are loaded.
+User=root
+Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/opt/pink-party/node/bin/node /opt/pink-party/app/deploy/linux/monitor.ts
+TimeoutStartSec=15
+TimeoutStopSec=2
+UMask=0077
+StateDirectory=pink-party-monitor
+StateDirectoryMode=0700
+ProtectSystem=strict
+ProtectHome=true
+InaccessiblePaths=/etc/pink-party /var/lib/pink-party
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+MemoryMax=96M
+TasksMax=32
+LogNamespace=pink-party-monitor
