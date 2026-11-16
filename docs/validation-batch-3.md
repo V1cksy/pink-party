@@ -71,6 +71,8 @@ Stopping foreground Serve restored the original empty Serve configuration; the H
 
 Private mode was stopped and local mode restarted successfully for the final browser checks. The final local shutdown released app TCP 3000, control TCP 7880 and media UDP 7882. No Pink Party backend, test proxy or Serve process is left running. Start local mode with `npm start`, or private mode with `npm run start:private` and `npm run serve:private` in separate terminals; stop each terminal with Ctrl+C. The [operations guide](remote-access.md) covers policy review, rollback and adding actual invited logins.
 
+After the owner reported a PC restart, the resumed session found Tailscale connected with its private interface present, zero peers, empty Serve configuration and no Pink Party processes. Private backend and Serve startup succeeded without another login or HTTPS consent. Diagnostics passed and `npm run test:tailnet` passed again in 15.2 seconds. Both services were stopped again; binding probes confirmed free server ports and empty Serve configuration. The execution host still reported 38 days of uptime, so this establishes resumed-session service startup, not an independently verified OS reboot. The original measurements above remain unchanged.
+
 ## Remaining peer-device test
 
 Use the [exact manual call test](remote-access.md#exact-manual-call-test-still-needed) when a second physical device and an invited friend's exact Tailscale login are available. Align the real application allowlist and network group, validate the policy again, and have the owner perform the normal invitation/share process. This work sent no messages or invitations.
