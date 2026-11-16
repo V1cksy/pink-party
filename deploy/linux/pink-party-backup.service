@@ -1,0 +1,29 @@
+[Unit]
+Description=Snapshot Pink Party local session and private configuration
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/python3 -B /opt/pink-party/app/deploy/linux/backup.py create
+TimeoutStartSec=30
+TimeoutStopSec=2
+UMask=0077
+StateDirectory=pink-party-backups
+StateDirectoryMode=0700
+ProtectSystem=strict
+ProtectHome=true
+InaccessiblePaths=/var/lib/pink-party /var/lib/pink-party-monitor /var/lib/pink-party-restores
+PrivateTmp=true
+PrivateDevices=true
+PrivateNetwork=true
+NoNewPrivileges=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX
+MemoryMax=128M
+TasksMax=16
+LogNamespace=pink-party-backup

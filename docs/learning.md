@@ -25,6 +25,21 @@ Questions for a later walkthrough:
 - Which timestamps measure service restoration and which measure scheduled recovery detection?
 - What can an internal health probe miss, and what would an external watchdog or media test add?
 
+## Scheduled backups and restoration
+
+On 16 November 2026, the owner authorised Codex to implement and exercise Linux backups. Codex inspected the startup-only synthetic session, private environment and generated LiveKit configuration, then implemented a small systemd snapshot job with locking, integrity checks, restrictive permissions and retention. Codex observed a normal scheduled capture, compared a separate restore with the captured files, served changed synthetic data, removed the file and verified startup failure, then restored the earlier session and verified it through the application's API. Failed-backup and missing/corrupt-restore exercises checked that the deployment, credentials and previous archives were protected. The [recovery report](recovery-linux-backups.md) gives actual observations; [operations](linux-backups.md) provides repeatable commands.
+
+This is assisted portfolio evidence for backup scoping, systemd scheduling, integrity validation and file recovery. It is not independent owner practice or professional backup administration. Same-disk snapshots do not protect against VM/disk loss. Cloud and independent backup storage remain later work; owner practice is not a prerequisite for further implementation.
+
+Questions for a later walkthrough:
+
+- Which files contain original data or credentials, and which are rebuilt or generated?
+- Why does publishing a completed backup require more than successfully running tar?
+- Why must restore reject archive paths and links even when a checksum matches?
+- Why does a restored session require restart, while generated LiveKit YAML should be regenerated?
+- Which observed time measures file restoration, and which includes application startup and API verification?
+- What would an off-VM encrypted copy add, and what new access/key-management duties would it create?
+
 ## Follow a join request
 
 1. `index.html` contains the page and labelled controls; `src/main.ts` connects them to the voice controller and renders session data and real participant state.

@@ -21,7 +21,7 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y --no-install-recommends ca-certificates curl xz-utils libatomic1
+apt-get install -y --no-install-recommends ca-certificates curl xz-utils libatomic1 python3
 install -d -m 0755 /opt/pink-party
 install -d -m 0700 /var/cache/pink-party
 
@@ -39,6 +39,7 @@ fetch 'https://github.com/livekit/livekit/releases/download/v1.13.11/livekit_1.1
   livekit.tar.gz 2af6ce091d6b3c79d1677f8ff1bbb91a8007f40b2325c059b52d38383c0830b6
 build_dir=$(mktemp -d /opt/pink-party/build.XXXXXX)
 monitor_paused=false
+backup_paused=false
 cleanup() {
   local result=$?
   rm -rf "$build_dir"
@@ -46,6 +47,13 @@ cleanup() {
     systemctl daemon-reload || result=1
     if ! systemctl enable --now pink-party-monitor.timer; then
       echo 'Monitoring could not resume; inspect pink-party-monitor.timer.' >&2
+      result=1
+    fi
+  fi
+  if [[ $backup_paused == true ]]; then
+    systemctl daemon-reload || result=1
+    if ! systemctl enable --now pink-party-backup.timer; then
+      echo 'Backups could not resume; inspect pink-party-backup.timer.' >&2
       result=1
     fi
   fi
@@ -94,12 +102,16 @@ if systemctl cat pink-party-monitor.timer >/dev/null 2>&1; then
   monitor_paused=true
   systemctl stop pink-party-monitor.timer pink-party-monitor.service
 fi
+if systemctl cat pink-party-backup.timer >/dev/null 2>&1; then
+  backup_paused=true
+  systemctl stop pink-party-backup.timer pink-party-backup.service
+fi
 if systemctl cat pink-party.service >/dev/null 2>&1; then
   systemctl stop pink-party.service
 fi
 rm -rf /opt/pink-party/previous
 install -d -m 0755 /opt/pink-party/previous
-for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer; do
+for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer pink-party-backup.service pink-party-backup.timer; do
   if [[ -f /etc/systemd/system/$unit ]]; then
     cp "/etc/systemd/system/$unit" /opt/pink-party/previous/
   fi
@@ -114,18 +126,26 @@ for component in app node bin; do
   mv "$build_dir/$component" "/opt/pink-party/$component"
 done
 cd /opt/pink-party/app
-for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer; do
+install -d -o root -g root -m 0700 /var/lib/pink-party-backups /var/lib/pink-party-restores
+for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer pink-party-backup.service pink-party-backup.timer; do
   install -o root -g root -m 0644 "deploy/linux/$unit" "/etc/systemd/system/$unit"
 done
 install -d -m 0755 /etc/systemd/journald@pink-party-monitor.conf.d
 install -o root -g root -m 0644 deploy/linux/journald-monitor.conf \
   /etc/systemd/journald@pink-party-monitor.conf.d/limits.conf
+install -d -m 0755 /etc/systemd/journald@pink-party-backup.conf.d
+install -o root -g root -m 0644 deploy/linux/journald-backup.conf \
+  /etc/systemd/journald@pink-party-backup.conf.d/limits.conf
 systemd-analyze verify /etc/systemd/system/pink-party.service \
-  /etc/systemd/system/pink-party-monitor.service /etc/systemd/system/pink-party-monitor.timer
+  /etc/systemd/system/pink-party-monitor.service /etc/systemd/system/pink-party-monitor.timer \
+  /etc/systemd/system/pink-party-backup.service /etc/systemd/system/pink-party-backup.timer
 systemctl daemon-reload
 systemctl try-restart systemd-journald@pink-party-monitor.service
 systemctl enable --now pink-party-monitor.timer
 monitor_paused=false
+systemctl try-restart systemd-journald@pink-party-backup.service
+systemctl enable --now pink-party-backup.timer
+backup_paused=false
 systemctl reset-failed pink-party.service
 systemctl enable --now pink-party.service
 for attempt in {1..30}; do

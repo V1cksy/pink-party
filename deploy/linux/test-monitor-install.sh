@@ -8,6 +8,7 @@ fi
 export PATH=/opt/pink-party/node/bin:/opt/pink-party/bin:/usr/sbin:/usr/bin:/sbin:/bin
 node /opt/pink-party/app/deploy/linux/service-health.ts
 systemctl is-active --quiet pink-party-monitor.timer
+systemctl is-active --quiet pink-party-backup.timer
 work=$(mktemp -d /var/tmp/pink-party-monitor-install.XXXXXX)
 restore=false
 cleanup() {
@@ -36,6 +37,7 @@ if bash "$work/bad/deploy/linux/install.sh" "$work/bad" > "$work/failed-activati
   exit 1
 fi
 systemctl is-active --quiet pink-party-monitor.timer
+systemctl is-active --quiet pink-party-backup.timer
 systemctl is-failed --quiet pink-party.service
 failed_at=$(node -e 'console.log(new Date().toISOString())')
 journalctl -u pink-party.service --since "$fault_at" --no-pager -o cat > "$work/service.log"
@@ -56,6 +58,7 @@ bash "$work/good/deploy/linux/install.sh" "$work/good" > "$work/recovery.log" 2>
 test "$(sha256sum /etc/pink-party/pink-party.env)" = "$before"
 node /opt/pink-party/app/deploy/linux/service-health.ts
 systemctl is-active --quiet pink-party-monitor.timer
+systemctl is-active --quiet pink-party-backup.timer
 restore=false
 node --input-type=module <<'JS'
 import { writeFileSync } from 'node:fs';
@@ -63,6 +66,7 @@ writeFileSync('/var/lib/pink-party-monitor/install-validation.json', JSON.string
   capturedAt: new Date().toISOString(),
   failedActivationRejected: true,
   timerActiveDuringApplicationFailure: true,
+  backupTimerActiveDuringApplicationFailure: true,
   scheduledDownRecorded: true,
   normalApplicationRestored: true,
   credentialsPreserved: true,

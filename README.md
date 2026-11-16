@@ -14,6 +14,8 @@ The [Linux deployment](docs/linux-deployment.md) adds a dedicated service accoun
 
 A separate systemd timer records web/control health even when the application is stopped. A [controlled outage report](docs/incident-linux-monitoring.md) follows scheduled detection, diagnosis and recovery with observed timestamps. The monitor does not test voice reception.
 
+The [backup and recovery lab](docs/recovery-linux-backups.md) adds scheduled private snapshots, archive integrity/path checks and restoration into a separate directory. A synthetic-data loss exercise verifies the recovered session through the running application. Storage remains on the same guest disk.
+
 The implementation includes:
 
 - Loopback application and LiveKit control listeners. In private mode, media binds only to the configured Tailscale IPv4 on UDP 7882. See [configuration](server/config.ts) and [startup checks](scripts/start.ts).
@@ -75,6 +77,8 @@ npm run test:e2e
 
 Recorded on 16 November 2026: 14 offline tests, 13 local browser cases and two synthetic TLS/identity-proxy cases passed. Real Tailscale Serve checks passed for trusted TLS, identity replacement, WSS 101, exact private UDP ICE candidates and decoded synthetic audio on one Mac. The owner also confirmed speech, mute/unmute and leave/rejoin through two Chrome tabs. Environments, resource samples and scope are in the [validation report](docs/validation-batch-3.md).
 
+Batch 6 also passed 17 TypeScript tests and eight Python backup tests on Mac/Linux, plus all 13 Linux browser cases. See the [recovery report](docs/recovery-linux-backups.md) for the actual restoration and failure exercises.
+
 A call between physical devices in separate homes remains unverified, as do real uninvited/tagged-peer boundaries, direct/relay routing and recovery after a physical client loses its network. Safari/WebKit reached signaling but failed to establish media; the cause is unresolved. Chrome is the browser verified for human listening.
 
 Additional commands and prerequisites:
@@ -86,7 +90,7 @@ Additional commands and prerequisites:
 | `npm run diagnose` / `npm run diagnose:private` | Check running services. Health does not prove media reception.     |
 | `npm run measure:private -- 10`                 | Sample app, LiveKit and Tailscale components separately.           |
 
-Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. Tested backup recovery and cloud deployment remain future work.
+Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. The [tested recovery scope](docs/recovery-linux-backups.md) covers synthetic files within the VM. Cloud deployment and independent backup storage remain future work.
 
 ## Project notes
 
@@ -97,11 +101,12 @@ Raw private evidence and failed-test artifacts stay ignored. See the [operations
 - [Learning record](docs/learning.md): confirmed owner practice and code walkthrough.
 - [Linux deployment](docs/linux-deployment.md) and [validation](docs/validation-linux.md): systemd configuration, permissions, failure exercises and local VM audio checks.
 - [Monitoring incident](docs/incident-linux-monitoring.md): controlled outage, scheduled detection, diagnosis and recovery.
+- [Backup operations](docs/linux-backups.md) and [recovery report](docs/recovery-linux-backups.md): scheduled snapshots, safe restoration and tested synthetic file loss.
 
 ## Contributions
 
 The owner chose the gaming-hangout scope and pink design, completed Tailscale onboarding and HTTPS consent, and performed the confirmed Chrome listening checks. Codex generated the application, configuration, tests and documentation, and carried out the recorded technical verification and interface revision. The earlier technical work included a separate review. The [learning record](docs/learning.md) distinguishes assisted work from personally confirmed practice.
 
-Codex also installed the Linux VM, implemented its deployment, service and scheduled monitoring configuration, and ran the recorded Linux checks and incident exercise. Independent owner practice on Linux remains unconfirmed.
+Codex also installed the Linux VM, implemented its deployment, service, scheduled monitoring and backup configuration, and ran the recorded Linux checks, incident and restoration exercises. Independent owner practice on Linux remains unconfirmed.
 
 LiveKit and its SDKs provide voice transport. The interface uses self-hosted Nunito Sans under the [SIL Open Font License](public/fonts/OFL.txt). The farmhouse is an original SVG illustration; it does not use Stardew Valley game assets.

@@ -84,7 +84,7 @@ limactl start pink-party
 
 One final teardown left Lima's host agent waiting after shutdown. If this recurs, stop the application service, request guest poweroff with `limactl shell --workdir=/tmp pink-party sudo systemctl poweroff`, and inspect the current events in `~/.lima/pink-party/ha.stderr.log`. After the log confirms `[VZ] - vm state change: stopped`, `limactl stop --force pink-party` can clear the stale host agent and control files. This fallback was exercised after the guest had powered off.
 
-To deploy changes, rerun `bash deploy/linux/deploy.sh` on the Mac. It uses the current working tree, including uncommitted public changes. Keep `/etc/pink-party` and `/var/lib/pink-party` when recovering an update. Credentials are not rotated by deployment.
+To deploy changes, rerun `bash deploy/linux/deploy.sh` on the Mac. It uses the current working tree, including uncommitted public changes. Keep `/etc/pink-party`, `/var/lib/pink-party`, `/var/lib/pink-party-backups` and any retained private restores when recovering an update. Credentials are not rotated by deployment.
 
 ## Scheduled monitoring
 
@@ -108,6 +108,12 @@ sudo /opt/pink-party/node/bin/node --input-type=module -e 'import {readFileSync}
 The oneshot is normally `inactive (dead)` between checks. A recorded application outage exits successfully; monitor execution/storage errors fail the monitoring unit. Inspect `Result`, `ExecMainStatus`, timer activity and sample freshness to distinguish these cases. Corrupt history is retained for diagnosis and causes a visible monitor failure. After privately saving and inspecting it, move the history file aside and let the timer create a new one.
 
 This is local recording without external notifications, automatic remediation or an outside watchdog. It cannot observe a powered-off VM, host failure or its own disabled timer. Stop it for planned maintenance with `sudo systemctl stop pink-party-monitor.timer pink-party-monitor.service`; resume with `sudo systemctl start pink-party-monitor.timer`. Both application and timer stay enabled for the next guest boot. No monitoring is expected while the VM is intentionally stopped.
+
+## Scheduled backups and restoration
+
+Deployment also enables a separate backup timer and private bounded snapshot store. Follow [backup operations](linux-backups.md) for the inspected data lifecycle, schedule, restore command and disruptive recovery exercise. The [recovery report](recovery-linux-backups.md) records actual file-loss evidence and storage limits. The backup directory shares the guest disk; deployment rollback under `previous` remains separate.
+
+For planned shutdown, stop `pink-party-backup.timer` and `pink-party-backup.service` alongside monitoring and the application. All three enabled units remain configured for the next guest boot.
 
 ## Repeat the scheduled incident exercise
 

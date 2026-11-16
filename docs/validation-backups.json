@@ -1,0 +1,216 @@
+{
+  "recordedAt": "2026-11-16",
+  "scope": "Codex-run assisted local Ubuntu ARM64 lab; inspected public evidence",
+  "backupScope": [
+    "Installed synthetic session JSON",
+    "Generated Linux local-mode environment and credentials"
+  ],
+  "configuration": {
+    "initialAfterTimerActivationSeconds": 30,
+    "secondsAfterPreviousAttemptCompletes": 900,
+    "accuracySeconds": 1,
+    "completedBackupLimit": 7,
+    "sourceFileLimitBytes": 16384,
+    "archiveLimitBytes": 65536,
+    "jobTimeoutSeconds": 30,
+    "validatorTimeoutSeconds": 5,
+    "memoryCapMiB": 128,
+    "tasksMax": 16,
+    "storeAndRestoreDirectoryMode": "0700",
+    "archiveAndChecksumMode": "0600",
+    "sameGuestDisk": true,
+    "survivesVmDiskLoss": false,
+    "plaintextPrivateCredentials": true,
+    "checksumProvidesAuthenticity": false
+  },
+  "exercise": {
+    "scope": "Codex-run assisted local Linux synthetic-data recovery",
+    "startedAt": "2026-11-16T18:33:11.273246+00:00",
+    "scheduled": {
+      "timerStartedAt": "2026-11-16T18:33:12.352413+00:00",
+      "capturedAt": "2026-11-16T18:33:42.628374+00:00",
+      "completedObservedAt": "2026-11-16T18:33:42.959615+00:00",
+      "sourceBytesMatched": true,
+      "jobDurationMs": 140
+    },
+    "restoreToSeparateDirectoryMs": 73,
+    "separateRestore": {
+      "exactHashesAndModes": true,
+      "applicationValidatorsPassed": true,
+      "workingCredentialsReplaced": false
+    },
+    "failedBackup": {
+      "unsafeSourceModeRejected": true,
+      "unitResult": "exit-code",
+      "priorArchiveHashesUnchanged": true,
+      "runningServiceUnchanged": true,
+      "reason": "Input permission mismatch"
+    },
+    "invalidRestore": {
+      "missingRejected": true,
+      "corruptRejected": true,
+      "noDestinationPublished": true,
+      "workingDeploymentUnaffected": true,
+      "sourceAndCredentialsUnchanged": true,
+      "priorArchiveHashesUnchanged": true,
+      "missingReason": "FileNotFoundError",
+      "corruptReason": "Archive checksum mismatch"
+    },
+    "overlapRejected": true,
+    "lossRecovery": {
+      "lossRequestedAt": "2026-11-16T18:33:44.310315+00:00",
+      "recoveryStartedAt": "2026-11-16T18:33:45.444782+00:00",
+      "applicationVerifiedAt": "2026-11-16T18:33:46.357477+00:00",
+      "restoreThroughServedDataMs": 913,
+      "changedDataServedBeforeLoss": true,
+      "missingDataPreventedStartup": true,
+      "backupDataServedAfterRestore": true,
+      "monitorStayedActive": true
+    },
+    "credentialsPreserved": true,
+    "passed": true,
+    "normalScheduledHealth": {
+      "observedAt": "2026-11-16T18:43:45.322Z",
+      "status": "up",
+      "reason": "web-control-ready",
+      "durationMs": 188,
+      "media": "not-tested"
+    },
+    "normalConfigurationRestored": true,
+    "finishedAt": "2026-11-16T18:43:45.625714+00:00"
+  },
+  "inspection": {
+    "capturedAt": "2026-11-16T18:58:26.509913+00:00",
+    "completedBackups": 7,
+    "allCompletedBackupsValidated": true,
+    "storeMode": "0o700",
+    "restoreRootMode": "0o700",
+    "archiveAndChecksumMode": "0600",
+    "backupDirectoriesMode": "0700",
+    "allOwnedByRoot": true,
+    "normalSessionServed": true,
+    "normalOwnedHealth": true,
+    "allThreeEnabledAndActive": true,
+    "noExerciseLockOrOverride": true,
+    "scheduledHealth": {
+      "observedAt": "2026-11-16T18:58:24.227Z",
+      "status": "up",
+      "reason": "web-control-ready",
+      "durationMs": 69,
+      "media": "not-tested"
+    },
+    "backupUnit": {
+      "TimeoutStartUSec": "30s",
+      "TimeoutStopUSec": "2s",
+      "Result": "success",
+      "MemoryMax": "134217728",
+      "TasksMax": "16",
+      "ReadWritePaths": "",
+      "InaccessiblePaths": "/var/lib/pink-party /var/lib/pink-party-monitor /var/lib/pink-party-restores",
+      "PrivateNetwork": "yes",
+      "ProtectSystem": "strict"
+    },
+    "monitorBlockedPaths": {
+      "InaccessiblePaths": "/etc/pink-party /var/lib/pink-party /var/lib/pink-party-backups /var/lib/pink-party-restores"
+    },
+    "installerRegression": {
+      "capturedAt": "2026-11-16T18:55:27.608Z",
+      "failedActivationRejected": true,
+      "timerActiveDuringApplicationFailure": true,
+      "backupTimerActiveDuringApplicationFailure": true,
+      "scheduledDownRecorded": true,
+      "normalApplicationRestored": true,
+      "credentialsPreserved": true
+    },
+    "unitDefinitionsAccepted": true,
+    "journalBudgetConfigMatches": true,
+    "backupJournalBytes": "Archived and active journals take up 1.0M in the file system."
+  },
+  "verification": {
+    "macCheck": {
+      "typescriptTests": 17,
+      "pythonBackupTests": 8,
+      "typecheck": true,
+      "productionBuild": true,
+      "formatting": true
+    },
+    "linuxCheck": {
+      "typescriptTests": 17,
+      "pythonBackupTests": 8,
+      "typecheck": true,
+      "productionBuild": true,
+      "formatting": true
+    },
+    "browser": {
+      "stats": {
+        "startTime": "2026-11-16T18:53:35.158Z",
+        "duration": 39373.961,
+        "expected": 13,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "scope": "Synthetic Chromium clients within one VM; no physical listening or separate-home claim"
+    },
+    "existingBundleSizeWarning": true,
+    "regressionMutationsDetected": [
+      "Clock rollback pruning the newly published backup",
+      "Accepting session data rejected by the actual application schema"
+    ],
+    "independentReviewPasses": 3,
+    "substantiveReviewFindingsResolved": true,
+    "securityScan": {
+      "publicFilesScanned": 100,
+      "linuxCredentialValuesAbsent": true,
+      "publicTransferExcludesPrivatePaths": true,
+      "backupAndMonitorJournalsContainNoCredentialValues": true
+    },
+    "localMarkdownTargetsValid": true,
+    "configuredMacPrivateValuesAbsent": true
+  },
+  "limits": [
+    "Same guest disk; no off-VM storage or VM/disk-loss recovery",
+    "Restored private configuration compared and validated but working credentials never replaced",
+    "No database, recording or persistent voice-room state",
+    "No new Mac/private-network or Safari evidence; cloud remains later"
+  ],
+  "preShutdownVerification": {
+    "capturedAt": "2026-11-16T19:01:33.194659+00:00",
+    "normalOwnedHealth": true,
+    "normalSourceSessionServed": true,
+    "freshNormalScheduledBackupCompared": true,
+    "freshBackupCapturedAt": "2026-11-16T19:01:32.122399+00:00",
+    "freshScheduledHealth": {
+      "observedAt": "2026-11-16T19:01:29.096Z",
+      "status": "up",
+      "reason": "web-control-ready",
+      "durationMs": 49,
+      "media": "not-tested"
+    },
+    "serviceAndBothTimersActiveAndEnabled": true,
+    "backupCount": 7,
+    "sourceSessionAndCredentialModesPreserved": true,
+    "noVerificationLock": true
+  },
+  "finalState": {
+    "capturedAt": "2026-11-16T19:02:12.105997+00:00",
+    "serviceStopped": true,
+    "monitorTimerStopped": true,
+    "monitorOneshotStopped": true,
+    "backupTimerStopped": true,
+    "backupOneshotStopped": true,
+    "linuxSocketsReleased": true,
+    "serviceAndBothTimersEnabledAtNextGuestBoot": true,
+    "installedCodeFilesMatched": 23,
+    "vzStoppedAt": "2026-11-16T20:02:34+01:00",
+    "guestPoweredOffBeforeForceCleanup": true,
+    "staleStopClientAndShutdownHelperCleared": true,
+    "additionalKillRequired": true,
+    "hostFinalInspectionAt": "2026-11-16T19:04:26.429279+00:00",
+    "vmStopped": true,
+    "hostAgentCleanupRequired": true,
+    "noRemainingPinkPartyLimaProcess": true,
+    "nativeMacPrivateConfigurationChanged": false,
+    "macApplicationListenersAbsent": true
+  }
+}
