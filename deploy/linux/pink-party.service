@@ -1,0 +1,42 @@
+[Unit]
+Description=Pink Party local voice room
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=exec
+User=pink-party
+Group=pink-party
+WorkingDirectory=/opt/pink-party/app
+EnvironmentFile=/etc/pink-party/pink-party.env
+Environment=PATH=/opt/pink-party/node/bin:/opt/pink-party/bin:/usr/bin:/bin
+Environment=NODE_ENV=production
+ExecStart=/opt/pink-party/node/bin/node scripts/start.ts
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+KillMode=control-group
+UMask=0077
+StateDirectory=pink-party
+StateDirectoryMode=0700
+ProtectSystem=strict
+ReadWritePaths=/var/lib/pink-party
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+NoNewPrivileges=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+# LiveKit enumerates interfaces through netlink; it has no network-admin capability.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+MemoryMax=512M
+TasksMax=128
+
+[Install]
+WantedBy=multi-user.target

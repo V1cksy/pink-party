@@ -4,7 +4,13 @@ The project owner selected the gaming hangout, required the pink design and voic
 
 On 16 November 2026, the owner completed native Tailscale installation, sign-in, first-use onboarding and HTTPS consent, and confirmed hearing their speech through Pink Party in Chrome on one Mac. They also confirmed speech after swapping the muted tab, silence/restored speech with mute/unmute, and leave/rejoin with participant-count updates. Exact audio device selection was not confirmed. No second physical device was available.
 
-Codex inspected and privately saved the existing policy, applied the scoped owner-only network grant, ran project setup and socket checks, and implemented the real Serve verification suite and Tailscale resource sampling. The owner has not confirmed independently running project scripts, reading the implementation or explaining its behaviour. See [current operational validation](validation-batch-3.md) for actual Tailscale evidence and the unresolved Safari/WebKit failure. This project does not establish completed Linux administration, cloud deployment, incident response or backup recovery work.
+Codex inspected and privately saved the existing policy, applied the scoped owner-only network grant, ran project setup and socket checks, and implemented the real Serve verification suite and Tailscale resource sampling. The owner has not confirmed independently running project scripts, reading the implementation or explaining its behaviour. See [current operational validation](validation-batch-3.md) for actual Tailscale evidence and the unresolved Safari/WebKit failure. The Linux deployment and Codex-run checks are recorded below. Owner-performed Linux administration, cloud deployment, incident response and backup recovery remain unconfirmed.
+
+## Linux deployment and practical exercises
+
+On 16 November 2026, the owner asked Codex to implement the Linux portfolio stage and perform the practical exercises. Codex installed Lima and an Ubuntu ARM64 VM, created the deployment scripts and restricted systemd service, and tested permissions, loopback sockets, backend-crash recovery, rejected configuration and journal diagnostics. The local browser/audio suite also passed inside the VM. See [Linux validation](validation-linux.md) and [repeatable operations](linux-deployment.md).
+
+These results establish a working project artifact and recorded exercises performed with assistance. They do not record the owner operating Linux or demonstrating independent understanding. Any later owner practice should be added from the owner's actual observations.
 
 ## Follow a join request
 

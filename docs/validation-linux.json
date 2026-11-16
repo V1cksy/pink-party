@@ -1,0 +1,158 @@
+{
+  "capturedAt": "2026-11-16T17:38:48.740405+00:00",
+  "scope": "Codex-run ARM64 Ubuntu local lab; public inspected summary",
+  "service": {
+    "capturedAt": "2026-11-16T17:29:24.254Z",
+    "scope": "Codex-run local Ubuntu VM; no peer-device or human-listening claim",
+    "checks": {
+      "enabledAtGuestBoot": true,
+      "dedicatedServiceUser": true,
+      "nonRootUid": true,
+      "effectiveUidMatches": true,
+      "noEffectiveCapabilities": true,
+      "noNewPrivileges": true,
+      "systemFilesReadOnly": true,
+      "homeDirectoriesHidden": true,
+      "credentialsRootOnly": true,
+      "stateOwnerAndMode": true,
+      "generatedConfigOwnerAndMode": true,
+      "serviceCannotWrite:/opt/pink-party/app/server/index.ts": true,
+      "serviceCannotWrite:/opt/pink-party/app/data/session.json": true,
+      "serviceCannotWrite:/etc/pink-party/pink-party.env": true,
+      "serviceCanWriteState": true,
+      "loopbackOnly:tcp:3000": true,
+      "loopbackOnly:tcp:7880": true,
+      "loopbackOnly:udp:7882": true,
+      "manualStopReleasesSocketsAndStaysStopped": true,
+      "foreignHttpListenerIsRejectedBeforeAnyKill": true,
+      "invalidConfigurationHasUsefulJournalDiagnostic": true,
+      "invalidConfigurationDoesNotLogSecrets": true
+    },
+    "exercises": [
+      {
+        "name": "application SIGKILL: supervisor exits and systemd starts a healthy replacement",
+        "passed": true,
+        "recoveryMs": 3001
+      },
+      {
+        "name": "LiveKit SIGKILL: supervisor exits and systemd starts a healthy replacement",
+        "passed": true,
+        "recoveryMs": 2726
+      },
+      {
+        "name": "invalid credentials: startup rejected, sockets closed, cause identified in journal",
+        "passed": true
+      }
+    ],
+    "environment": {
+      "os": "Ubuntu 24.04.5 LTS",
+      "architecture": "arm64",
+      "kernel": "6.8.0-147-generic",
+      "node": "v24.22.2",
+      "livekit": "livekit-server version 1.13.11",
+      "systemd": "systemd 255 (255.4-1ubuntu8.18)"
+    },
+    "idleResources": {
+      "samples": 10,
+      "intervalSeconds": 1,
+      "meanServiceMemoryMiB": 123.29,
+      "peakServiceMemoryMiB": 123.59,
+      "scope": "systemd cgroup: supervisor, app, LiveKit and charged cache; excludes VM, SSH, browser and test runner"
+    },
+    "normalServiceRestored": true
+  },
+  "installer": {
+    "capturedAt": "2026-11-16T17:31:33.047Z",
+    "failedBuildPreservedRunningService": true,
+    "dirtySourcePrivateFilesExcluded": true,
+    "nestedPrivateEnvironmentExcluded": true,
+    "redeployedWhileServiceRunning": true,
+    "credentialsPreserved": true
+  },
+  "guestBoot": {
+    "capturedAt": "2026-11-16T17:32:01.188189+00:00",
+    "guestBootIdChanged": true,
+    "enabledAtBoot": true,
+    "healthyWithoutManualServiceStart": true,
+    "stopStartAndHealthSeconds": 12.88,
+    "scope": "Actual Ubuntu guest stop/start; no Mac reboot claim"
+  },
+  "browser": {
+    "stats": {
+      "startTime": "2026-11-16T17:29:56.396Z",
+      "duration": 39330.146,
+      "expected": 13,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "clients": 4,
+    "streamsPerClient": [3, 3, 3, 3],
+    "allStreamsHaveDecodedAudio": true,
+    "two": {
+      "label": "2 synthetic Chromium clients publishing and receiving audio",
+      "capturedAt": "2026-11-16T17:30:08.665Z",
+      "samples": 10,
+      "intervalSeconds": 1,
+      "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. Tailscale is excluded. ps %CPU is an OS estimate, not an interval profiler.",
+      "processes": [
+        {
+          "name": "application",
+          "meanRssMiB": 115.3,
+          "peakRssMiB": 115.31,
+          "meanPsCpuPercent": 2.09,
+          "peakPsCpuPercent": 2.6
+        },
+        {
+          "name": "LiveKit",
+          "meanRssMiB": 83.64,
+          "peakRssMiB": 83.7,
+          "meanPsCpuPercent": 1.81,
+          "peakPsCpuPercent": 2
+        }
+      ]
+    },
+    "four": {
+      "label": "4 synthetic Chromium clients, each receiving 3 audio streams",
+      "capturedAt": "2026-11-16T17:30:20.052Z",
+      "samples": 10,
+      "intervalSeconds": 1,
+      "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. Tailscale is excluded. ps %CPU is an OS estimate, not an interval profiler.",
+      "processes": [
+        {
+          "name": "application",
+          "meanRssMiB": 115.31,
+          "peakRssMiB": 115.31,
+          "meanPsCpuPercent": 1.34,
+          "peakPsCpuPercent": 1.6
+        },
+        {
+          "name": "LiveKit",
+          "meanRssMiB": 99.92,
+          "peakRssMiB": 99.99,
+          "meanPsCpuPercent": 2.72,
+          "peakPsCpuPercent": 2.9
+        }
+      ]
+    }
+  },
+  "hostResources": {
+    "capturedAt": "2026-11-16T17:38:17.559732+00:00",
+    "samples": 10,
+    "intervalSeconds": 1,
+    "configuredGuestMemoryMiB": 1536.0,
+    "processes": {
+      "limaHostAgent": {
+        "meanRssMiB": 18.8,
+        "peakRssMiB": 18.98,
+        "meanPsCpuPercent": 0.08
+      },
+      "virtualizationVmProcess": {
+        "meanRssMiB": 128.76,
+        "peakRssMiB": 150.61,
+        "meanPsCpuPercent": 1.82
+      }
+    },
+    "scope": "Idle after guest boot, no browser clients. Host ps RSS is not total VM memory; SSH, other Mac applications and caches outside these processes are excluded. No performance improvement claimed."
+  }
+}
