@@ -81,6 +81,8 @@ limactl stop pink-party
 limactl start pink-party
 ```
 
+One final teardown left Lima's host agent waiting after shutdown. If this recurs, stop the application service, request guest poweroff with `limactl shell --workdir=/tmp pink-party sudo systemctl poweroff`, and inspect the current events in `~/.lima/pink-party/ha.stderr.log`. After the log confirms `[VZ] - vm state change: stopped`, `limactl stop --force pink-party` can clear the stale host agent and control files. This fallback was exercised after the guest had powered off.
+
 To deploy changes, rerun `bash deploy/linux/deploy.sh` on the Mac. It uses the current working tree, including uncommitted public changes. Keep `/etc/pink-party` and `/var/lib/pink-party` when recovering an update. Credentials are not rotated by deployment.
 
 ## Repeat the practical checks

@@ -34,6 +34,8 @@ The [installer exercise](../deploy/linux/test-install.sh) verified that an inten
 
 A complete Lima guest stop/start changed the Linux boot ID. The enabled service became healthy without an explicit service-start command; guest stop/start and the health check took 12.88 seconds. This is guest reboot evidence, not a Mac reboot claim.
 
+Final teardown exposed a Lima lifecycle issue: `limactl stop` waited with its host agent still running. Pink Party had already stopped and released its sockets. Guest `systemctl poweroff` produced the VZ stopped event and removed the host VM process; forced Lima cleanup then cleared the stale host agent. The final VM status is Stopped, with configuration retained. The [operations guide](linux-deployment.md) records this fallback; normal host-agent shutdown is not consistently established by this run.
+
 ## Resource samples
 
 The service cgroup averaged 123.29 MiB over ten idle samples, including the supervisor, app, LiveKit and charged cache. This excludes Chromium, the guest OS and host VM overhead. During four-client synthetic media, separate process samples averaged 115.31 MiB RSS for the app and 99.92 MiB for LiveKit. These measures have different accounting scopes and must not be added or compared as equivalent memory totals.

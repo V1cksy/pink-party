@@ -154,5 +154,15 @@
       }
     },
     "scope": "Idle after guest boot, no browser clients. Host ps RSS is not total VM memory; SSH, other Mac applications and caches outside these processes are excluded. No performance improvement claimed."
+  },
+  "finalState": {
+    "capturedAt": "2026-11-16T17:45:19.365548+00:00",
+    "serviceStopped": true,
+    "linuxSocketsReleased": true,
+    "vmStopped": true,
+    "enabledAtNextGuestBoot": true,
+    "nativeMacPrivateConfigurationChanged": false,
+    "hostAgentCleanupRequired": true,
+    "guestPoweredOffBeforeForceCleanup": true
   }
 }
