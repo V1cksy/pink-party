@@ -1,14 +1,95 @@
-# Pink Party
+<div align="center">
 
-A small, pink gaming hangout: check the next session, take a seat in one voice room, and talk while playing. The session is fictional demo data. The room supports up to four connected participants.
+# 🌷 Pink Party
 
-![Pink Party local interface](docs/interface.png)
+**Good games. Better company.**
 
-Local mode runs natively on a Mac and accepts connections from that machine only. Private mode uses Tailscale and an invited-user allowlist. Native installation, sign-in and private socket binding have been verified; see [current operational validation](docs/validation-batch-3.md) for access, media and human-call status. LiveKit provides voice transport; this project implements the interface, admission checks, SDK integration, configuration and startup scripts. See [validation](docs/validation.md) for the original measured results, and [learning notes](docs/learning.md) for contribution records and a code walkthrough.
+A cosy voice room for game nights, with a private network behind the pink.
 
-## Requirements and setup
+TypeScript · Node.js · LiveKit · Tailscale · Playwright
 
-Tested on an ARM64 Mac with 8 GiB RAM, Node.js 24.22.2 LTS, npm 11.19.1 and LiveKit Server 1.13.11. Use Node 24; `.node-version` and `.nvmrc` record the tested patch. The npm dependencies are pinned in `package.json` and `package-lock.json`. No container or VM is required.
+[How it works](#how-it-works) · [Verified results](#verified-results) · [Run locally](#run-locally) · [Technical notes](#technical-notes)
+
+<img src="docs/interface.png" alt="Pink Party interface with a pink handheld-console illustration, game-night card and voice-room controls" width="960">
+
+</div>
+
+## A little room for your people
+
+Pink Party combines a fictional game-night card with one voice room for up to four connected participants. Pick a display name, join, mute your microphone when needed, and see who is in the room. The interface handles leaving, reconnecting and microphone cleanup.
+
+The project is also a practical networking and operations lab: a working application makes it possible to inspect access boundaries, distinguish signaling from audio traffic, and test what happens when permissions or connections fail.
+
+It runs natively on macOS. Local mode accepts connections only from the host machine. Private mode uses Tailscale, HTTPS and an explicit invited-account allowlist. There is no public demo endpoint; the screenshots and validation records can be reviewed without access to the private service.
+
+## Technical work you can inspect
+
+| Area                             | Implemented behavior                                                                                                                    | Evidence in the repository                                                                                                                                    |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Network isolation                | Loopback-only application and LiveKit control listeners; private media restricted to the configured Tailscale IPv4 on UDP 7882.         | [Configuration](server/config.ts), [startup checks](scripts/start.ts) and [socket/ICE results](docs/validation-batch-3.md#https-identity-and-media-evidence). |
+| Identity and access control      | Verified Serve identity plus an exact application allowlist; scoped tailnet rules for TCP 443 and UDP 7882.                             | [Request boundary](server/access.ts), [synthetic policy example](docs/tailnet-policy.example.json) and [private operations](docs/remote-access.md).           |
+| Token permissions                | Server-signed, 60-second tokens for one room, microphone publishing and subscription. LiveKit enforces the four-person cap.             | [Admission logic](server/admission.ts) and [permission/capacity tests](tests/admission.test.ts).                                                              |
+| Service operation                | Configuration validation, readiness checks, coordinated startup/shutdown and diagnostics. A failed backend service stops its companion. | [Supervisor](scripts/start.ts), [diagnostics](scripts/diagnose.ts) and [startup regression test](tests/startup.test.ts).                                      |
+| Troubleshooting and verification | Separate checks for HTTP health, TLS, WebSocket upgrade, selected ICE candidates and decoded audio.                                     | [Real Serve test](tests/tailnet-browser/serve.spec.ts) and [dated validation](docs/validation-batch-3.md).                                                    |
+| Client lifecycle                 | Permission errors, cancelled joins, mute state, reconnection and release of microphone tracks/audio elements.                           | [Voice controller](src/voice.ts) and [browser recovery tests](tests/browser/recovery.spec.ts).                                                                |
+
+These are implementation and validation claims. The [contribution record](docs/learning.md) identifies the owner's confirmed actions and the work performed with assistance.
+
+## How it works
+
+The browser loads the private page through Tailscale Serve. Serve handles HTTPS and supplies the verified account identity; the application checks that identity against its own allowlist before serving pages, APIs or signaling.
+
+When someone joins, the application checks admission and asks LiveKit to create or inspect the room. It returns a short-lived voice token. WebSocket signaling sets up the connection, while the audio takes a separate encrypted WebRTC path over private UDP.
+
+```mermaid
+flowchart LR
+    B[Browser with Tailscale] -->|HTTPS: TCP 443| S[Tailscale Serve]
+    subgraph Mac[Host Mac]
+        S -->|Verified identity over loopback| A[Node.js application :3000]
+        A <-->|Control and signaling on loopback :7880| L[LiveKit]
+    end
+    A -->|Admission response| S
+    S -->|60-second room token| B
+    B <-->|WSS signaling through Serve and app| S
+    B <-->|Encrypted audio: private UDP 7882| L
+```
+
+| Traffic                                 | Local mode                               | Private mode                                                  |
+| --------------------------------------- | ---------------------------------------- | ------------------------------------------------------------- |
+| Page and admission API                  | `http://localhost:3000`, local join code | Exact HTTPS `*.ts.net` origin, verified invited identity      |
+| Signaling                               | Loopback WebSocket on 7880               | Authenticated WSS `/livekit/rtc/v1` through Serve and the app |
+| Voice media                             | Loopback UDP 7882                        | Configured Tailscale IPv4, UDP 7882                           |
+| Application / LiveKit control listeners | `127.0.0.1:3000` / `127.0.0.1:7880`      | Remain on loopback                                            |
+
+### Decisions behind the setup
+
+- **Two access checks:** tailnet membership alone does not admit a user. Network policy restricts the destination ports, and the application checks the exact login. Additive allow-all rules must be removed or scoped appropriately.
+- **A small trust boundary:** remote clients cannot directly reach the loopback backend. Serve replaces caller-supplied identity headers. Programs already running on the host remain trusted and can forge local headers.
+- **Restricted tokens:** signing secrets stay on the server. Tokens grant no video, screen sharing, data publishing or room administration. Their 60-second expiry limits initial admission; it does not end an established call.
+- **Separate evidence for each layer:** a healthy API or successful HTTPS request does not prove that audio is arriving. The media tests inspect selected ICE candidates, received bytes, decoded samples and audio energy.
+
+Private mode has no development-code fallback. Funnel, router forwarding, external STUN discovery, LiveKit TCP media and TURN are excluded from this setup. Real credentials, identities and generated configuration stay in ignored private files; committed configuration examples are synthetic.
+
+## Verified results
+
+Recorded on **16 November 2026**, using native macOS services. Detailed environments, resource samples and test limits are in the [validation report](docs/validation-batch-3.md).
+
+| Check                           | Result and scope                                                                                                                                          |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Static checks and offline tests | TypeScript, production build, formatting and **14 offline tests passed**.                                                                                 |
+| Local browser tests             | **13 passed**, including two/four synthetic clients, capacity enforcement, mute, reconnection and cleanup against real LiveKit.                           |
+| Synthetic private proxy tests   | **Two passed** with fixture TLS/identity and real loopback media. These are explicitly separate from Tailscale verification.                              |
+| Real Tailscale Serve            | Trusted certificate, secure context, identity replacement, WSS **101**, exact private UDP ICE candidates and decoded synthetic audio passed on one Mac.   |
+| Human listening                 | The owner confirmed speech through two Chrome tabs, swapped mute directions, mute/unmute silence and recovery, and leave/rejoin with participant updates. |
+| Resource sampling               | Application, LiveKit, Tailscale app, network extension and Serve CLI measured separately, with exclusions documented.                                     |
+
+**Still to verify:** a call between physical devices in separate homes, real uninvited/tagged-peer boundaries, peer direct/relay routing and recovery after a physical client's network interruption. Same-Mac tabs do not establish those results.
+
+Chrome is the verified browser for physical listening. Safari/WebKit reached signaling but failed to establish media during the recorded checks; its root cause remains unresolved. Linux deployment, monitoring exercises, tested backup recovery and cloud deployment are future work.
+
+## Run locally
+
+Use an ARM64 Mac with **Node.js 24** and native **LiveKit Server**. Tested patch versions and detailed configuration are recorded in the [local development guide](docs/local-development.md).
 
 ```sh
 brew install node@24 livekit
@@ -21,103 +102,53 @@ npm run build
 npm start
 ```
 
-Open **http://localhost:3000**. Enter a display name and the `JOIN_CODE` from `.env`, then allow microphone access. Use headphones when testing multiple clients to prevent feedback. `.env` can be opened in your editor; avoid sharing it or displaying it in screenshots.
+Open **http://localhost:3000** in Chrome. Enter a display name and the `JOIN_CODE` from your generated `.env`, then allow the microphone. Do not share that file or include its contents in screenshots. Headphones help prevent feedback when testing two clients on one machine.
 
-`npm start` validates configuration and session data, writes a private LiveKit configuration, starts LiveKit, waits for its authenticated API, and starts the application. It stops both services when either exits. Press **Ctrl+C** in that terminal to stop both. It does not install a background service.
+Press **Ctrl+C** to stop both backend services. Pink Party does not install a background service.
 
-## Private access with Tailscale
+### Private mode
 
-Follow [private setup and operations](docs/remote-access.md) for native installation, account sign-in, the invited-user allowlist, tailnet rules and HTTPS consent. After setup, stop local mode, run `npm run start:private`, then `npm run serve:private` in another terminal. Use the HTTPS address printed by Serve. Stop both terminals with Ctrl+C; `npm start` returns to loopback-only local mode.
-
-Private mode uses verified Serve identity headers and an exact login allowlist. It has no development-code fallback. WSS signaling passes through the same authenticated HTTPS proxy; encrypted voice media uses only the configured Tailscale IPv4 on UDP 7882. The app and LiveKit control API stay on loopback. HTTPS availability alone does not prove remote audio. See [batch 2 evidence](docs/validation-batch-2.md) for implementation checks and [current operational validation](docs/validation-batch-3.md) for the real Tailscale checks and remaining physical-device call test.
-
-## Configuration
-
-`npm run setup` generates random local credentials in `.env` with owner-only permissions. Running it again preserves an existing file. `.env.example` shows the variable names and placeholders. No `VITE_` secret variables are used.
-
-| Variable             | Purpose                                                       |
-| -------------------- | ------------------------------------------------------------- |
-| `JOIN_CODE`          | Local development admission code, 16–128 URL-safe characters. |
-| `LIVEKIT_API_KEY`    | Server API key, at least 12 URL-safe characters.              |
-| `LIVEKIT_API_SECRET` | Server signing secret, at least 32 URL-safe characters.       |
-
-The application and startup supervisor read `.env`. The browser receives only its short-lived voice token. Generated `.local/livekit.yaml` contains the API credentials and is ignored by Git, as is `.env`. To rotate all local credentials, stop the app, remove `.env`, run `npm run setup`, then restart. Existing tokens are bearer credentials and should not be shared.
-
-Edit `data/session.json` to change the sample session, then restart. Use an ISO timestamp with an explicit offset, a valid IANA timezone such as `Europe/Madrid`, and `synthetic: true`. The UI displays the timezone and UTC offset explicitly.
-
-## How local mode connects
-
-```mermaid
-flowchart LR
-    B[Browser on localhost] -->|HTTP: built page and session JSON| A[Node application :3000]
-    B -->|Display name and local join code| A
-    A -->|Authenticated room API: create room, cap 4| L[LiveKit :7880]
-    A -->|60-second signed join token| B
-    B <-->|WebSocket signaling :7880| L
-    B <-->|Encrypted WebRTC audio over UDP :7882| L
-```
-
-In local mode, all listeners bind to `127.0.0.1`. TCP media and TURN are disabled; UDP media is filtered to the loopback address. No router changes, public exposure, external STUN server or cloud service is needed. The web page and microphone secure context use `localhost`.
-
-`POST /api/voice-token` checks the request host and origin, JSON size/type, display name and join code. It limits join attempts to 60 per minute across this local app and eight concurrent admission requests. The server creates the room with a four-person maximum and checks its current occupancy. LiveKit enforces the final cap, including competing connections with already issued tokens.
-
-Tokens allow joining only `pink-party`, publishing microphone audio, and subscribing. They do not grant video, screen sharing, data publishing or room administration. The 60-second expiry limits initial admission; it does **not** end an established call. LiveKit can refresh tokens during a connection. The join code is a simple local development admission mechanism. Private mode uses the separate identity and access design described above.
-
-`GET /api/session` returns the sample data. `GET /api/health` returns 200 when the application can authenticate to LiveKit, or 503 when voice is unavailable. It does not prove microphone or media connectivity.
-
-## Development and checks
-
-Keep `npm start` running. In a second terminal, `npm run dev` serves the interface at **http://127.0.0.1:5173**, forwarding API requests to port 3000. For the normal built interface, run `npm run build` after changes and refresh port 3000.
+Complete the [Tailscale setup, policy review and HTTPS consent](docs/remote-access.md) first. That guide includes the synthetic configuration, adding actual invited logins, troubleshooting and rollback. Stop local mode before starting private mode.
 
 ```sh
-npm run check
-npx playwright install chromium
-npm run test:e2e
-npm run measure -- 10
+# Terminal 1: application and LiveKit
+npm run start:private
+
+# Terminal 2: private HTTPS proxy
+npm run serve:private
 ```
 
-`check` runs strict TypeScript checks, the offline Node test suite, the production build and Prettier checks. `npm run format` applies formatting. No separate linter is configured.
+Open the HTTPS address printed by Serve. Stop both terminals with **Ctrl+C**. Never enable optional Funnel on the HTTPS consent page for this setup.
 
-The browser suite needs the running app and LiveKit, `.env`, an empty voice room, and local browser installation. Close other Pink Party tabs before running it. It generates a synthetic 440 Hz WAV file, uses isolated Chromium clients and tests real LiveKit media reception. Device-denial and autoplay cases are deliberately injected in the browser; they are not tests of macOS permission dialogs. Test artifacts stay in ignored `.local/` and `test-results/`. Traces and screenshots on failure are disabled to avoid capturing credentials. Explicit UI screenshots contain no entered join codes.
+## Reproduce the checks
 
-`measure` is a macOS sampling script for the two listening service processes. Run it while the intended number of clients is connected. It reports RSS and the OS `ps` CPU estimate; it excludes browser and supervisor costs. See the recorded test conditions in [validation](docs/validation.md).
+| Command                                         | Prerequisite / purpose                                                                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check`                                 | Offline tests, TypeScript, build and formatting; no running services needed.                                                          |
+| `npm run test:e2e`                              | Running **local mode**, installed Playwright Chromium and an empty room.                                                              |
+| `npm run test:private`                          | The same local-mode prerequisites; starts the synthetic TLS/identity test proxy.                                                      |
+| `npm run test:tailnet`                          | Running **private mode and real Serve**, an invited host identity, Chromium and an empty room. Uses synthetic microphones on one Mac. |
+| `npm run diagnose` / `npm run diagnose:private` | Inspect the corresponding running mode; health alone is not a media test.                                                             |
+| `npm run measure:private -- 10`                 | Sample running service processes and native Tailscale components. Record participant count and conditions separately.                 |
 
-For the actual private deployment, use `npm run test:tailnet` with an empty room and both private terminals running. It verifies real Serve TLS, identity replacement, WSS and selected private UDP media using synthetic microphones on this Mac. `npm run measure:private -- 10` includes Tailscale components separately. These checks and their limits are described in [private operations](docs/remote-access.md#repeat-the-real-serve-check).
+Install the test browser with `npx playwright install chromium`. Browser suites join the room; run them sequentially with no other participants. Raw private evidence and failed-test artifacts stay ignored. The [operations guide](docs/remote-access.md#repeat-the-real-serve-check) explains their handling.
 
-## Troubleshooting
+## Technical notes
 
-| Symptom                                     | Action                                                                                                                          |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `node`, `npm` or `livekit-server` not found | Install the requirements and run the PATH export above in this terminal.                                                        |
-| Missing/invalid secrets                     | Run `npm run setup`; if `.env` already exists, check its values against `.env.example`.                                         |
-| Port in use                                 | Stop the earlier Pink Party terminal or the other process using 3000, 7880 or UDP 7882; retry.                                  |
-| Page missing or old interface               | Run `npm run build`, then refresh.                                                                                              |
-| Join code rejected                          | Read the current `.env` in an editor. Codes are exact and are never logged by the app.                                          |
-| Room full                                   | Wait for someone to leave. After an abrupt browser crash, LiveKit may need time to remove the lost participant.                 |
-| Microphone denied                           | Allow microphone access for localhost in browser site settings and macOS Privacy & Security; join again.                        |
-| Microphone unavailable                      | Connect an input device, check system input settings, close apps holding it, then join again.                                   |
-| Connected but silent                        | Check actual mute labels, input/output devices and volume. If shown, click **Enable sound** and allow site audio.               |
-| Reconnecting/disconnected                   | Check `/api/health` and the terminal. Wait for reconnection, or leave and join again. Restart `npm start` if a service stopped. |
-| Tests cannot find the browser               | Run `npx playwright install chromium`.                                                                                          |
+- [Local development and operations](docs/local-development.md): environment, configuration, development server, troubleshooting and teardown.
+- [Private network operations](docs/remote-access.md): access rules, network paths, startup, shutdown and rollback.
+- [Current validation](docs/validation-batch-3.md): actual results, resource measurements and outstanding checks.
+- [Contribution and learning record](docs/learning.md): confirmed owner practice, code walkthrough and interview questions.
+- [Earlier validation](docs/validation.md): initial local implementation; [private-access implementation tests](docs/validation-batch-2.md).
 
-Permission prompts can remain open until you answer them; **Cancel join** leaves the interface usable. If permission is granted after cancellation, the late microphone track is stopped. Leaving or failing a join stops local tracks, disconnects the room and removes attached audio elements. The participant list and mute labels come from LiveKit state.
+## Contributions and dependencies
 
-## Teardown and next work
+The owner selected the gaming-hangout scope and pink design, completed native Tailscale onboarding and HTTPS consent, and performed the confirmed Chrome listening checks. Codex generated the application, configuration, tests and documentation and carried out the recorded technical verification with a separate review. LiveKit and its SDKs provide the voice transport.
 
-Stop both `npm start` and any Vite terminal with Ctrl+C. To remove generated files from this checkout:
+The project records assisted implementation and personally confirmed practice separately. See the [learning record](docs/learning.md) for the current contribution details.
 
-```sh
-rm -rf node_modules dist .local test-results playwright-report
-rm -f .env
-```
+<div align="center">
 
-These paths contain dependencies, builds, test artifacts and local credentials. Keep `.env` privately if you want to preserve the same code and keys. Browser downloads can be removed separately with `npx playwright uninstall chromium`. The project installs no login item or persistent service; Homebrew packages remain available for other projects.
+🌸 Bring your game. Save a seat.
 
-Complete the pending Tailscale/physical-device validation before claiming separate-home voice. Later batches cover Linux deployment, monitoring and incident exercises, tested backup restoration, then a cloud extension. These later operations remain unimplemented.
-
-## Primary references
-
-- [Node.js LTS releases](https://nodejs.org/en/about/previous-releases) and [Vite requirements](https://vite.dev/guide/)
-- [Native LiveKit setup](https://docs.livekit.io/transport/self-hosting/local/) and [Homebrew formula](https://formulae.brew.sh/formula/livekit)
-- [LiveKit configuration](https://github.com/livekit/livekit/blob/master/config-sample.yaml), [tokens and grants](https://docs.livekit.io/frontends/reference/tokens-grants/), [microphone publishing](https://docs.livekit.io/transport/media/publish/) and [track subscription](https://docs.livekit.io/transport/media/subscribe/)
-- [LiveKit browser SDK](https://github.com/livekit/client-sdk-js) and [server SDK](https://github.com/livekit/server-sdk-js)
+</div>
