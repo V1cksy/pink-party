@@ -23,6 +23,7 @@ function render(view: VoiceView) {
   const status = element('connection-state');
   status.textContent = view.state[0].toUpperCase() + view.state.slice(1);
   status.dataset.state = view.state;
+  form.setAttribute('aria-busy', String(view.state === 'connecting'));
   const message = element('room-message');
   if (message.textContent !== view.message) message.textContent = view.message;
   form.hidden = inRoom;
@@ -103,14 +104,14 @@ async function loadSession() {
       code.value = '';
       code.parentElement!.hidden = true;
       element('admission-note').textContent =
-        'Invited Tailscale account verified. Keep Tailscale connected while you talk.';
-      element('access-badge').textContent = 'Private hangout';
+        'Your invitation is verified. Keep Tailscale connected during the call.';
+      element('access-badge').textContent = 'Private room';
     }
     accessReady = true;
     join.disabled = false;
   } catch {
     element('admission-note').textContent =
-      'Access unavailable. Check Tailscale and your invitation with the host, then refresh.';
+      'Couldn’t check access. Refresh the page; if it still fails, contact the host.';
     return;
   }
   try {
@@ -124,10 +125,22 @@ async function loadSession() {
     element('session-description').textContent = session.description;
     element('session-tag').textContent = session.tag;
     const date = new Date(session.startsAt);
-    element('session-time').textContent =
-      `${new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: session.timeZone, timeZoneName: 'shortOffset' }).format(date)} · ${session.timeZone}`;
+    const time = element<HTMLTimeElement>('session-time');
+    time.dateTime = session.startsAt;
+    time.textContent = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: session.timeZone,
+      timeZoneName: 'shortOffset',
+    }).format(date);
+    const zone = document.createElement('span');
+    zone.textContent = session.timeZone;
+    time.append(zone);
   } catch {
-    element('session-game').textContent = 'Next session unavailable';
+    element('session-game').textContent = 'Game night unavailable';
     element('session-error').hidden = false;
   }
 }

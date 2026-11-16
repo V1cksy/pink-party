@@ -5,7 +5,9 @@ import { instrument, joinRoom, expectReleased } from './helpers.ts';
 
 async function fillJoin(page: import('@playwright/test').Page) {
   await page.goto('/');
-  await page.getByLabel('What should we call you?').fill('Synthetic guest');
+  await page
+    .getByLabel('Display name', { exact: true })
+    .fill('Synthetic guest');
   await page
     .getByLabel('Local join code', { exact: true })
     .fill(process.env.JOIN_CODE!);
@@ -222,17 +224,25 @@ test('responsive interface, keyboard labels and synthetic session are visible', 
   await expect(
     page.getByRole('link', { name: 'Skip to voice room', exact: true }),
   ).toBeFocused();
-  await page
-    .getByRole('heading', { name: 'Good games. Better company.' })
-    .click();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#voice-room')).toBeFocused();
+  await page.getByRole('heading', { name: 'Anyone up for a game?' }).click();
   await page.screenshot({ path: '.local/desktop.png', fullPage: true });
+  for (const width of [320, 390, 680, 900, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(
+      page.getByLabel('Display name', { exact: true }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      `No page overflow at ${width}px`,
+    ).toBe(true);
+    const button = await page.locator('#join-button').boundingBox();
+    expect(button!.height).toBeGreaterThanOrEqual(44);
+  }
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.getByLabel('What should we call you?')).toBeVisible();
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= innerWidth,
-    ),
-  ).toBe(true);
   await page.screenshot({ path: '.local/mobile.png', fullPage: true });
 });
 

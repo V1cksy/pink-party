@@ -48,7 +48,7 @@ export class VoiceController {
   private attempt?: Attempt;
   private view: VoiceView = {
     state: 'disconnected',
-    message: 'Your seat is waiting. Join when you’re ready.',
+    message: 'You can mute your mic or leave at any time.',
     people: [],
     microphoneEnabled: false,
     playbackBlocked: false,
@@ -197,7 +197,7 @@ export class VoiceController {
       if (current())
         this.emit({
           state: 'connected',
-          message: 'Back together. Your connection has recovered.',
+          message: 'Reconnected. You’re back in the room.',
         });
     });
     room.on(RoomEvent.Disconnected, () => {
@@ -231,7 +231,7 @@ export class VoiceController {
         );
       if (!current()) return;
       stage = 'microphone';
-      this.emit({ message: 'Allow your microphone to take your seat…' });
+      this.emit({ message: 'Allow your microphone in the browser to join…' });
       const track = await createLocalAudioTrack({
         echoCancellation: true,
         noiseSuppression: true,
@@ -298,7 +298,7 @@ export class VoiceController {
       await this.finish(
         this.attempt,
         'disconnected',
-        'You’ve left the room. See you next game!',
+        'You’ve left the room. Your microphone is off.',
       );
   }
 

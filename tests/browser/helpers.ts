@@ -30,7 +30,7 @@ export async function instrument(page: Page) {
 }
 export async function joinRoom(page: Page, name: string) {
   await page.goto('/');
-  await page.getByLabel('What should we call you?').fill(name);
+  await page.getByLabel('Display name', { exact: true }).fill(name);
   await page
     .getByLabel('Local join code', { exact: true })
     .fill(process.env.JOIN_CODE!);

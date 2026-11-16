@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 192" fill="none" shape-rendering="crispEdges">
+  <title>A farmhouse for game night</title>
+  <!-- Every edge follows a two-pixel grid, including the roof and planting beds. -->
+  <path fill="#dce8d7" d="M0 0h320v192H0z"/>
+  <path fill="#fff3ce" d="M258 18h20v4h6v20h-6v4h-20v-4h-6V22h6z"/>
+  <path fill="#f6faf0" d="M30 24h16v-6h18v6h10v8H30zm154-8h14v-4h12v4h10v8h-36z"/>
+  <path fill="#b1c69c" d="M0 88h18V76h18V62h20V52h18v12h16v12h16v12h24V76h18V62h20V50h20v12h18v14h22v10h18V74h18V62h22v12h18v14h26v104H0z"/>
+  <path fill="#8eaa7a" d="M0 110h32V98h26v8h34v10h40v-10h36V94h32v10h30v8h38v-12h30v10h22v82H0z"/>
+  <path fill="#adc38b" d="M0 134h320v58H0z"/>
+  <path fill="#9cb57d" d="M0 154h320v38H0z"/>
+  <!-- Orchard trees. -->
+  <path fill="#76533f" d="M36 100h8v42h-8zm238 0h8v40h-8z"/>
+  <path fill="#5c7f59" d="M20 66h12v-8h16v8h12v12h8v26h-8v10H20v-10h-8V78h8zm242 12h10v-8h14v8h12v12h8v22h-8v10h-38v-10h-8V90h10z"/>
+  <path fill="#75965f" d="M22 72h12v-8h12v8h12v12h6v14H18V84h4zm244 12h8v-8h10v8h12v10h4v12h-42V94h8z"/>
+  <path fill="#c06e70" d="M24 90h6v6h-6zm24-10h6v6h-6zm222 18h6v6h-6zm18-10h6v6h-6z"/>
+  <!-- Chimney and the stepped, tiled roof. -->
+  <path fill="#73483f" d="M204 44h20v42h-20z"/>
+  <path fill="#b47562" d="M208 48h12v34h-12z"/>
+  <path fill="#73483f" d="M202 40h24v8h-24z"/>
+  <path fill="#e0be9b" d="M208 54h6v4h-6zm6 10h6v4h-6z"/>
+  <path fill="#71463e" d="M96 90h140v54H96z"/>
+  <path fill="#efcf9e" d="M100 90h132v50H100z"/>
+  <path fill="#dfb380" d="M100 104h132v4H100zm0 14h132v4H100zm0 14h132v4H100z"/>
+  <path fill="#bd8967" d="M100 92h132v6H100z"/>
+  <path fill="#754442" d="M126 44h80v8h8v8h8v8h8v8h8v8h8v12H86V84h8v-8h8v-8h8v-8h8v-8h8z"/>
+  <path fill="#b65f6b" d="M128 50h76v8h8v8h8v8h8v8h8v8H96v-8h8v-8h8v-8h8v-8h8z"/>
+  <path fill="#d5858b" d="M128 50h76v4h-76zm-8 12h92v4h-92zm-12 12h116v4H108zM98 86h136v4H98z"/>
+  <path fill="#94505a" d="M142 54h4v8h-4zm34 0h4v8h-4zm-48 12h4v8h-4zm32 0h4v8h-4zm34 0h4v8h-4zm-80 12h4v8h-4zm32 0h4v8h-4zm34 0h4v8h-4zm32 0h4v8h-4z"/>
+  <!-- Windows sit inside timber frames; the right one has a flower box. -->
+  <path fill="#805348" d="M110 104h24v24h-24zm86 0h24v24h-24z"/>
+  <path fill="#fff0b7" d="M114 108h16v16h-16zm86 0h16v16h-16z"/>
+  <path fill="#c58f65" d="M120 108h4v16h-4zm-6 6h16v4h-16zm92-6h4v16h-4zm-6 6h16v4h-16z"/>
+  <path fill="#f6dfb4" d="M108 126h28v4h-28zm86 0h28v4h-28z"/>
+  <path fill="#6a8050" d="M198 130h4v-6h4v6h8v-6h4v10h-20z"/>
+  <path fill="#cc7692" d="M200 122h6v6h-6zm12-2h6v6h-6z"/>
+  <path fill="#97634e" d="M196 132h24v6h-24z"/>
+  <!-- Door, porch and the path to the garden gate. -->
+  <path fill="#805348" d="M148 100h36v44h-36z"/>
+  <path fill="#a37358" d="M152 104h28v36h-28z"/>
+  <path fill="#f5ddab" d="M158 108h16v12h-16z"/>
+  <path fill="#805348" d="M164 108h4v12h-4zm-10 20h22v4h-22z"/>
+  <path fill="#f5ddab" d="M174 126h4v4h-4z"/>
+  <path fill="#bd9278" d="M140 142h52v6h-52zm-8 6h68v6h-68z"/>
+  <path fill="#e8c89d" d="M150 154h32v12h-8v12h-8v14h-38v-10h8v-14h14z"/>
+  <path fill="#d6b485" d="M156 160h10v4h-10zm-10 16h10v4h-10zm-8 12h8v4h-8z"/>
+  <!-- Vegetable rows and a short picket fence. -->
+  <path fill="#8a6348" d="M206 154h58v30h-58z"/>
+  <path fill="#b08457" d="M210 158h50v4h-50zm0 10h50v4h-50zm0 10h50v4h-50z"/>
+  <path fill="#567344" d="M214 152h4v8h-4zm10 0h4v8h-4zm12 0h4v8h-4zm10 0h4v8h-4zm-30 16h4v8h-4zm12 0h4v8h-4zm12 0h4v8h-4zm12 0h4v8h-4z"/>
+  <path fill="#769553" d="M210 154h12v4h-12zm12 0h12v4h-12zm12 0h12v4h-12zm12 0h12v4h-12zm-34 16h12v4h-12zm12 0h12v4h-12zm12 0h12v4h-12zm12 0h12v4h-12z"/>
+  <path fill="#f0d5ad" d="M14 154h104v4H14zm0 12h104v4H14z"/>
+  <path fill="#fff0cd" d="M18 148h6v30h-6zm26 0h6v30h-6zm26 0h6v30h-6zm26 0h6v30h-6z"/>
+  <path fill="#75955f" d="M8 184h12v4H8zm74 2h12v4H82zm196-28h10v4h-10zm14 22h12v4h-12z"/>
+  <path fill="#d88a9d" d="M68 142h4v8h-4zm-4 2h12v4H64zm226 0h4v8h-4zm-4 2h12v4h-12z"/>
+  <path fill="#fff0cd" d="M68 144h4v4h-4zm222 2h4v4h-4z"/>
+</svg>

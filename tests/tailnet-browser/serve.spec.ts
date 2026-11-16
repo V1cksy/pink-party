@@ -119,14 +119,14 @@ test('real Serve: trusted TLS, replaced identity, WSS 101 and private UDP media 
         access.origin.replace('https:', 'wss:') + '/livekit',
       );
       expect(await page.evaluate(() => window.isSecureContext)).toBe(true);
-      await expect(page.locator('#access-badge')).toHaveText('Private hangout');
+      await expect(page.locator('#access-badge')).toHaveText('Private room');
       await expect(
         page.getByLabel('Local join code', { exact: true }),
       ).toBeHidden();
     }
     for (let i = 0; i < pages.length; i++) {
       await pages[i]
-        .getByLabel('What should we call you?')
+        .getByLabel('Display name', { exact: true })
         .fill(`Tailnet test ${i + 1}`);
       await pages[i]
         .getByRole('button', { name: 'Join voice room', exact: true })

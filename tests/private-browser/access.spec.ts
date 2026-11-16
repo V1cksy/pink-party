@@ -49,12 +49,19 @@ test('synthetic TLS proxy: verified fixture certificate, protected WSS, two real
       );
       await page.goto('https://localhost:3443/');
       expect(await page.evaluate(() => window.isSecureContext)).toBe(true);
-      await expect(page.locator('#access-badge')).toHaveText('Private hangout');
+      await expect(page.locator('#access-badge')).toHaveText('Private room');
       await expect(
         page.getByLabel('Local join code', { exact: true }),
       ).toBeHidden();
+      const inputWidth = await page
+        .locator('#display-name')
+        .evaluate((input) => input.getBoundingClientRect().width);
+      const rowWidth = await page
+        .locator('.form-fields')
+        .evaluate((row) => row.getBoundingClientRect().width);
+      expect(inputWidth).toBeCloseTo(rowWidth, 0);
       await page
-        .getByLabel('What should we call you?')
+        .getByLabel('Display name', { exact: true })
         .fill(`Remote fixture ${i + 1}`);
       await page
         .getByRole('button', { name: 'Join voice room', exact: true })

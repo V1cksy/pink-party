@@ -124,7 +124,7 @@ test('real voice: two-way audio, four peers, authoritative cap, mute, leave and 
     ).toBeGreaterThan(5);
     const fifth = pages[4];
     await fifth.goto('/');
-    await fifth.getByLabel('What should we call you?').fill('Peach 5');
+    await fifth.getByLabel('Display name', { exact: true }).fill('Peach 5');
     await fifth
       .getByLabel('Local join code', { exact: true })
       .fill(process.env.JOIN_CODE!);
@@ -184,7 +184,7 @@ test('LiveKit rejects an already expired room token', async ({ page }) => {
     route.fulfill({ json: { token: jwt, url: 'ws://127.0.0.1:7880' } }),
   );
   await page.goto('/');
-  await page.getByLabel('What should we call you?').fill('Expired');
+  await page.getByLabel('Display name', { exact: true }).fill('Expired');
   await page.getByLabel('Local join code', { exact: true }).fill('synthetic');
   await page
     .getByRole('button', { name: 'Join voice room', exact: true })

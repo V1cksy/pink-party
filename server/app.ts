@@ -17,6 +17,7 @@ const contentTypes: Record<string, string> = {
   '.css': 'text/css',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
 };
 
 async function readBody(req: IncomingMessage): Promise<unknown> {
