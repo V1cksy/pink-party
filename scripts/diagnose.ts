@@ -57,5 +57,7 @@ if (settings.privateAccess) {
   });
 }
 console.log(
-  'Signaling: check browser Network for WSS 101. Media: check selected ICE pair, increasing inbound audio counters and human speech. These are pending manual checks.',
+  'Health checks do not prove voice. Run ' +
+    (settings.privateAccess ? 'npm run test:tailnet' : 'npm run test:e2e') +
+    ' for signaling and synthetic media checks. Physical listening and separate-home calls need their own evidence.',
 );

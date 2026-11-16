@@ -19,12 +19,14 @@
     "format:check": "prettier --check .",
     "check": "npm run typecheck && npm test && npm run build && npm run format:check",
     "measure": "node scripts/measure.ts",
+    "measure:private": "node scripts/measure.ts --private",
     "setup:private": "node scripts/setup-private.ts",
     "start:private": "node --env-file=.env.private scripts/start.ts",
     "serve:private": "node --env-file=.env.private scripts/serve-private.ts",
     "diagnose": "node --env-file=.env scripts/diagnose.ts",
     "diagnose:private": "node --env-file=.env.private scripts/diagnose.ts",
-    "test:private": "node scripts/test-audio.ts && playwright test --config=playwright.private.config.ts"
+    "test:private": "node scripts/test-audio.ts && playwright test --config=playwright.private.config.ts",
+    "test:tailnet": "node scripts/test-audio.ts && playwright test --config=playwright.tailnet.config.ts"
   },
   "dependencies": {
     "livekit-client": "2.23.0",
