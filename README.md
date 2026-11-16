@@ -4,7 +4,7 @@ A small, pink gaming hangout: check the next session, take a seat in one voice r
 
 ![Pink Party local interface](docs/interface.png)
 
-Local mode runs natively on a Mac and accepts connections from that machine only. Batch 2 adds an invited-user Tailscale mode; actual Tailscale and separate-home audio validation are pending native installation and account setup. LiveKit provides voice transport; this project implements the interface, admission checks, SDK integration, configuration and startup scripts. See [validation](docs/validation.md) for measured results and limits, and [learning notes](docs/learning.md) for contribution records and a code walkthrough.
+Local mode runs natively on a Mac and accepts connections from that machine only. Private mode uses Tailscale and an invited-user allowlist. Native installation, sign-in and private socket binding have been verified; see [current operational validation](docs/validation-batch-3.md) for access, media and human-call status. LiveKit provides voice transport; this project implements the interface, admission checks, SDK integration, configuration and startup scripts. See [validation](docs/validation.md) for the original measured results, and [learning notes](docs/learning.md) for contribution records and a code walkthrough.
 
 ## Requirements and setup
 
@@ -29,7 +29,7 @@ Open **http://localhost:3000**. Enter a display name and the `JOIN_CODE` from `.
 
 Follow [private setup and operations](docs/remote-access.md) for native installation, account sign-in, the invited-user allowlist, tailnet rules and HTTPS consent. After setup, stop local mode, run `npm run start:private`, then `npm run serve:private` in another terminal. Use the HTTPS address printed by Serve. Stop both terminals with Ctrl+C; `npm start` returns to loopback-only local mode.
 
-Private mode uses verified Serve identity headers and an exact login allowlist. It has no development-code fallback. WSS signaling passes through the same authenticated HTTPS proxy; encrypted voice media uses only the configured Tailscale IPv4 on UDP 7882. The app and LiveKit control API stay on loopback. HTTPS availability alone does not prove remote audio. See [batch 2 evidence](docs/validation-batch-2.md) for automated results and the remaining physical-device call test.
+Private mode uses verified Serve identity headers and an exact login allowlist. It has no development-code fallback. WSS signaling passes through the same authenticated HTTPS proxy; encrypted voice media uses only the configured Tailscale IPv4 on UDP 7882. The app and LiveKit control API stay on loopback. HTTPS availability alone does not prove remote audio. See [batch 2 evidence](docs/validation-batch-2.md) for implementation checks and [current operational validation](docs/validation-batch-3.md) for the real Tailscale checks and remaining physical-device call test.
 
 ## Configuration
 
@@ -81,6 +81,8 @@ npm run measure -- 10
 The browser suite needs the running app and LiveKit, `.env`, an empty voice room, and local browser installation. Close other Pink Party tabs before running it. It generates a synthetic 440 Hz WAV file, uses isolated Chromium clients and tests real LiveKit media reception. Device-denial and autoplay cases are deliberately injected in the browser; they are not tests of macOS permission dialogs. Test artifacts stay in ignored `.local/` and `test-results/`. Traces and screenshots on failure are disabled to avoid capturing credentials. Explicit UI screenshots contain no entered join codes.
 
 `measure` is a macOS sampling script for the two listening service processes. Run it while the intended number of clients is connected. It reports RSS and the OS `ps` CPU estimate; it excludes browser and supervisor costs. See the recorded test conditions in [validation](docs/validation.md).
+
+For the actual private deployment, use `npm run test:tailnet` with an empty room and both private terminals running. It verifies real Serve TLS, identity replacement, WSS and selected private UDP media using synthetic microphones on this Mac. `npm run measure:private -- 10` includes Tailscale components separately. These checks and their limits are described in [private operations](docs/remote-access.md#repeat-the-real-serve-check).
 
 ## Troubleshooting
 

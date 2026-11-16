@@ -1,0 +1,152 @@
+{
+  "capturedAt": "2026-11-16T11:22:20.937Z",
+  "realServe": true,
+  "certificateExceptions": false,
+  "syntheticMicrophones": true,
+  "physicalDevices": 1,
+  "separateHomeCall": false,
+  "upgrades": [101, 101],
+  "candidates": [
+    [
+      {
+        "state": "succeeded",
+        "remotePort": 7882,
+        "protocol": "udp",
+        "candidateType": "host",
+        "remoteAddressMatchesConfiguredTailscaleIPv4": true
+      }
+    ],
+    [
+      {
+        "state": "succeeded",
+        "remotePort": 7882,
+        "protocol": "udp",
+        "candidateType": "host",
+        "remoteAddressMatchesConfiguredTailscaleIPv4": true
+      }
+    ]
+  ],
+  "receivedAudio": [
+    [
+      {
+        "bytes": 6718,
+        "samples": 28320,
+        "energy": 0.0038347400349454867
+      }
+    ],
+    [
+      {
+        "bytes": 7135,
+        "samples": 33120,
+        "energy": 0.002161167237996066
+      }
+    ]
+  ],
+  "resources": {
+    "label": "Real Serve, 2 synthetic Chromium clients on one Mac; no remote peer or human speech",
+    "capturedAt": "2026-11-16T11:22:20.637Z",
+    "samples": 10,
+    "intervalSeconds": 1,
+    "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. Named Tailscale processes are included. ps %CPU is an OS estimate, not an interval profiler.",
+    "processes": [
+      {
+        "name": "application",
+        "meanRssMiB": 53.06,
+        "peakRssMiB": 74.11,
+        "meanPsCpuPercent": 0.16,
+        "peakPsCpuPercent": 0.8
+      },
+      {
+        "name": "LiveKit",
+        "meanRssMiB": 74.62,
+        "peakRssMiB": 77.33,
+        "meanPsCpuPercent": 4.26,
+        "peakPsCpuPercent": 5.7
+      },
+      {
+        "name": "Tailscale app",
+        "meanRssMiB": 15.72,
+        "peakRssMiB": 16.19,
+        "meanPsCpuPercent": 0.13,
+        "peakPsCpuPercent": 1.2
+      },
+      {
+        "name": "Tailscale network extension",
+        "meanRssMiB": 26.97,
+        "peakRssMiB": 33.25,
+        "meanPsCpuPercent": 2.45,
+        "peakPsCpuPercent": 2.7
+      },
+      {
+        "name": "Tailscale Serve CLI",
+        "meanRssMiB": 11.57,
+        "peakRssMiB": 11.84,
+        "meanPsCpuPercent": 0.02,
+        "peakPsCpuPercent": 0.2
+      }
+    ]
+  },
+  "notEstablishedByThisSuite": [
+    "Uninvited/tagged peer and forged allowed login from that peer",
+    "Physical microphone/playback quality and separate-home human call",
+    "Client network interruption and Tailscale direct/relay observation"
+  ],
+  "denialProbe": {
+    "capturedAt": "2026-11-16T11:04:59.883Z",
+    "realServe": true,
+    "condition": "Actual owner excluded by temporary process-only synthetic allowlist. Forged allowed fixture login supplied to real Serve. Saved owner config unchanged.",
+    "cases": [
+      {
+        "path": "/",
+        "status": 403,
+        "forgedIdentity": false
+      },
+      {
+        "path": "/",
+        "status": 403,
+        "forgedIdentity": true
+      },
+      {
+        "path": "/api/access",
+        "status": 403,
+        "forgedIdentity": false
+      },
+      {
+        "path": "/api/access",
+        "status": 403,
+        "forgedIdentity": true
+      },
+      {
+        "path": "/api/session",
+        "status": 403,
+        "forgedIdentity": false
+      },
+      {
+        "path": "/api/session",
+        "status": 403,
+        "forgedIdentity": true
+      },
+      {
+        "path": "/api/health",
+        "status": 403,
+        "forgedIdentity": false
+      },
+      {
+        "path": "/api/health",
+        "status": 403,
+        "forgedIdentity": true
+      },
+      {
+        "path": "/api/voice-token",
+        "status": 403,
+        "forgedIdentity": true
+      },
+      {
+        "path": "/livekit/rtc/v1",
+        "status": 403,
+        "forgedIdentity": true
+      }
+    ],
+    "limits": "Same authenticated Mac; not an uninvited/tagged peer or real missing-identity test."
+  }
+}

@@ -1,10 +1,10 @@
 # Private access on macOS
 
-This batch adds an invited-user mode for Tailscale and Tailscale Serve. Local mode remains the default. Native Tailscale setup and a call between separate homes are pending; see [batch 2 validation](validation-batch-2.md). No VM, public hosting, Funnel or router port forwarding is used.
+Private mode uses Tailscale and Tailscale Serve. Local mode remains the default. See [current operational validation](validation-batch-3.md) for verified setup and outstanding checks, and [batch 2 validation](validation-batch-2.md) for the implementation tests. No VM, public hosting, Funnel or router port forwarding is used.
 
 ## Install and configure
 
-Use the [standalone macOS app](https://tailscale.com/docs/install/mac). The verified Homebrew cask on 4 November 2026 was `tailscale-app` 1.104.5. The native installer requires an administrator password; the owner must approve macOS network/VPN prompts and sign in. A GitHub CLI login does not sign in to Tailscale. The [Personal plan](https://tailscale.com/pricing) currently includes six users and three ACL groups at no charge. Choose that plan for this personal service.
+Use the [standalone macOS app](https://tailscale.com/docs/install/mac), which requires macOS Ventura 13.0 or later. On 16 November 2026, the Homebrew cask installed native `tailscale-app` 1.104.7 on macOS 27.0.1. The installer requires an administrator password; the owner must approve macOS network/VPN prompts and sign in. A GitHub CLI login does not sign in to Tailscale. The [Personal plan](https://tailscale.com/pricing), rechecked that day, includes six users, unlimited user devices and three ACL groups at no charge. Choose that plan for this personal service; no paid add-on is required here.
 
 ```sh
 brew install --cask tailscale-app
@@ -49,7 +49,7 @@ Build once after code changes with `npm run build`. Stop the previous mode first
 
 `start:private` verifies that the connected Tailscale device matches the saved origin/address, and that the IPv4 address exists on a native interface. It fails before launching services if those checks fail. It generates `.local/livekit.yaml` with owner-only permissions. The app and LiveKit control/signaling API stay on loopback; only the media socket uses the exact Tailscale IPv4. No wildcard, LAN or external STUN candidate is configured. TCP media and TURN stay disabled. If the native client does not provide a bindable interface, stop and diagnose it; do not substitute a wildcard address.
 
-`serve:private` inspects Serve status and saves a private timestamped snapshot before making changes. It refuses an existing 443 handler or active Funnel configuration and never resets other services. It runs **in the foreground**, so exiting removes its temporary handler. On first use, Serve may print a consent URL for enabling tailnet HTTPS certificates. Follow that URL and approve HTTPS; do not enable public Funnel. [Tailscale certificates](https://tailscale.com/docs/how-to/set-up-https-certificates) use the device's `*.ts.net` name; certificate transparency exposes that hostname, so choose a non-sensitive machine name.
+`serve:private` inspects Serve status and saves a private timestamped snapshot before making changes. It refuses an existing 443 handler or active Funnel configuration and never resets other services. It runs **in the foreground**, so exiting removes its temporary handler. On first use, Serve may print a consent URL for enabling tailnet HTTPS certificates. On the consent page, **uncheck Tailscale Funnel (optional)** before approving. This option was checked by default in the actual 16 November 2026 setup. Confirm that the final button says **Enable HTTPS**, then approve it. [Tailscale certificates](https://tailscale.com/docs/how-to/set-up-https-certificates) use the device's `*.ts.net` name; certificate transparency permanently exposes that hostname, so choose a non-sensitive machine name before consent.
 
 Switch back by stopping the Serve and private backend terminals, then running `npm start`. Private mode cannot accept a development code. Local mode rejects proxy/identity headers, so an accidentally retained Serve handler cannot turn the code-based development service into remote admission. Generated settings are ignored by Git; restarting local mode rewrites the LiveKit file for loopback.
 
@@ -111,7 +111,24 @@ Expected listeners: Node TCP `127.0.0.1:3000`; LiveKit TCP `127.0.0.1:7880`; Liv
 
 Run `npm run check`, `npm run test:e2e`, and `npm run test:private` for automated verification. The last two need an empty, running **local-mode** LiveKit room. The private suite uses a synthetic HTTPS/identity proxy on loopback 3443 and ephemeral app port, with real LiveKit loopback media. Its browser trusts a test certificate only for that harness; it is not a Tailscale test and must never be used to host the service.
 
-## Official references checked on 4 November 2026
+### Repeat the real Serve check
+
+With the private backend and foreground Serve running, close other room clients and run:
+
+```sh
+npm run test:tailnet
+npm run measure:private -- 10
+```
+
+`test:tailnet` requires the Mac's actual connected Tailscale identity to be invited. It uses normal Node/Chromium certificate trust, with no certificate exception or identity proxy. It checks the secure context, replaced forged denied-login header, Host/Origin rejection, CSP, missing admission Origin, blocked administration route, actual WSS 101 responses, selected UDP candidates matching the configured private IPv4 on 7882, decoded synthetic audio both ways, unmute reception and capture cleanup. It also samples service resources with Tailscale listed separately. A host-to-own-Serve identity rejection must stay fail-closed; use a real invited peer to investigate it.
+
+The test creates two synthetic microphone clients on **one Mac**. It does not verify a separate home's route, human speech or an uninvited/tagged peer. It joins the real room, so run it only when the room is empty. Raw evidence, selected private addresses and a screenshot stay in ignored `.local/real-serve-validation.json` and `.local/real-serve-interface.png`; do not publish those files without review. Failed Playwright diagnostics also stay ignored.
+
+`measure:private` samples the app, LiveKit and detected standalone Tailscale app/Serve CLI/network-extension processes once per second. Record the actual participant count and network conditions alongside its output. The script excludes browsers, npm, the startup supervisor and unrelated host processes. CPU values are the OS `ps` estimate. This is a process sample, not total host usage or a performance comparison.
+
+## Official references
+
+macOS support, Personal limits, Serve identity handling, Serve CLI and grants documentation were rechecked on 16 November 2026. The version-pinned implementation references below were originally inspected during batch 2.
 
 - [Tailscale macOS installation](https://tailscale.com/docs/install/mac), [Personal limits](https://tailscale.com/pricing), [Serve](https://tailscale.com/docs/features/tailscale-serve) and [Serve CLI](https://tailscale.com/docs/reference/tailscale-cli/serve).
 - [Tailscale grants](https://tailscale.com/docs/features/access-control/grants). Additive policy rules must be reviewed in the actual tailnet.

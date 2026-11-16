@@ -1,0 +1,207 @@
+{
+  "capturedDate": "2026-11-16",
+  "local": {
+    "two": {
+      "label": "2 synthetic Chromium clients publishing and receiving audio",
+      "capturedAt": "2026-11-16T11:24:13.649Z",
+      "samples": 10,
+      "intervalSeconds": 1,
+      "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. Tailscale is excluded. ps %CPU is an OS estimate, not an interval profiler.",
+      "processes": [
+        {
+          "name": "application",
+          "meanRssMiB": 33.91,
+          "peakRssMiB": 43.75,
+          "meanPsCpuPercent": 0.78,
+          "peakPsCpuPercent": 4.7
+        },
+        {
+          "name": "LiveKit",
+          "meanRssMiB": 77.06,
+          "peakRssMiB": 81.89,
+          "meanPsCpuPercent": 3.99,
+          "peakPsCpuPercent": 9.3
+        }
+      ]
+    },
+    "four": {
+      "label": "4 synthetic Chromium clients, each receiving 3 audio streams",
+      "capturedAt": "2026-11-16T11:24:25.419Z",
+      "samples": 10,
+      "intervalSeconds": 1,
+      "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. Tailscale is excluded. ps %CPU is an OS estimate, not an interval profiler.",
+      "processes": [
+        {
+          "name": "application",
+          "meanRssMiB": 30.49,
+          "peakRssMiB": 30.58,
+          "meanPsCpuPercent": 0.02,
+          "peakPsCpuPercent": 0.2
+        },
+        {
+          "name": "LiveKit",
+          "meanRssMiB": 78.73,
+          "peakRssMiB": 83.94,
+          "meanPsCpuPercent": 8.22,
+          "peakPsCpuPercent": 9.5
+        }
+      ]
+    },
+    "receivedAudioAtFourClients": [
+      [
+        {
+          "bytes": 272419,
+          "samples": 1060320,
+          "energy": 0.0217446134642174
+        },
+        {
+          "bytes": 135327,
+          "samples": 527040,
+          "energy": 0.012456903963537137
+        },
+        {
+          "bytes": 130006,
+          "samples": 506880,
+          "energy": 0.011584924234086318
+        }
+      ],
+      [
+        {
+          "bytes": 135327,
+          "samples": 527040,
+          "energy": 0.012456903963537137
+        },
+        {
+          "bytes": 272243,
+          "samples": 1064640,
+          "energy": 0.026571741112558202
+        },
+        {
+          "bytes": 130198,
+          "samples": 507840,
+          "energy": 0.01192671195330825
+        }
+      ],
+      [
+        {
+          "bytes": 137332,
+          "samples": 531840,
+          "energy": 0.011037713500255918
+        },
+        {
+          "bytes": 137332,
+          "samples": 531840,
+          "energy": 0.004344660003942737
+        },
+        {
+          "bytes": 130006,
+          "samples": 506880,
+          "energy": 0.011584924234086318
+        }
+      ],
+      [
+        {
+          "bytes": 132639,
+          "samples": 513600,
+          "energy": 0.00420017473255383
+        },
+        {
+          "bytes": 132763,
+          "samples": 513600,
+          "energy": 0.010180973475889029
+        },
+        {
+          "bytes": 132639,
+          "samples": 513600,
+          "energy": 0.007889929755168454
+        }
+      ]
+    ]
+  },
+  "syntheticProxy": {
+    "syntheticIdentity": true,
+    "syntheticTls": true,
+    "transport": "real native LiveKit, loopback media",
+    "upgrades": [
+      "wss://localhost:3443/livekit/rtc/v1",
+      "wss://localhost:3443/livekit/rtc/v1",
+      "wss://localhost:3443/livekit/rtc/v1"
+    ],
+    "receivedAudio": [
+      [
+        {
+          "bytes": 167689,
+          "samples": 657600,
+          "energy": 0.013239166102139717
+        }
+      ],
+      [
+        {
+          "bytes": 167856,
+          "samples": 661920,
+          "energy": 0.021297642189060596
+        }
+      ]
+    ],
+    "resources": {
+      "label": "2 synthetic clients through synthetic HTTPS/identity proxy, real loopback media",
+      "capturedAt": "2026-11-16T11:24:55.480Z",
+      "samples": 10,
+      "intervalSeconds": 1,
+      "exclusions": "Browser processes, startup supervisor, npm, build tooling and other host applications. Tailscale is excluded. ps %CPU is an OS estimate, not an interval profiler.",
+      "processes": [
+        {
+          "name": "fixture proxy and application",
+          "meanRssMiB": 95.17,
+          "peakRssMiB": 95.69,
+          "meanPsCpuPercent": 0.23,
+          "peakPsCpuPercent": 0.7
+        },
+        {
+          "name": "LiveKit",
+          "meanRssMiB": 68.73,
+          "peakRssMiB": 84.7,
+          "meanPsCpuPercent": 3.42,
+          "peakPsCpuPercent": 4.6
+        }
+      ]
+    }
+  },
+  "privateIdle": {
+    "capturedAt": "2026-11-16T10:51:50.201Z",
+    "condition": "Private backend idle, zero browser clients, Tailscale connected with zero peers; Serve not running",
+    "samples": 10,
+    "intervalSeconds": 1,
+    "exclusions": "Browsers, supervisor, npm/build tools and other host processes. Tailscale CLI/Serve not running in this sample. ps CPU is the OS estimate, not interval CPU usage.",
+    "processes": [
+      {
+        "name": "Tailscale GUI",
+        "meanRssMiB": 17.34,
+        "peakRssMiB": 17.39,
+        "meanPsCpuPercent": 0.04,
+        "peakPsCpuPercent": 0.2
+      },
+      {
+        "name": "Tailscale network extension",
+        "meanRssMiB": 19.71,
+        "peakRssMiB": 19.78,
+        "meanPsCpuPercent": 0.09,
+        "peakPsCpuPercent": 0.8
+      },
+      {
+        "name": "Application",
+        "meanRssMiB": 8.45,
+        "peakRssMiB": 8.98,
+        "meanPsCpuPercent": 0.03,
+        "peakPsCpuPercent": 0.3
+      },
+      {
+        "name": "LiveKit",
+        "meanRssMiB": 12.22,
+        "peakRssMiB": 12.42,
+        "meanPsCpuPercent": 0.03,
+        "peakPsCpuPercent": 0.1
+      }
+    ]
+  }
+}

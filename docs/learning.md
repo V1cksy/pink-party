@@ -2,7 +2,9 @@
 
 The project owner selected the gaming hangout, required the pink design and voice chat, and agreed the local-first scope. Codex generated the application, LiveKit integration, local and private-access configuration, tests and documentation, then ran and debugged the automated checks. A separate Codex reviewer inspected the implementation. LiveKit and its SDKs provide the voice transport.
 
-The owner has not yet confirmed personally running the setup, testing a physical microphone, reading the implementation or explaining its behaviour. Those steps remain pending. The private-access implementation has agent-run tests with a synthetic identity/TLS proxy and real loopback media. Actual Tailscale access and a separate-home human call remain pending. This project does not establish completed Linux administration, cloud deployment, incident response or backup recovery work.
+On 16 November 2026, the owner completed native Tailscale installation, sign-in, first-use onboarding and HTTPS consent, and confirmed hearing their speech through Pink Party in Chrome on one Mac. They also confirmed speech after swapping the muted tab, silence/restored speech with mute/unmute, and leave/rejoin with participant-count updates. Exact audio device selection was not confirmed. No second physical device was available.
+
+Codex inspected and privately saved the existing policy, applied the scoped owner-only network grant, ran project setup and socket checks, and implemented the real Serve verification suite and Tailscale resource sampling. The owner has not confirmed independently running project scripts, reading the implementation or explaining its behaviour. See [current operational validation](validation-batch-3.md) for actual Tailscale evidence and the unresolved Safari/WebKit failure. This project does not establish completed Linux administration, cloud deployment, incident response or backup recovery work.
 
 ## Follow a join request
 
@@ -16,7 +18,7 @@ Start with `server/config.ts`, `server/admission.ts` and `src/voice.ts`. Then re
 
 ## Owner practice to record next
 
-Run setup and checks yourself; explain each service and port. Make a small change to the fictional session JSON, restart, and check the timezone. Use a physical microphone and headphones for a short human listening test. Record what you changed, observed and understood here, without treating generated code as independently written work.
+Run setup and checks yourself; explain each service and port. Make a small change to the fictional session JSON, restart, and check the timezone. Repeat the listening check from a second physical device, then with an invited friend in another home. Record what you changed, observed and understood here, without treating generated code as independently written work.
 
 ## Interview questions
 
@@ -38,7 +40,7 @@ Record your browser, input/output devices, whether speech was intelligible, and 
 
 ## Private-network practice
 
-These are exercises to perform and explain; none has been confirmed as completed by the owner.
+The owner has completed the setup and same-Mac listening steps above. The code walkthrough, independent diagnostics and peer-device exercises below still need owner observations.
 
 1. Read the [network diagram and operations guide](remote-access.md). Trace a page request, an allowlist rejection, a token request and the separate signaling/media paths. Find the matching checks in `server/access.ts`, `server/admission.ts` and `server/signaling.ts`.
 2. Run local mode, inspect the three sockets with `lsof`, and stop it. After Tailscale setup, repeat in private mode. Explain why the application still listens on loopback while UDP 7882 changes address.
