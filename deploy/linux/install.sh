@@ -12,6 +12,21 @@ if [[ $ID != ubuntu || $VERSION_ID != 24.04 ]]; then
   exit 1
 fi
 source_dir=$(cd "${1:?Pass the unpacked project directory}" && pwd)
+shift
+recover_dir=
+if [[ $# != 0 ]]; then
+  if [[ $# != 2 || $1 != --recover-from || -z $2 ]]; then
+    echo 'Usage: install.sh SOURCE [--recover-from VALIDATED_RESTORE_DIRECTORY]' >&2
+    exit 1
+  fi
+  recover_dir=$2
+fi
+# Serialize activation and fresh-install checks, including normal redeployments.
+exec 9>/run/pink-party-install.lock
+flock -n 9 || { echo 'Another installation is running.' >&2; exit 1; }
+if [[ -n $recover_dir ]]; then
+  python3 -B "$source_dir/deploy/linux/recovery-config.py" check-fresh
+fi
 test -f "$source_dir/server/index.ts"
 test -f "$source_dir/deploy/linux/pink-party.service"
 if [[ $source_dir == /opt/pink-party/app ]]; then
@@ -25,18 +40,9 @@ apt-get install -y --no-install-recommends ca-certificates curl xz-utils libatom
 install -d -m 0755 /opt/pink-party
 install -d -m 0700 /var/cache/pink-party
 
-fetch() {
-  local url=$1 name=$2 digest=$3
-  if [[ ! -f /var/cache/pink-party/$name ]] || ! echo "$digest  /var/cache/pink-party/$name" | sha256sum -c --status; then
-    curl --fail --location --connect-timeout 15 --max-time 180 \
-      "$url" -o "/var/cache/pink-party/$name"
-    echo "$digest  /var/cache/pink-party/$name" | sha256sum -c --status
-  fi
-}
-fetch 'https://nodejs.org/dist/v24.22.2/node-v24.22.2-linux-arm64.tar.xz' \
-  node.tar.xz eb187837a2230d4047161ac0be008584e16b46f726e9c9490ee35dc6b17d9ba8
-fetch 'https://github.com/livekit/livekit/releases/download/v1.13.11/livekit_1.13.11_linux_arm64.tar.gz' \
-  livekit.tar.gz 2af6ce091d6b3c79d1677f8ff1bbb91a8007f40b2325c059b52d38383c0830b6
+. "$source_dir/deploy/linux/runtimes.sh"
+fetch_runtime "$NODE_URL" /var/cache/pink-party/node.tar.xz "$NODE_SHA256"
+fetch_runtime "$LIVEKIT_URL" /var/cache/pink-party/livekit.tar.gz "$LIVEKIT_SHA256"
 build_dir=$(mktemp -d /opt/pink-party/build.XXXXXX)
 monitor_paused=false
 backup_paused=false
@@ -66,6 +72,26 @@ tar -xzf /var/cache/pink-party/livekit.tar.gz -C "$build_dir/bin" livekit-server
 chmod -R u=rwX,go=rX "$build_dir/node" "$build_dir/bin"
 export PATH="$build_dir/node/bin:$build_dir/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
+if [[ -n $recover_dir ]]; then
+  python3 -B "$source_dir/deploy/linux/recovery-config.py" stage "$recover_dir" "$build_dir/recovered"
+fi
+
+bash "$source_dir/deploy/linux/archive.sh" "$source_dir" "$build_dir/source.tar"
+tar --no-same-owner -C "$build_dir/app" -xf "$build_dir/source.tar"
+if [[ -n $recover_dir ]]; then
+  install -o root -g root -m 0644 "$build_dir/recovered/data/session.json" "$build_dir/app/data/session.json"
+fi
+cd "$build_dir/app"
+npm ci --no-audit --no-fund
+npm run build
+chown -R root:root "$build_dir/app"
+chmod -R u=rwX,go=rX "$build_dir/app"
+ln -s /var/lib/pink-party .local
+
+if [[ -n $recover_dir ]]; then
+  # A failed build leaves no new working environment or service state.
+  python3 -B "$source_dir/deploy/linux/recovery-config.py" check-fresh
+fi
 if ! id pink-party >/dev/null 2>&1; then
   useradd --system --user-group --home-dir /var/lib/pink-party \
     --shell /usr/sbin/nologin pink-party
@@ -76,7 +102,9 @@ if [[ $(id -u pink-party) == 0 || $(getent passwd pink-party | cut -d: -f7) != /
 fi
 install -d -o pink-party -g pink-party -m 0700 /var/lib/pink-party
 install -d -o root -g root -m 0700 /etc/pink-party
-if [[ ! -e /etc/pink-party/pink-party.env ]]; then
+if [[ -n $recover_dir ]]; then
+  install -o root -g root -m 0600 "$build_dir/recovered/private/pink-party.env" /etc/pink-party/pink-party.env
+elif [[ ! -e /etc/pink-party/pink-party.env ]]; then
   node --input-type=module -e '
     import { randomBytes } from "node:crypto";
     import { writeFileSync } from "node:fs";
@@ -86,15 +114,6 @@ if [[ ! -e /etc/pink-party/pink-party.env ]]; then
 fi
 chown root:root /etc/pink-party/pink-party.env
 chmod 0600 /etc/pink-party/pink-party.env
-
-bash "$source_dir/deploy/linux/archive.sh" "$source_dir" "$build_dir/source.tar"
-tar --no-same-owner -C "$build_dir/app" -xf "$build_dir/source.tar"
-cd "$build_dir/app"
-npm ci --no-audit --no-fund
-npm run build
-chown -R root:root "$build_dir/app"
-chmod -R u=rwX,go=rX "$build_dir/app"
-ln -s /var/lib/pink-party .local
 
 # Keep the running version available until its replacement has built successfully.
 # Avoid running a check while its runtime/code is being replaced.

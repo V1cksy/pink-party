@@ -96,7 +96,9 @@ Additional commands and prerequisites:
 | `npm run diagnose` / `npm run diagnose:private` | Check running services. Health does not prove media reception.     |
 | `npm run measure:private -- 10`                 | Sample app, LiveKit and Tailscale components separately.           |
 
-Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. The [tested recovery scope](docs/recovery-linux-backups.md) covers synthetic files within a host. Cloud backups also shared their VM disk and were removed with the lab. Independent encrypted backup storage remains future work.
+Batch 8 adds encrypted off-VM export and a fresh Ubuntu rebuild using recovered Linux credentials and synthetic session data. See the [fresh recovery report](docs/recovery-off-vm.md) and [repeatable operations](docs/encrypted-recovery.md) for measured scope and limitations.
+
+Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. The original [file-recovery exercise](docs/recovery-linux-backups.md) covered one host. The [later fresh-VM recovery](docs/recovery-off-vm.md) uses encrypted storage outside the source guest. Its vault and separate key remain on the same Mac; off-device storage and recovery after Mac loss remain future work. Cloud backups shared their VM disk and were removed with that lab.
 
 ## Project notes
 
@@ -108,6 +110,7 @@ Raw private evidence and failed-test artifacts stay ignored. See the [operations
 - [Linux deployment](docs/linux-deployment.md) and [validation](docs/validation-linux.md): systemd configuration, permissions, failure exercises and local VM audio checks.
 - [Monitoring incident](docs/incident-linux-monitoring.md): controlled outage, scheduled detection, diagnosis and recovery.
 - [Backup operations](docs/linux-backups.md) and [recovery report](docs/recovery-linux-backups.md): scheduled snapshots, safe restoration and tested synthetic file loss.
+- [Encrypted recovery operations](docs/encrypted-recovery.md) and [fresh-VM report](docs/recovery-off-vm.md): age export, separate key handling, rebuild, failure boundaries and cleanup.
 - [Cloud operations](docs/cloud-deployment.md), [report](docs/cloud-report.md) and [validation](docs/validation-cloud.json): verified AWS entitlement, private deployment, cross-host media, recovery and deletion evidence.
 
 ## Contributions
@@ -117,5 +120,7 @@ The owner chose the gaming-hangout scope and pink design, completed Tailscale on
 Codex also installed the Linux VM, implemented its deployment, service, scheduled monitoring and backup configuration, and ran the recorded Linux checks, incident and restoration exercises. Independent owner practice on Linux remains unconfirmed.
 
 For AWS, the owner completed account/node onboarding and approvals. Codex prepared the cloud scripts, provisioned the host, performed the deployment and exercises, and verified teardown. No independent owner cloud administration or professional cloud role is claimed.
+
+Codex also implemented encrypted export, rebuilt a disposable Linux guest from the retained copy and key, and performed the recovery and failure exercises. These are assisted project results; independent owner recovery practice remains unconfirmed.
 
 LiveKit and its SDKs provide voice transport. The interface uses self-hosted Nunito Sans under the [SIL Open Font License](public/fonts/OFL.txt). The farmhouse is an original SVG illustration; it does not use Stardew Valley game assets.

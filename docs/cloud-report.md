@@ -1,5 +1,6 @@
 # First private AWS deployment
 
+Later evidence: [batch 8](recovery-off-vm.md) tested encrypted off-VM storage and fresh local Linux recovery. It did not restore to AWS; this report retains the cloud stage’s original scope.
 Recorded 17 November 2026. Codex implemented and exercised this lab at the owner's request. The owner created the AWS Free account, completed temporary CLI and cloud-node sign-in, and approved the temporary network rule and rollback. These are assisted project results, with no claim of independent owner administration, professional cloud duties or a credential.
 
 ## Deployment and access

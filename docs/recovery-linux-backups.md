@@ -1,5 +1,6 @@
 # Linux backup and recovery exercise
 
+Later evidence: [batch 8](recovery-off-vm.md) extends these same-disk exercises with encrypted off-VM export and fresh local Linux recovery. This report retains the original batch-6 scope.
 On 16 November 2026, Codex implemented and performed this stage at the owner's request in the local Ubuntu ARM64 VM. This is assisted portfolio evidence for backup scoping, systemd scheduling, integrity checks, restrictive permissions and file restoration. Independent owner practice and professional backup duties are not claimed.
 
 ## What was recovered

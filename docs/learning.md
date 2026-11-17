@@ -53,6 +53,20 @@ Questions for a later walkthrough:
 - Why can the root monitor supply an identity header locally while a remote browser must use Serve?
 - What did the separate-directory restore protect, and which losses would require independent backup storage?
 
+## Encrypted off-VM recovery
+
+On 17 November 2026, the owner authorised Codex to implement encrypted export and perform fresh-machine recovery. Codex used age with a dedicated recovery identity retained separately from an off-VM Mac vault, exported a real scheduled synthetic capture, stopped the original guest, and rebuilt a new Ubuntu ARM64 guest from public source and the encrypted recovery material. The exercises compared exact recovered files privately, checked the loaded credentials and served marker, tested failure boundaries and verified the rebuilt service. The [recovery report](recovery-off-vm.md) records measured results and cleanup; [operations](encrypted-recovery.md) contains reproducible steps.
+
+This adds assisted portfolio evidence for encryption/key handling, independent guest storage, recovery validation, safe credential application and rebuilding Linux services. The vault and key share one physical Mac. Off-device protection, full physical-host recovery, independent owner practice and professional backup duties are not established.
+
+Questions for a later walkthrough:
+
+- Which loss can an off-VM vault on the same Mac survive, and which loss removes it too?
+- Why does the source need a public recipient while recovery needs a separately retained identity?
+- Why must successful age decryption precede archive parsing and file publication?
+- What do authentication, SHA-256 consistency and provenance each establish?
+- How do the recovered marker, process environment and decoded media distinguish restoration from a default install or HTTP-only check?
+
 ## Follow a join request
 
 1. `index.html` contains the page and labelled controls; `src/main.ts` connects them to the voice controller and renders session data and real participant state.

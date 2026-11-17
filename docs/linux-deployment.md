@@ -4,6 +4,8 @@ Pink Party runs as a systemd service in an ARM64 Ubuntu 24.04 VM. This lab cover
 
 The Mac private-access setup remains separate. This Lima guest uses local mode, with a browser inside the VM for synthetic voice tests. Tailscale is not installed in this guest. A separate AWS host exercised Linux private mode in [batch 7](cloud-report.md); follow [cloud operations](cloud-deployment.md) for its extra units, account boundaries and teardown.
 
+For a fresh rebuild from encrypted recovery material, use [encrypted recovery operations](encrypted-recovery.md). The recovery installer preserves the restored session and credentials and rejects an existing deployment. Normal deployment below replaces the installed session from public source.
+
 ## Environment and access
 
 [Lima](https://lima-vm.io/docs/) uses macOS's Virtualization framework. The [VM configuration](../deploy/linux/lima.yaml) allocates two CPUs, 1536 MiB RAM and a 12 GiB sparse disk. It disables shared host folders, containerd and application port forwarding. Administrative SSH remains available through a localhost port on the Mac.

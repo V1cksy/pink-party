@@ -213,7 +213,9 @@ test('real signaling transport loss reconnects, then leaves cleanly', async ({
 
 test('responsive interface, keyboard labels and synthetic session are visible', async ({
   page,
+  request,
 }) => {
+  const session = await (await request.get('/api/session')).json();
   await page.goto('/');
   await expect(
     page.getByRole('heading', { name: 'Stardew Valley', exact: true }),
@@ -226,6 +228,7 @@ test('responsive interface, keyboard labels and synthetic session are visible', 
   ).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('#voice-room')).toBeFocused();
+  await expect(page.locator('#session-title')).toHaveText(session.title);
   await page.getByRole('heading', { name: 'Anyone up for a game?' }).click();
   await page.screenshot({ path: '.local/desktop.png', fullPage: true });
   for (const width of [320, 390, 680, 900, 1440]) {
