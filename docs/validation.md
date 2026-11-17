@@ -63,3 +63,7 @@ RSS and the OS `ps` CPU estimate vary with process lifetime, garbage collection 
 - Friends joining from separate homes, private HTTPS/identity, Linux operation, monitoring, incident exercises, tested restoration and cloud deployment remain future batches.
 
 The [learning notes](learning.md) explain the implementation and further exercises.
+
+## Off-device backup preparation
+
+The batch-11 fixture uses a real OpenSSH SFTP subprocess and the existing age/archive validators. A live Mac user-agent exercise observed scheduled failure against an unreachable loopback endpoint. See the [batch-11 report](offsite-backup-report.md) for measured results and the pending off-device checks.

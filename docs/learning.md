@@ -140,3 +140,7 @@ I closed the gap between scheduled Linux snapshots and the manual off-VM export.
 The job records separate attempts, export success, authenticated collection and snapshot capture time. Revalidating an old copy does not make its data new. I used scheduled failures and recovery to check this distinction, including temporary key references, missing/stale captures and interrupted transfer. The [batch-10 report](scheduled-export-report.md) records the observations and [operations guide](scheduled-exports.md) explains the locking, spare publication slot and ambiguous post-publication failures.
 
 The vault and identity still share the physical Mac. This stage protects access to guest recovery material; independent device/host-loss recovery needs separate custody.
+
+## Off-device backup preparation (batch 11)
+
+I separated publication from proof of recovery. The uploader downloads and authenticates the complete ciphertext before retiring an older copy. The reader can retrieve using its own SSH configuration and age identity, with the Mac collection store unavailable. My local fixture covered partial uploads, a lost rename response, stale data and failure on a full rolling store. The [operations guide](offsite-backups.md) covers recovery inputs and access. The [batch-11 report](offsite-backup-report.md) records which parts ran.

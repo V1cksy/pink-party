@@ -50,7 +50,7 @@ def scheduled_capture(expected, after):
             return path, manifest
 
 
-def begin():
+def begin(marker='Synthetic batch 10: automatically collected encrypted recovery.'):
     require(not WORK.exists() and not LOCK.exists(), 'use-new-workspace-and-inspect-existing-lock')
     require(healthy(), 'healthy-baseline-required')
     LOCK.mkdir(mode=0o700)
@@ -64,7 +64,7 @@ def begin():
     # finish can restore from this journal even if restart/readiness fails after the data change.
     atomic_json(WORK / 'report.json', report)
     synthetic = json.loads(original['data/session.json'])
-    synthetic['title'] = 'Synthetic batch 10: automatically collected encrypted recovery.'
+    synthetic['title'] = marker
     data = (json.dumps(synthetic, indent=2) + '\n').encode()
     backup.write_private(WORK / 'synthetic-session.json', data)
     replace_session(data)
@@ -106,9 +106,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command', choices=['begin', 'finish'])
     parser.add_argument('--work-name', default='batch10-chain')
+    parser.add_argument('--batch11', action='store_true')
     args = parser.parse_args()
     require(os.geteuid() == 0, 'run-as-root')
     require(re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}', args.work_name), 'invalid-work-name')
     WORK = backup.RESTORES / args.work_name
     os.umask(0o077)
-    (begin if args.command == 'begin' else finish)()
+    if args.command == 'finish':
+        finish()
+    elif args.batch11:
+        begin('Synthetic batch 11: recovered from off-device storage.')
+    else:
+        begin()

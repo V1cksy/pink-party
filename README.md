@@ -28,6 +28,8 @@ The implementation includes:
 - Permission recovery, join cancellation, mute state and reconnection. Leaving or failing a join releases microphone tracks and attached audio. See the [voice controller](src/voice.ts) and [browser tests](tests/browser/recovery.spec.ts).
 - Coordinated startup and shutdown, configuration validation and diagnostics. A failed backend stops its companion. See the [supervisor](scripts/start.ts) and [startup regression test](tests/startup.test.ts).
 
+The [off-device backup workflow](docs/offsite-backups.md) adds an SFTP upload and independent retrieval command. I tested transfer and file restoration with a local OpenSSH fixture. Live off-device storage and independent key custody are pending. [Batch-11 report](docs/offsite-backup-report.md)
+
 ## Connection paths
 
 In private mode, Tailscale Serve terminates HTTPS and supplies the verified account identity. The application checks that identity before serving the page, API or signaling. Local programs on the host remain trusted and can forge local identity headers.
@@ -115,6 +117,7 @@ Raw private evidence and failed-test artifacts stay ignored. See the [operations
 - [Monitoring incident](docs/incident-linux-monitoring.md): controlled outage, scheduled detection, diagnosis and recovery.
 - [Backup operations](docs/linux-backups.md) and [recovery report](docs/recovery-linux-backups.md): scheduled snapshots, safe restoration and tested synthetic file loss.
 - [Encrypted recovery operations](docs/encrypted-recovery.md) and [fresh-VM report](docs/recovery-off-vm.md): age export, separate key handling, rebuild, failure boundaries and cleanup.
+- [Off-device backup operations](docs/offsite-backups.md) and [batch-11 report](docs/offsite-backup-report.md).
 - [Scheduled encrypted exports](docs/scheduled-exports.md) and [freshness report](docs/scheduled-export-report.md): systemd/launchd scheduling, authenticated rolling collection, failure handling and cleanup.
 - [Cloud operations](docs/cloud-deployment.md), [report](docs/cloud-report.md) and [validation](docs/validation-cloud.json): verified AWS entitlement, private deployment, cross-host media, recovery and deletion evidence.
 

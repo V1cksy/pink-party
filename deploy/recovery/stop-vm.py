@@ -70,7 +70,7 @@ def stop(vm):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('vm', choices=['pink-party', 'pink-party-recovery-b8'])
+    parser.add_argument('vm', choices=['pink-party', 'pink-party-recovery-b8', 'pink-party-recovery-b11'])
     args = parser.parse_args()
     print(json.dumps(stop(args.vm)))
 

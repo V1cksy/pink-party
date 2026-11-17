@@ -14,7 +14,7 @@ from backup import (SOURCES, STORE, MODES, read_regular, private_directory,
                     require, validate_backup, write_private)
 
 
-def verify(recovered):
+def verify(recovered, marker):
     private_directory(recovered)
     expected = {name: read_regular(recovered / name, 16384, MODES[name]) for name in MODES}
     require(all(read_regular(SOURCES[name], 16384, MODES[name]) == value
@@ -32,7 +32,7 @@ def verify(recovered):
     with urllib.request.urlopen('http://127.0.0.1:3000/api/session', timeout=3) as response:
         require(json.load(response) == json.loads(expected['data/session.json']), 'Served session mismatch')
     require(json.loads(expected['data/session.json'])['title'] ==
-            'Synthetic batch 8: recovered from the off-VM vault.', 'Recovery marker missing')
+            marker, 'Recovery marker missing')
     for unit in ['pink-party.service', 'pink-party-monitor.timer', 'pink-party-backup.timer']:
         for command in ['is-enabled', 'is-active']:
             subprocess.run(['systemctl', command, '--quiet', unit], check=True, timeout=5)
@@ -71,10 +71,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('recovered', type=Path)
     parser.add_argument('report', type=Path)
+    parser.add_argument('--marker', default='Synthetic batch 8: recovered from the off-VM vault.')
     args = parser.parse_args()
     require(os.geteuid() == 0, 'Run as root in recovery guest')
     os.umask(0o077)
-    report = verify(args.recovered)
+    report = verify(args.recovered, args.marker)
     write_private(args.report, (json.dumps(report, indent=2) + '\n').encode())
     print('Exact recovered files, loaded credentials, served marker and scheduled jobs verified.')
 

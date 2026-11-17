@@ -14,6 +14,8 @@ The script preserves its failing exit status, stops its application process grou
 
 No repository secrets, owner environment, recovery key, AWS access or Tailscale state are supplied. Only ordinary test output is published. Raw application logs, screenshots and browser artifacts are not uploaded. Credentials and ephemeral identities generated inside tests are synthetic fixtures, not the owner's configuration.
 
+The backup tests use a local OpenSSH SFTP subprocess in a disposable directory. This fixture opens no listener and needs no external destination or credentials.
+
 ## Execution and permissions
 
 The action is pinned to a full commit SHA, with credential persistence disabled. The token has `contents: read`; other workflow permissions are absent. Pull requests use `pull_request`, without a privileged `pull_request_target` job or untrusted text interpolated into shell code. Runs on the same Git ref cancel older work. Each job has a 20-minute bound and browser installation a separate ten-minute bound.

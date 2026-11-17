@@ -172,14 +172,15 @@ def inspect(config):
             'capturedAt': success['capturedAt'] if success else None}
 
 
-def bounded_run(config_path):
+def bounded_run(config_path, script=Path(__file__), timeout=90, arguments=None):
     def interrupted(signum, frame):
         raise InterruptedError('collection interrupted')
     previous_handler = signal.signal(signal.SIGTERM, interrupted)
-    child = subprocess.Popen([sys.executable, '-B', str(Path(__file__).resolve()), 'worker', str(config_path)],
+    child = subprocess.Popen([sys.executable, '-B', str(script.resolve()),
+                              *(arguments or ['worker', str(config_path)])],
                              start_new_session=True)
     try:
-        return child.wait(timeout=90)
+        return child.wait(timeout=timeout)
     except (subprocess.TimeoutExpired, KeyboardInterrupt, InterruptedError):
         os.killpg(child.pid, signal.SIGTERM)
         try:

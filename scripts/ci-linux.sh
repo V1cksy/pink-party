@@ -32,7 +32,8 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 sudo apt-get update -qq
-sudo apt-get install -y --no-install-recommends age ca-certificates curl xz-utils libatomic1 python3 lsof
+sudo apt-get install -y --no-install-recommends age ca-certificates curl xz-utils libatomic1 python3 lsof openssh-sftp-server
+test -x /usr/lib/openssh/sftp-server
 . deploy/linux/runtimes.sh
 fetch_runtime "$NODE_URL" "$work/node.tar.xz" "$NODE_SHA256"
 fetch_runtime "$LIVEKIT_URL" "$work/livekit.tar.gz" "$LIVEKIT_SHA256"
