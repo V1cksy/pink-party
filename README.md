@@ -16,6 +16,8 @@ A separate systemd timer records web/control health even when the application is
 
 The [backup and recovery lab](docs/recovery-linux-backups.md) adds scheduled private snapshots, archive integrity/path checks and restoration into a separate directory. A synthetic-data loss exercise verifies the recovered session through the running application. Storage remains on the same guest disk.
 
+The [scheduled export workflow](docs/scheduled-exports.md) adds Linux encryption and an opt-in Mac collector. The collector authenticates and validates each candidate before rolling retention. Freshness tracks attempts, successful exports, validated collections and actual capture time separately. The original pinned recovery material stays outside automation. See [the batch-10 report](docs/scheduled-export-report.md) for practical scheduler/failure observations and the same-Mac storage limit.
+
 The [first cloud deployment](docs/cloud-report.md) reproduced the service on AWS with separate credentials, a live Free-plan guard and repeatable teardown. The Mac reached the actual cloud host through trusted HTTPS, verified identity, WSS and private UDP media. Scheduled private monitoring/backups, recovery and automatic startup after a guest reboot were exercised before deleting the VM, disk, address and network resources.
 
 The implementation includes:
@@ -113,6 +115,7 @@ Raw private evidence and failed-test artifacts stay ignored. See the [operations
 - [Monitoring incident](docs/incident-linux-monitoring.md): controlled outage, scheduled detection, diagnosis and recovery.
 - [Backup operations](docs/linux-backups.md) and [recovery report](docs/recovery-linux-backups.md): scheduled snapshots, safe restoration and tested synthetic file loss.
 - [Encrypted recovery operations](docs/encrypted-recovery.md) and [fresh-VM report](docs/recovery-off-vm.md): age export, separate key handling, rebuild, failure boundaries and cleanup.
+- [Scheduled encrypted exports](docs/scheduled-exports.md) and [freshness report](docs/scheduled-export-report.md): systemd/launchd scheduling, authenticated rolling collection, failure handling and cleanup.
 - [Cloud operations](docs/cloud-deployment.md), [report](docs/cloud-report.md) and [validation](docs/validation-cloud.json): verified AWS entitlement, private deployment, cross-host media, recovery and deletion evidence.
 
 ## Project ownership and software credits

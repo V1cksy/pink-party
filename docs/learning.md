@@ -132,3 +132,11 @@ Additional interview questions:
 - Which boundaries remain unverified, and what evidence would establish them?
 
 Add dated observations from completed exercises. Keep real login names, addresses and private device details outside the public repository.
+
+## Scheduled encrypted recovery and freshness
+
+I closed the gap between scheduled Linux snapshots and the manual off-VM export. A separate systemd service encrypts validated completed captures, while a Mac user agent collects only ciphertext and authenticates the archive before rolling retention. The original tested export and recovery identity stay outside automation.
+
+The job records separate attempts, export success, authenticated collection and snapshot capture time. Revalidating an old copy does not make its data new. I used scheduled failures and recovery to check this distinction, including temporary key references, missing/stale captures and interrupted transfer. The [batch-10 report](scheduled-export-report.md) records the observations and [operations guide](scheduled-exports.md) explains the locking, spare publication slot and ambiguous post-publication failures.
+
+The vault and identity still share the physical Mac. This stage protects access to guest recovery material; independent device/host-loss recovery needs separate custody.

@@ -1,0 +1,11 @@
+[Unit]
+Description=Export completed Pink Party captures every minute while enabled
+
+[Timer]
+OnActiveSec=45s
+OnUnitInactiveSec=60s
+AccuracySec=1s
+Unit=pink-party-export.service
+
+[Install]
+WantedBy=timers.target

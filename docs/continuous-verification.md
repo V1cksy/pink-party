@@ -1,5 +1,7 @@
 # Continuous verification
 
+Batch 10 extends the same offline test discovery with scheduled-export, authenticated rolling collection and freshness failure tests. The workflow/runner/permissions and no-secrets/no-artifact boundary remain unchanged. See [the scheduled-export report](scheduled-export-report.md) for actual native-scheduler evidence, which CI does not establish.
+
 [Verify](https://github.com/V1cksy/pink-party/actions/workflows/verify.yml) checks pushes and pull requests targeting `main`, with a manual dispatch option. It runs the source checks and synthetic browser/media suite on a fresh Ubuntu 24.04 ARM64 GitHub-hosted runner. [The workflow](../.github/workflows/verify.yml) and [CI script](../scripts/ci-linux.sh) are the executable configuration.
 
 ## What runs

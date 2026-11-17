@@ -36,7 +36,7 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y --no-install-recommends ca-certificates curl xz-utils libatomic1 python3
+apt-get install -y --no-install-recommends ca-certificates curl xz-utils libatomic1 python3 age
 install -d -m 0755 /opt/pink-party
 install -d -m 0700 /var/cache/pink-party
 
@@ -46,6 +46,7 @@ fetch_runtime "$LIVEKIT_URL" /var/cache/pink-party/livekit.tar.gz "$LIVEKIT_SHA2
 build_dir=$(mktemp -d /opt/pink-party/build.XXXXXX)
 monitor_paused=false
 backup_paused=false
+export_paused=false
 cleanup() {
   local result=$?
   rm -rf "$build_dir"
@@ -62,6 +63,10 @@ cleanup() {
       echo 'Backups could not resume; inspect pink-party-backup.timer.' >&2
       result=1
     fi
+  fi
+  if [[ $export_paused == true ]]; then
+    systemctl daemon-reload || result=1
+    systemctl start pink-party-export.timer || result=1
   fi
   exit "$result"
 }
@@ -125,12 +130,18 @@ if systemctl cat pink-party-backup.timer >/dev/null 2>&1; then
   backup_paused=true
   systemctl stop pink-party-backup.timer pink-party-backup.service
 fi
+if systemctl is-active --quiet pink-party-export.timer; then
+  export_paused=true
+fi
+if systemctl cat pink-party-export.service >/dev/null 2>&1; then
+  systemctl stop pink-party-export.timer pink-party-export.service
+fi
 if systemctl cat pink-party.service >/dev/null 2>&1; then
   systemctl stop pink-party.service
 fi
 rm -rf /opt/pink-party/previous
 install -d -m 0755 /opt/pink-party/previous
-for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer pink-party-backup.service pink-party-backup.timer; do
+for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer pink-party-backup.service pink-party-backup.timer pink-party-export.service pink-party-export.timer; do
   if [[ -f /etc/systemd/system/$unit ]]; then
     cp "/etc/systemd/system/$unit" /opt/pink-party/previous/
   fi
@@ -145,8 +156,11 @@ for component in app node bin; do
   mv "$build_dir/$component" "/opt/pink-party/$component"
 done
 cd /opt/pink-party/app
-install -d -o root -g root -m 0700 /var/lib/pink-party-backups /var/lib/pink-party-restores
-for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer pink-party-backup.service pink-party-backup.timer; do
+install -d -o root -g root -m 0700 /var/lib/pink-party-backups /var/lib/pink-party-restores /var/lib/pink-party-backup-status /var/lib/pink-party-rolling-exports /var/lib/pink-party-export-status
+# The exporter may write only this lock, never the snapshot store.
+touch /var/lib/pink-party-backups/.lock
+chmod 0600 /var/lib/pink-party-backups/.lock
+for unit in pink-party.service pink-party-monitor.service pink-party-monitor.timer pink-party-backup.service pink-party-backup.timer pink-party-export.service pink-party-export.timer; do
   install -o root -g root -m 0644 "deploy/linux/$unit" "/etc/systemd/system/$unit"
 done
 install -d -m 0755 /etc/systemd/journald@pink-party-monitor.conf.d
@@ -157,7 +171,8 @@ install -o root -g root -m 0644 deploy/linux/journald-backup.conf \
   /etc/systemd/journald@pink-party-backup.conf.d/limits.conf
 systemd-analyze verify /etc/systemd/system/pink-party.service \
   /etc/systemd/system/pink-party-monitor.service /etc/systemd/system/pink-party-monitor.timer \
-  /etc/systemd/system/pink-party-backup.service /etc/systemd/system/pink-party-backup.timer
+  /etc/systemd/system/pink-party-backup.service /etc/systemd/system/pink-party-backup.timer \
+  /etc/systemd/system/pink-party-export.service /etc/systemd/system/pink-party-export.timer
 systemctl daemon-reload
 systemctl try-restart systemd-journald@pink-party-monitor.service
 systemctl enable --now pink-party-monitor.timer

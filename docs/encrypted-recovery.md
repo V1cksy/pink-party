@@ -1,5 +1,7 @@
 # Encrypted export and fresh Linux recovery
 
+For automatic encryption, authenticated Mac collection and freshness checks, use [scheduled exports](scheduled-exports.md). That workflow uses a separate rolling area and preserves this manually managed vault/key. The manual commands below remain available.
+
 This workflow keeps a validated snapshot outside the source VM, encrypted with [age](https://github.com/FiloSottile/age). It rebuilds a separate local Ubuntu ARM64 guest from public source and applies only the recovered Linux local-mode session and application environment. [The batch-8 report](recovery-off-vm.md) records what actually ran.
 
 ## Storage and key boundary

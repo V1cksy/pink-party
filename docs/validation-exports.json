@@ -1,0 +1,194 @@
+{
+  "recordedAt": "2026-11-17",
+  "scope": "Scheduled Linux encrypted export, authenticated Mac rolling collection and independent freshness",
+  "architecture": {
+    "sourceVcpus": 2,
+    "sourceMemoryMiB": 1536,
+    "sourceSparseDiskGiB": 12,
+    "newVmCreated": false,
+    "recoveryIdentityEnteredSource": false,
+    "samePhysicalMacVaultAndKey": true,
+    "offDeviceRecovery": false
+  },
+  "schedules": {
+    "backupOnActiveSeconds": 30,
+    "backupAfterCompletionSeconds": 900,
+    "exportOnActiveSeconds": 45,
+    "exportAfterCompletionSeconds": 60,
+    "macNormalIntervalSeconds": 60,
+    "macFailureExerciseIntervalSeconds": 15
+  },
+  "bounds": {
+    "snapshotBytes": 65536,
+    "ciphertextBytes": 131072,
+    "offerBytes": 262144,
+    "exportServiceSeconds": 90,
+    "macWorkerSeconds": 90,
+    "transferSeconds": 25,
+    "ageSeconds": 15,
+    "captureFreshnessSeconds": 1200,
+    "attemptFreshnessSeconds": 180,
+    "historyRows": 48,
+    "completedRollingCopies": 7,
+    "publicationSpareCopies": 1,
+    "automaticVmStart": false
+  },
+  "actualChain": {
+    "normalFirstScheduledCaptureWaitMs": 32302,
+    "fullChainObservedMs": 126284,
+    "capturedAt": "2026-11-17T15:30:56.798908+00:00",
+    "exportedAt": "2026-11-17T15:31:58.046228+00:00",
+    "collectedAt": "2026-11-17T15:32:30.474660+00:00",
+    "authenticatedAt": "2026-11-17T15:32:32.635561+00:00",
+    "manualWorkersInvokedForRecordedChain": false,
+    "separateRestoreAndIndependentComparisonMs": 1192,
+    "exactBytesOwnerModesAndCaptureCompared": true,
+    "restoredPlaintextRemoved": true
+  },
+  "sourceScheduledFaults": [
+    {
+      "case": "missing",
+      "reason": "job-error",
+      "detectedMs": 16097,
+      "attemptedAt": "2026-11-17T15:38:22.193470+00:00"
+    },
+    {
+      "case": "missing-scheduled-recovery",
+      "reason": "validated",
+      "observedMs": 17758
+    },
+    {
+      "case": "stale",
+      "reason": "stale",
+      "detectedMs": 16492,
+      "attemptedAt": "2026-11-17T15:38:56.236779+00:00"
+    },
+    {
+      "case": "stale-scheduled-recovery",
+      "reason": "validated",
+      "observedMs": 18027
+    },
+    {
+      "case": "failed-export",
+      "reason": "job-error",
+      "detectedMs": 52603,
+      "attemptedAt": "2026-11-17T15:40:07.086371+00:00"
+    },
+    {
+      "case": "failed-export-scheduled-recovery",
+      "reason": "validated",
+      "observedMs": 64744
+    },
+    {
+      "case": "corrupt",
+      "reason": "authentication-or-validation-failed",
+      "detectedMs": 15858,
+      "attemptedAt": "2026-11-17T15:41:27.932482+00:00"
+    },
+    {
+      "case": "corrupt-scheduled-recovery",
+      "reason": "validated",
+      "observedMs": 49985
+    },
+    {
+      "case": "truncated",
+      "reason": "authentication-or-validation-failed",
+      "detectedMs": 16083,
+      "attemptedAt": "2026-11-17T15:42:33.701021+00:00"
+    },
+    {
+      "case": "truncated-scheduled-recovery",
+      "reason": "validated",
+      "observedMs": 50885
+    }
+  ],
+  "macScheduledFaults": [
+    "wrong-temporary-key",
+    "missing-temporary-key",
+    "unavailable-temporary-key",
+    "full-separate-capacity-area",
+    "real-transfer-process-stop",
+    "overlap-rejected",
+    "corrupt-state-retained"
+  ],
+  "offlineFaults": [
+    "clock-skew-and-rollback",
+    "publication-error",
+    "pre-and-post-publication-interrupt",
+    "retirement-error",
+    "missing-mutated-copy",
+    "descendant-cleanup",
+    "missing-corrupt-exercise-checkpoint"
+  ],
+  "unavailableSource": {
+    "applicationDownWithFreshRecoverableCopy": true,
+    "startedAt": "2026-11-17T15:48:28.074103+00:00",
+    "sourceUnavailableObserved": true,
+    "unavailableReason": "source-unavailable-or-transfer-failed",
+    "twoScheduledFailures": true,
+    "collectorDidNotStartStoppedVm": true,
+    "unavailableObservedMs": 59783,
+    "recoveredAt": "2026-11-17T15:50:22.513045+00:00",
+    "freshNormalCaptureAt": "2026-11-17T15:50:04.389073+00:00",
+    "realScheduledRecoveryAfterExplicitRestart": true
+  },
+  "checks": {
+    "linuxTypeScriptTests": 22,
+    "linuxPythonTests": 59,
+    "macNewRegressionTests": 17,
+    "linuxTypecheckBuildFormat": true,
+    "shellSyntaxPythonParseWorkflowLint": true,
+    "independentReviewPasses": 3,
+    "findingsResolved": true,
+    "hostedWorkflowUnchanged": true,
+    "publicRunnerNoSecretsNoArtifactsBoundaryUnchanged": true,
+    "macTypeScriptTests": 22,
+    "macPythonTests": 59,
+    "macTypecheckBuildFormat": true,
+    "publicBuildFilesScanned": 159,
+    "configuredPrivateValuesAbsent": true,
+    "filteredDeploymentArchiveChecked": true
+  },
+  "normalBeforeShutdown": {
+    "verifiedAt": "2026-11-17T15:50:29.515347+00:00",
+    "originalDataConfigurationOwnerModesAndLoadedEnvironment": true,
+    "ownedWebControlHealth": true,
+    "freshNormalScheduledCaptureAt": "2026-11-17T15:50:04.389073+00:00",
+    "lastScheduledMonitoringAt": "2026-11-17T15:50:01.078Z",
+    "normalScheduledExportAt": "2026-11-17T15:50:20.123014+00:00",
+    "noNativeRecoveryIdentityInInspectedStores": true,
+    "privateFilesInspected": 112,
+    "batch8ProtectedBackups": 7,
+    "batch10ProtectedBackups": 7
+  },
+  "finalState": {
+    "checkedAt": "2026-11-17T15:53:17.122783+00:00",
+    "sourceVm": "Stopped",
+    "originalDiskRetained": true,
+    "ownerFilesAndPinnedExportKeyModesUnchanged": true,
+    "pinnedExportAuthenticatedAfterCleanup": true,
+    "allRollingCopiesAuthenticatedAfterCleanup": 7,
+    "macAgentLoaded": false,
+    "macPlistAndInstalledRuntimeRemoved": true,
+    "macPortsFree": true,
+    "tailscaleConnectedServeSemanticsUnchanged": true,
+    "noRemainingProjectHostAgent": true,
+    "noAwsCommandsOrResourcesCreated": true,
+    "newPaidFeatures": false,
+    "temporaryPlaintextKeyAndFailureFixturesRemoved": true,
+    "exportTimerEnabled": false,
+    "appMonitorBackupEnabledForGuestBoot": true,
+    "allProjectUnitsInactive": true,
+    "finalStopNormalExit": 0,
+    "finalStopNewVzEventUtc": "2026-11-17T15:50:30Z",
+    "protectedBatch8BackupCopies": 7,
+    "protectedBatch10BackupCopies": 7
+  },
+  "limitations": [
+    "Same physical Mac; no off-device or physical-host-loss recovery",
+    "Trusted source/operator/store; encryption does not establish sender identity or prevent valid replay",
+    "No external watchdog/notifications; scheduling intentionally stopped after cleanup",
+    "Publication/retirement/state are not a multi-file transaction; no power-loss durability test",
+    "No repeated fresh-VM rebuild or new physical voice test"
+  ]
+}

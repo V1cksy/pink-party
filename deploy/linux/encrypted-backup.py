@@ -71,36 +71,39 @@ def clear_staging(store, pattern):
 
 
 def export_backup(source, store, recipient_file):
+    with backup.locked(source.parent), backup.locked(store):
+        return export_locked(source, store, recipient_file)
+
+
+def export_locked(source, store, recipient_file):
+    """Caller holds both capture-retention and export-store locks."""
     recipient = read_recipient(recipient_file)
     backup.private_directory(store)
     backup.require(source.parent.resolve() != store.resolve(), 'Use a separate export store')
-    # Snapshot retention cannot remove the selected capture while it is being read.
-    with backup.locked(source.parent), backup.locked(store):
-        clear_staging(store, '.pending-export-*')
-        backup.validate_backup(source)
-        archive = backup.read_regular(source / 'snapshot.tar', backup.ARCHIVE_LIMIT, 0o600)
-        stage = Path(tempfile.mkdtemp(prefix='.pending-export-', dir=store))
-        try:
-            encrypted = age_transform(archive, ['--encrypt', '--recipient', recipient], stage, CIPHER_LIMIT)
-            backup.write_private(stage / 'snapshot.tar.age', encrypted)
-            backup.require(backup.read_regular(stage / 'snapshot.tar.age', CIPHER_LIMIT, 0o600) == encrypted,
-                           'Encrypted output verification failed')
-            backup.sync_directory(stage)
-            captured = dt.datetime.now(dt.timezone.utc)
-            target = store / (captured.strftime('export-%Y%m%dT%H%M%S%fZ-') + uuid.uuid4().hex[:8])
-            os.rename(stage, target)
-            backup.sync_directory(store)
-        finally:
-            if stage.exists():
-                shutil.rmtree(stage)
-        # No pruning on encryption/publication failure; retain the new export even after clock rollback.
-        completed = sorted(p for p in store.iterdir() if EXPORT_NAME.fullmatch(p.name) and p != target)
-        for old in completed[:-(KEEP - 1)]:
-            backup.private_directory(old)
-            shutil.rmtree(old)
+    clear_staging(store, '.pending-export-*')
+    backup.validate_backup(source)
+    archive = backup.read_regular(source / 'snapshot.tar', backup.ARCHIVE_LIMIT, 0o600)
+    stage = Path(tempfile.mkdtemp(prefix='.pending-export-', dir=store))
+    try:
+        encrypted = age_transform(archive, ['--encrypt', '--recipient', recipient], stage, CIPHER_LIMIT)
+        backup.write_private(stage / 'snapshot.tar.age', encrypted)
+        backup.require(backup.read_regular(stage / 'snapshot.tar.age', CIPHER_LIMIT, 0o600) == encrypted,
+                       'Encrypted output verification failed')
+        backup.sync_directory(stage)
+        captured = dt.datetime.now(dt.timezone.utc)
+        target = store / (captured.strftime('export-%Y%m%dT%H%M%S%fZ-') + uuid.uuid4().hex[:8])
+        os.rename(stage, target)
         backup.sync_directory(store)
-        return target
-
+    finally:
+        if stage.exists():
+            shutil.rmtree(stage)
+    # No pruning on encryption/publication failure; retain the new export even after clock rollback.
+    completed = sorted(p for p in store.iterdir() if EXPORT_NAME.fullmatch(p.name) and p != target)
+    for old in completed[:-(KEEP - 1)]:
+        backup.private_directory(old)
+        shutil.rmtree(old)
+    backup.sync_directory(store)
+    return target
 
 @contextlib.contextmanager
 def decrypted_backup(encrypted_file, identity_file, work_dir):

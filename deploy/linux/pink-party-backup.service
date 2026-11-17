@@ -4,11 +4,11 @@ Description=Snapshot Pink Party local session and private configuration
 [Service]
 Type=oneshot
 User=root
-ExecStart=/usr/bin/python3 -B /opt/pink-party/app/deploy/linux/backup.py create
+ExecStart=/usr/bin/python3 -B /opt/pink-party/app/deploy/linux/scheduled-backup.py
 TimeoutStartSec=30
 TimeoutStopSec=2
 UMask=0077
-StateDirectory=pink-party-backups
+StateDirectory=pink-party-backups pink-party-backup-status
 StateDirectoryMode=0700
 ProtectSystem=strict
 ProtectHome=true

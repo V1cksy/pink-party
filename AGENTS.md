@@ -24,3 +24,5 @@ Victoria Prado owns the project. Use her voice for portfolio copy and omit unsol
 - Follow Conventional Commits and stage only task files. Preserve unrelated changes.
 
 - Follow docs/continuous-verification.md for hosted CI. scripts/ci-linux.sh is destructive only inside a fresh disposable Linux ARM64 Actions checkout; never run it over owner configuration. Keep the standard public-runner boundary, pinned checkout/read-only token, no secrets/artifact upload and loopback synthetic media. CI does not deploy.
+
+- Follow docs/scheduled-exports.md for opt-in systemd encryption and user-scoped Mac collection. Keep the pinned vault/key outside rolling retention, decrypt only in separate private state, preserve captures/configuration before redeployment and never auto-start Lima. Inspect attempt/export/validation/capture times separately. Leave the Mac agent removed and optional export timer disabled after exercises; retain stores and use guarded shutdown.

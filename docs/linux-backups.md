@@ -1,5 +1,7 @@
 # Linux backups and restoration
 
+Scheduled capture now records attempts independently of successful captures through `scheduled-backup.py`. The separate opt-in encrypted export and Mac collection workflow is documented in [scheduled exports](scheduled-exports.md); batch 6 remains the historical local-recovery measurement.
+
 Linux hosts keep small private snapshots of the synthetic session and generated host credentials. [The local recovery report](recovery-linux-backups.md) records batch 6; [the cloud report](cloud-report.md) records later AWS exercises. Those stages cover file recovery within one host. [Encrypted export and fresh local recovery](encrypted-recovery.md) adds an off-VM Mac vault; [its report](recovery-off-vm.md) records the later evidence.
 
 ## Recovery scope

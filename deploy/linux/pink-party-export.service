@@ -1,0 +1,30 @@
+[Unit]
+Description=Encrypt completed Pink Party snapshots independently of application health
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/python3 -B /opt/pink-party/app/deploy/linux/scheduled-export.py run
+TimeoutStartSec=90
+TimeoutStopSec=2
+UMask=0077
+StateDirectory=pink-party-rolling-exports pink-party-export-status
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/pink-party-backups/.lock
+ProtectSystem=strict
+ProtectHome=true
+InaccessiblePaths=/etc/pink-party /var/lib/pink-party /var/lib/pink-party-monitor /var/lib/pink-party-restores /var/lib/pink-party-exports
+PrivateTmp=true
+PrivateDevices=true
+PrivateNetwork=true
+NoNewPrivileges=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX
+MemoryMax=128M
+TasksMax=16
+LogNamespace=pink-party-backup

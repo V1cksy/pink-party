@@ -11,12 +11,30 @@ import subprocess
 import sys
 import tempfile
 import time
+import resource
 
 spec = importlib.util.spec_from_file_location('backup', Path(__file__).resolve().parents[1] / 'linux/backup.py')
 backup = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(backup)
 LIMIT = 131072
 KEEP = 7
+
+
+def request_offer(vm, destination):
+    """Bound the complete response on disk, including a malicious or broken guest response."""
+    backup.require(re.fullmatch(r'[a-zA-Z0-9_-]{1,64}', vm), 'Invalid VM name')
+    def limits():
+        resource.setrlimit(resource.RLIMIT_FSIZE, (262144, 262144))
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
+    with open(destination, 'xb') as stream:
+        os.fchmod(stream.fileno(), 0o600)
+        result = subprocess.run(['limactl', 'shell', '--workdir=/tmp', vm, 'sudo',
+            'python3', '-B', '/opt/pink-party/app/deploy/linux/scheduled-export.py', 'offer'],
+            stdout=stream, stderr=subprocess.DEVNULL, timeout=25, preexec_fn=limits)
+        stream.flush()
+        os.fsync(stream.fileno())
+    backup.require(result.returncode == 0, 'Encrypted transfer failed')
+    return backup.read_regular(destination, 262144, 0o600)
 
 
 def collect(vm, export, vault):
