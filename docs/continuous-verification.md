@@ -18,7 +18,7 @@ The action is pinned to a full commit SHA, with credential persistence disabled.
 
 The repository was verified public with Actions enabled before this stage. GitHub documents [standard runners as free for public repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories); the job skips if repository visibility becomes private. No larger runner, artifact upload/storage, paid feature or AWS resource is configured. Recheck current pricing and visibility before changing that boundary. [GitHub's secure-use reference](https://docs.github.com/en/actions/reference/security/secure-use) explains commit pinning, minimal permissions and masking.
 
-This workflow verifies code; it does not deploy, publish a release, edit branch protection or restart any retained VM. A green result does not establish private-network access, physical listening, systemd/VM recovery or an independent owner skill. Those have separate [Linux](validation-linux.md), [cloud](cloud-report.md) and [recovery](recovery-off-vm.md) records. Branch protection was not configured, so a failed run is visible evidence rather than a guarantee that Git rejects a direct push.
+This workflow verifies code; it does not deploy, publish a release, edit branch protection or restart any retained VM. A green result does not establish private-network access, physical listening or systemd/VM recovery. Those have separate [Linux](validation-linux.md), [cloud](cloud-report.md) and [recovery](recovery-off-vm.md) records. Branch protection was not configured, so a failed run is visible evidence rather than a guarantee that Git rejects a direct push.
 
 ## Inspect or repeat
 
@@ -34,7 +34,7 @@ For a controlled failure exercise, create a task-specific temporary branch from 
 
 ## Observed runs: 17 November 2026
 
-Codex implemented and performed this assisted portfolio stage after the owner asked to continue. This does not establish independent owner CI administration or professional duties.
+This stage verifies automated source and synthetic media checks on the hosted runner, including a controlled failure-propagation exercise.
 
 The [normal main push](https://github.com/V1cksy/pink-party/actions/runs/44097086312) at `f35148b` succeeded on the standard ARM64 runner: 22 TypeScript tests, 42 Python tests, typecheck, build, formatting and all 13 browser cases. The hosted job took 134 seconds from job start to completion, including setup/cleanup; the synthetic browser suite took 38.8 seconds. Its two-way decoded audio, four-client capacity and cleanup assertions are separate from the readiness probe.
 

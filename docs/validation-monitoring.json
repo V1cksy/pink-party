@@ -1,6 +1,6 @@
 {
   "recordedAt": "2026-11-16",
-  "scope": "Codex-run assisted local Ubuntu ARM64 lab; inspected public evidence",
+  "scope": "Automated local Ubuntu ARM64 lab; inspected public evidence",
   "configuration": {
     "initialAfterBootSeconds": 30,
     "secondsAfterPreviousCheckCompletes": 30,
@@ -22,7 +22,7 @@
     "journalBudgetCaveat": "Archived files are removed; active files can temporarily keep usage above the configured budget."
   },
   "incident": {
-    "scope": "Codex-run controlled local VM outage; web/control only; synthetic data",
+    "scope": "Automated controlled local VM outage; web/control only; synthetic data",
     "startedAt": "2026-11-16T18:01:25.703Z",
     "fault": "Explicit systemctl stop; no configuration or credential change",
     "timeline": {

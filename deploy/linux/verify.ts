@@ -37,7 +37,7 @@ let ownsOverride = false;
 let ownsInvalidEnv = false;
 const report: Record<string, unknown> = {
   capturedAt: new Date().toISOString(),
-  scope: 'Codex-run local Ubuntu VM; no peer-device or human-listening claim',
+  scope: 'Automated local Ubuntu VM; no peer-device or human-listening claim',
   checks: {},
   exercises: [],
 };

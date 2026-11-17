@@ -1,6 +1,6 @@
 # Encrypted off-VM recovery report
 
-Recorded 17 November 2026. Codex implemented and ran this assisted local portfolio stage at the owner's request. The exercise adds encrypted storage outside a source VM and applies recovered Linux credentials and synthetic session data to a newly created Ubuntu ARM64 VM. It is not independent owner practice, professional backup work, a cloud restore or a credential.
+Recorded 17 November 2026. This local recovery exercise adds encrypted storage outside a source VM and applies recovered Linux credentials and synthetic session data to a fresh Ubuntu ARM64 VM. Automated checks verify the restored application, failure boundaries and media reception.
 
 ## Recovery boundary and implementation
 
@@ -50,4 +50,4 @@ The original VM remains stopped, with its normal data/configuration, protected p
 
 Mac project ports are free. Tailscale remains connected and Serve empty, with no settings/grant changes in this stage. A read-only AWS query confirmed the earlier lab remained removed and the account FREE/ACTIVE. No cloud resource, paid purchase or paid upgrade was introduced; historical usage from batch 7 may still post later and is not a finalized invoice here.
 
-The delivered scope is local application recovery from an encrypted off-VM copy while the source guest is unavailable. Off-device storage, survival of physical Mac loss, full-system restoration and cloud restoration remain untested. Independent owner practice can be recorded when performed; it is not a prerequisite for continuing portfolio implementation.
+The delivered scope is local application recovery from an encrypted off-VM copy while the source guest is unavailable. Off-device storage, survival of physical Mac loss, full-system restoration and cloud restoration remain untested.

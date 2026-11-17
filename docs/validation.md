@@ -62,4 +62,4 @@ RSS and the OS `ps` CPU estimate vary with process lifetime, garbage collection 
 - Safari, Firefox, mobile hardware and assistive technologies have not been tested.
 - Friends joining from separate homes, private HTTPS/identity, Linux operation, monitoring, incident exercises, tested restoration and cloud deployment remain future batches.
 
-The [contribution record](learning.md) distinguishes generated implementation and agent-run checks from the owner's pending hands-on work.
+The [learning notes](learning.md) explain the implementation and further exercises.

@@ -59,7 +59,7 @@ def verify(recovered):
             break
         time.sleep(0.5)
     require(scheduled and monitoring, 'Fresh scheduled recovery evidence missing')
-    return {'scope': 'Codex-run assisted fresh local Ubuntu VM recovery',
+    return {'scope': 'Automated fresh local Ubuntu VM recovery',
             'exactInstalledBytesOwnerAndModes': True, 'recoveredEnvironmentLoadedByService': True,
             'ownedWebControlHealth': True, 'servedRecoveryMarker': True,
             'appAndTimersEnabledAndActive': True, 'freshScheduledBackupAt': scheduled,

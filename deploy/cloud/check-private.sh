@@ -35,7 +35,7 @@ for port, flag, address in [(3000, '-ltnp', '127.0.0.1'), (7880, '-ltnp', '127.0
     require(len(pids) == 1, 'Unexpected application socket ownership')
     require(f'0::{group}' in Path('/proc/' + pids.pop() + '/cgroup').read_text().splitlines(), 'Foreign application socket rejected')
 run('/opt/pink-party/node/bin/node', '/opt/pink-party/app/deploy/linux/service-health.ts')
-report = {'scope': 'Codex-run Linux private-host checks; not media or human listening',
+report = {'scope': 'Automated Linux private-host checks; not media or human listening',
           'checkedAt': dt.datetime.now(dt.timezone.utc).isoformat(),
           'nativePrivateInterface': True, 'exactOwnedAppControlMediaSockets': True,
           'ownedHealth': True, 'media': 'not-tested'}

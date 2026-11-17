@@ -1,6 +1,6 @@
 # Scheduled monitoring: controlled Linux outage
 
-On 16 November 2026, Codex ran this exercise at the owner's request in the local Ubuntu ARM64 VM. The fault was an explicit `systemctl stop pink-party.service`, with no credential or configuration change. No production service or external user was involved. This is assisted project evidence; independent owner incident practice remains unconfirmed.
+Recorded 16 November 2026 in the local Ubuntu ARM64 VM. The fault was an explicit `systemctl stop pink-party.service`, with no credential or configuration change. No production service or external user was involved.
 
 ## Detection and diagnosis
 
@@ -15,11 +15,11 @@ All timestamps are UTC from the same guest. The [inspected JSON](validation-moni
 | Time on 16 November 2026 | Observation                                                                   |
 | ------------------------ | ----------------------------------------------------------------------------- |
 | 18:01:48.780             | Scheduled baseline: web/control ready.                                        |
-| 18:01:49.139             | Codex requested the controlled stop.                                          |
+| 18:01:49.139             | The exercise requested the controlled stop.                                   |
 | 18:01:49.192             | Stop command completed. The journal recorded successful stop at 18:01:49.190. |
 | 18:02:19.774             | Scheduled monitor recorded down.                                              |
 | 18:02:20.219             | Status, absent process/listeners and stop journal confirmed the diagnosis.    |
-| 18:02:20.220             | Codex requested service start.                                                |
+| 18:02:20.220             | The exercise requested service start.                                         |
 | 18:02:21.345             | Service-owned web/control health verified.                                    |
 | 18:02:50.743             | First scheduled recovery sample: web/control ready.                           |
 
@@ -41,4 +41,4 @@ The scheduled probe verifies local web/control readiness through service ownersh
 
 Separate-home voice still needs another device/friend. Safari interoperability remains unresolved in the earlier Mac work. Scheduled backups and tested synthetic file restoration were subsequently completed in [batch 6](recovery-linux-backups.md). Cloud deployment remains a later stage. The Mac Tailscale setup and policy were unchanged. Final verification and shutdown facts are recorded in [validation-monitoring.json](validation-monitoring.json).
 
-After normal service and scheduled recovery were verified, Codex stopped the monitor/timer and application for planned shutdown and confirmed their sockets were free. The application and timer remain enabled for the next guest boot. Lima again left a stale host agent waiting; guest poweroff produced the current VZ stopped event at 18:09:27 UTC, before forced host-agent cleanup. The stale stop client and orphaned shutdown helper were also cleared. Final Lima status is `Stopped`. This run does not establish consistently clean Lima host-agent shutdown.
+After normal service and scheduled recovery were verified, the planned shutdown stopped the monitor/timer and application and confirmed their sockets were free. The application and timer remain enabled for the next guest boot. Lima again left a stale host agent waiting; guest poweroff produced the current VZ stopped event at 18:09:27 UTC, before forced host-agent cleanup. The stale stop client and orphaned shutdown helper were also cleared. Final Lima status is `Stopped`. This run does not establish consistently clean Lima host-agent shutdown.

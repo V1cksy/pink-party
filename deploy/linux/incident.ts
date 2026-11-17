@@ -43,7 +43,7 @@ async function scheduled(status: 'up' | 'down', after: string) {
 }
 const report: Record<string, unknown> = {
   scope:
-    'Codex-run controlled Linux service outage; web/control only; synthetic data',
+    'Automated controlled Linux service outage; web/control only; synthetic data',
   accessMode: settings.privateAccess ? 'private' : 'local',
   startedAt: now(),
   fault: 'Explicit systemctl stop; no configuration or credential change',

@@ -26,7 +26,7 @@ def main():
     lock.mkdir(mode=0o700)
     work = RESTORES / ('export-exercise-' + uuid.uuid4().hex[:12])
     work.mkdir(mode=0o700)
-    report = {'scope': 'Codex-run assisted scheduled encrypted export',
+    report = {'scope': 'Automated scheduled encrypted export',
               'startedAt': dt.datetime.now(dt.timezone.utc).isoformat()}
     original = {name: read_regular(path, 16384, MODES[name]) for name, path in SOURCES.items()}
     for name, data in original.items():

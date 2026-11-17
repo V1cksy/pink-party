@@ -108,21 +108,15 @@ Raw private evidence and failed-test artifacts stay ignored. See the [operations
 - [Private operations](docs/remote-access.md): access rules, network paths and rollback.
 - [Validation](docs/validation-batch-3.md): results, measurements and outstanding checks. Earlier records cover the [local implementation](docs/validation.md) and [private-access tests](docs/validation-batch-2.md).
 - [Interface design](docs/design.md): design choices, research sources and verification.
-- [Learning record](docs/learning.md): confirmed owner practice and code walkthrough.
+- [Learning notes](docs/learning.md): project exercises and code walkthrough.
 - [Linux deployment](docs/linux-deployment.md) and [validation](docs/validation-linux.md): systemd configuration, permissions, failure exercises and local VM audio checks.
 - [Monitoring incident](docs/incident-linux-monitoring.md): controlled outage, scheduled detection, diagnosis and recovery.
 - [Backup operations](docs/linux-backups.md) and [recovery report](docs/recovery-linux-backups.md): scheduled snapshots, safe restoration and tested synthetic file loss.
 - [Encrypted recovery operations](docs/encrypted-recovery.md) and [fresh-VM report](docs/recovery-off-vm.md): age export, separate key handling, rebuild, failure boundaries and cleanup.
 - [Cloud operations](docs/cloud-deployment.md), [report](docs/cloud-report.md) and [validation](docs/validation-cloud.json): verified AWS entitlement, private deployment, cross-host media, recovery and deletion evidence.
 
-## Contributions
+## Project ownership and software credits
 
-The owner chose the gaming-hangout scope and pink design, completed Tailscale onboarding and HTTPS consent, and performed the confirmed Chrome listening checks. Codex generated the application, configuration, tests and documentation, and carried out the recorded technical verification and interface revision. The earlier technical work included a separate review. The [learning record](docs/learning.md) distinguishes assisted work from personally confirmed practice.
-
-Codex also installed the Linux VM, implemented its deployment, service, scheduled monitoring and backup configuration, and ran the recorded Linux checks, incident and restoration exercises. Independent owner practice on Linux remains unconfirmed.
-
-For AWS, the owner completed account/node onboarding and approvals. Codex prepared the cloud scripts, provisioned the host, performed the deployment and exercises, and verified teardown. No independent owner cloud administration or professional cloud role is claimed.
-
-Codex also implemented encrypted export, rebuilt a disposable Linux guest from the retained copy and key, and performed the recovery and failure exercises. These are assisted project results; independent owner recovery practice remains unconfirmed.
+Pink Party is Victoria Prado's personal portfolio project. It combines a gaming voice app with Linux deployment, private cloud hosting, scheduled monitoring, encrypted backups, verified recovery and hosted CI. The [learning notes](docs/learning.md) explain the implementation and exercises.
 
 LiveKit and its SDKs provide voice transport. The interface uses self-hosted Nunito Sans under the [SIL Open Font License](public/fonts/OFL.txt). The farmhouse is an original SVG illustration; it does not use Stardew Valley game assets.

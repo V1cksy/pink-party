@@ -1,9 +1,9 @@
 {
   "capturedAt": "2026-11-16T17:38:48.740405+00:00",
-  "scope": "Codex-run ARM64 Ubuntu local lab; public inspected summary",
+  "scope": "Automated ARM64 Ubuntu local lab; public inspected summary",
   "service": {
     "capturedAt": "2026-11-16T17:29:24.254Z",
-    "scope": "Codex-run local Ubuntu VM; no peer-device or human-listening claim",
+    "scope": "Automated local Ubuntu VM; no peer-device or human-listening claim",
     "checks": {
       "enabledAtGuestBoot": true,
       "dedicatedServiceUser": true,

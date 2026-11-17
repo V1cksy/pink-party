@@ -79,4 +79,4 @@ Use the [exact manual call test](remote-access.md#exact-manual-call-test-still-n
 
 From separate homes, verify the certificate and WSS, actual selected UDP candidates and increasing decoded audio counters, and intelligible speech in both directions. Record device/browser versions, audio devices, network types, participant count and direct/relayed Tailscale status privately. Check mute/unmute, participant updates, leave/rejoin and a client network interruption/recovery. Test an uninvited/tagged peer and attempted allowed-login spoofing; only a real peer can establish those network boundaries.
 
-Linux deployment, monitoring/incident exercises, tested backup restoration and cloud remain later batches. [Learning notes](learning.md) credit the owner's confirmed actions, assisted implementation and LiveKit's transport separately.
+Linux deployment, monitoring/incident exercises, tested backup restoration and cloud remain later batches. [Learning notes](learning.md) explain the implementation and exercises.

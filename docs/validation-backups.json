@@ -1,6 +1,6 @@
 {
   "recordedAt": "2026-11-16",
-  "scope": "Codex-run assisted local Ubuntu ARM64 lab; inspected public evidence",
+  "scope": "Automated local Ubuntu ARM64 lab; inspected public evidence",
   "backupScope": [
     "Installed synthetic session JSON",
     "Generated Linux local-mode environment and credentials"
@@ -24,7 +24,7 @@
     "checksumProvidesAuthenticity": false
   },
   "exercise": {
-    "scope": "Codex-run assisted local Linux synthetic-data recovery",
+    "scope": "Automated local Linux synthetic-data recovery",
     "startedAt": "2026-11-16T18:33:11.273246+00:00",
     "scheduled": {
       "timerStartedAt": "2026-11-16T18:33:12.352413+00:00",

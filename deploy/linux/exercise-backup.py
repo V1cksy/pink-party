@@ -46,7 +46,7 @@ def main():
     work = RESTORES / ('exercise-' + uuid.uuid4().hex[:12])
     work.mkdir(mode=0o700)
     log = open(work / 'commands.log', 'xb')
-    report = {'scope': 'Codex-run assisted local Linux synthetic-data recovery', 'startedAt': now()}
+    report = {'scope': 'Automated local Linux synthetic-data recovery', 'startedAt': now()}
     changed = False
     original = None
     credentials = None

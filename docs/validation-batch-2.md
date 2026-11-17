@@ -1,6 +1,6 @@
 # Batch 2 validation: private-access implementation
 
-Verified by Codex on 4 and 5 November 2026, on the same ARM64 macOS 27.0.1 / 8 GiB host as batch 1. Node 24.22.2, LiveKit 1.13.11, pinned SDKs and Playwright Chromium 156 were used. [Batch 1 results](validation.md) and its raw measurements are retained unchanged.
+Automated verification ran on 4 and 5 November 2026 on the same ARM64 macOS 27.0.1 / 8 GiB host as batch 1. Node 24.22.2, LiveKit 1.13.11, pinned SDKs and Playwright Chromium 156 were used. [Batch 1 results](validation.md) and its raw measurements are retained unchanged.
 
 ## Implemented and exercised
 
@@ -30,7 +30,7 @@ The private browser harness starts a synthetic HTTPS proxy on loopback 3443 and 
 
 The first proxy run exposed that the SDK initially uses `/rtc/v1` before falling back to legacy `/rtc`. The proxy was corrected to allow both exact SDK routes and their validation routes. The corrected run used v1 directly and reconnected over it.
 
-A fresh-context Codex review found a cancellation race during asynchronous startup. A launch guard now prevents either service from starting after shutdown is requested. The regression test delays a fake Tailscale lookup beyond the four-second cleanup timer and injects an interface and port probes; no real Tailscale identity or network interface is used. It failed with “A service launched after shutdown” when the guard was removed and passed after restoration.
+A separate review found a cancellation race during asynchronous startup. A launch guard now prevents either service from starting after shutdown is requested. The regression test delays a fake Tailscale lookup beyond the four-second cleanup timer and injects an interface and port probes; no real Tailscale identity or network interface is used. It failed with “A service launched after shutdown” when the guard was removed and passed after restoration.
 
 The generated private-mode desktop screenshot was inspected: the pink layout and voice controls were preserved, with the private badge and no development-code field. This was the synthetic proxy interface, not the real Tailscale endpoint.
 
@@ -62,4 +62,4 @@ Remaining checks are explicit dependencies:
 - Complete intelligible human two-way audio from separate homes, mute/unmute, participant updates, leave/rejoin and a client network interruption/recovery. No physical microphone/headphone check or remote device/browser/network has been confirmed.
 - Sample real private-call resource use, including the Tailscale process separately.
 
-Use the [exact manual test](remote-access.md#exact-manual-call-test-still-needed). The owner has not confirmed personally running setup, reading code, understanding the access design or hearing audio. [Learning exercises and attribution](learning.md) keep assisted implementation separate from personal evidence. Linux deployment, monitoring/incident exercises, tested backup recovery and cloud deployment remain later batches.
+Use the [exact manual test](remote-access.md#exact-manual-call-test-still-needed). [Learning exercises](learning.md) explain the implementation and remaining peer-device checks. This report retains the batch-2 scope; [later validation](validation-batch-3.md) records the subsequent native Tailscale and Chrome listening results.

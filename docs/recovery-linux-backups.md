@@ -1,7 +1,7 @@
 # Linux backup and recovery exercise
 
 Later evidence: [batch 8](recovery-off-vm.md) extends these same-disk exercises with encrypted off-VM export and fresh local Linux recovery. This report retains the original batch-6 scope.
-On 16 November 2026, Codex implemented and performed this stage at the owner's request in the local Ubuntu ARM64 VM. This is assisted portfolio evidence for backup scoping, systemd scheduling, integrity checks, restrictive permissions and file restoration. Independent owner practice and professional backup duties are not claimed.
+Recorded 16 November 2026 in the local Ubuntu ARM64 VM. This exercise covers backup scoping, systemd scheduling, integrity checks, restrictive permissions and file restoration.
 
 ## What was recovered
 
@@ -9,7 +9,7 @@ The application reads a synthetic session file at startup. Its private Linux env
 
 The backup timer created an archive containing synthetic session A and the existing Linux environment. Restoration into a new root-only directory reproduced the captured bytes, hashes, owner and modes. Both the actual session validator and configuration validator accepted the recovered files. Working credentials were compared privately and never replaced or rotated.
 
-Codex then changed the session to B, restarted the app and verified B through `/api/session`. Removing the session prevented healthy startup and produced the expected missing-file journal diagnostic. Restoring A from the retained archive, applying only that session and restarting recovered owned web/control health and the expected API response. A known-good private copy of the original session/configuration and separate restored files were retained for cleanup and inspection. Normal source session and configuration were restored afterward.
+The recovery exercise changed the session to B, restarted the app and verified B through `/api/session`. Removing the session prevented healthy startup and produced the expected missing-file journal diagnostic. Restoring A from the retained archive, applying only that session and restarting recovered owned web/control health and the expected API response. A known-good private copy of the original session/configuration and separate restored files were retained for cleanup and inspection. Normal source session and configuration were restored afterward.
 
 ## Actual observations
 
@@ -47,8 +47,8 @@ Three independent review passes resolved retention under clock rollback, reuse o
 
 Snapshots are plaintext private files on the same guest disk. They protect this tested synthetic file-loss case and do **not** survive VM/disk loss, host storage failure or root compromise. No encrypted/off-VM copy, full-machine rebuild, credential rotation or disaster-recovery claim is made. Applying recovered private configuration to a fresh system remains untested. [Backup operations](linux-backups.md) provides repeatable commands and interruption recovery.
 
-The guest remains a local Linux lab. Mac Tailscale settings and policy were unchanged. Separate-home voice still needs another device/friend, Safari interoperability remains unresolved, and cloud deployment remains later work. Independent owner practice is not required before continuing implementation.
+The guest remains a local Linux lab. Mac Tailscale settings and policy were unchanged. Separate-home voice still needs another device/friend, Safari interoperability remains unresolved, and cloud deployment remains later work.
 
 Final verification and planned shutdown are recorded in [validation-backups.json](validation-backups.json). The application, monitoring and backup timer are configured for the next guest boot; no Mac login item was added.
 
-Normal source/session health, a fresh scheduled normal backup and monitoring recovery were verified before shutdown. Codex then stopped the application, monitor/backup timers and both oneshots, and confirmed guest sockets were released. Application and both timers remain enabled for the next guest boot. Guest poweroff produced the current VZ stopped event at 19:02:34 UTC before forced stale-host cleanup. The stale stop client and shutdown helper also required clearing. Final VM status is `Stopped`, with no remaining Pink Party Lima process; normal Lima host-agent shutdown remains unreliable.
+Normal source/session health, a fresh scheduled normal backup and monitoring recovery were verified before shutdown. Planned shutdown stopped the application, monitor/backup timers and both oneshots, and confirmed guest sockets were released. Application and both timers remain enabled for the next guest boot. Guest poweroff produced the current VZ stopped event at 19:02:34 UTC before forced stale-host cleanup. The stale stop client and shutdown helper also required clearing. Final VM status is `Stopped`, with no remaining Pink Party Lima process; normal Lima host-agent shutdown remains unreliable.

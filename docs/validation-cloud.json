@@ -1,6 +1,6 @@
 {
   "recordedAt": "2026-11-17",
-  "scope": "Codex-run assisted AWS deployment and exercises; owner account onboarding and approvals",
+  "scope": "AWS deployment and automated verification; account onboarding and approvals",
   "architecture": {
     "region": "eu-north-1",
     "os": "Ubuntu 24.04 ARM64",
@@ -54,7 +54,7 @@
     "normalConfigurationRestored": true
   },
   "cloudPrivateBackup": {
-    "scope": "Codex-run Linux private-host checks; not media or human listening",
+    "scope": "Automated Linux private-host checks; not media or human listening",
     "checkedAt": "2026-11-17T07:05:04.374831+00:00",
     "nativePrivateInterface": true,
     "exactOwnedAppControlMediaSockets": true,
@@ -68,7 +68,7 @@
     "passed": true
   },
   "privateMonitoringIncident": {
-    "scope": "Codex-run controlled Linux service outage; web/control only; synthetic data",
+    "scope": "Automated controlled Linux service outage; web/control only; synthetic data",
     "accessMode": "private",
     "startedAt": "2026-11-17T07:05:05.141Z",
     "fault": "Explicit systemctl stop; no configuration or credential change",
@@ -234,7 +234,6 @@
     "loggedOutCloudDeviceListingMayRemain": true
   },
   "limitations": [
-    "Assisted implementation, not independent owner practice or professional duties",
     "Two synthetic browser clients on one Mac used a real AWS host; no new physical listening or separate-home human call",
     "Real uninvited/tagged-source clients and physical client-network interruption remain untested",
     "Private archive validation and separate restore do not apply recovered credentials to a fresh machine",

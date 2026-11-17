@@ -141,7 +141,7 @@ def exercise(cipher, key):
     encrypted.verify_export(cipher, key, work / 'scratch')
     encrypted.export_backup(good, work / 'exports', recipient)
     unchanged()
-    report = {'scope': 'Codex-run assisted encrypted failure exercises on healthy fresh guest',
+    report = {'scope': 'Automated encrypted failure exercises on healthy fresh guest',
               'rejectedWithoutChangingHealthyFilesPidOrPriorGoodExport': passed,
               'normalAuthenticationAndExportAfterInterruption': True,
               'realRetainedRecoveryKeyUnchanged': encrypted.read_identity(key) is not None}

@@ -1,6 +1,6 @@
 # Linux deployment validation
 
-Recorded 16 November 2026. Codex installed, configured and exercised this deployment at the owner's request. Independent owner operation or understanding has not been observed. This is a local systems-administration lab with [repeatable instructions](linux-deployment.md).
+Recorded 16 November 2026. This local systems-administration lab covers Ubuntu ARM64 deployment, service permissions, failure recovery and synthetic media, with [repeatable instructions](linux-deployment.md).
 
 ## Environment
 

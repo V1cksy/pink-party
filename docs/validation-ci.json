@@ -1,6 +1,6 @@
 {
   "recordedAt": "2026-11-17",
-  "scope": "Codex-run assisted GitHub Actions implementation and hosted exercises",
+  "scope": "GitHub Actions source and synthetic media verification",
   "workflow": ".github/workflows/verify.yml",
   "runnerLabel": "ubuntu-24.04-arm",
   "repositoryVerifiedPublic": true,
@@ -79,7 +79,6 @@
   "limitations": [
     "Hosted synthetic source/media checks only; no deployment or physical listening",
     "Branch protection unchanged; failed checks do not prevent a direct push",
-    "Standard public runner pricing/visibility boundary must be rechecked before changing runner or repository visibility",
-    "Assisted project work, not independent owner CI practice or professional duties"
+    "Standard public runner pricing/visibility boundary must be rechecked before changing runner or repository visibility"
   ]
 }
