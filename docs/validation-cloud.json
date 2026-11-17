@@ -1,0 +1,245 @@
+{
+  "recordedAt": "2026-11-17",
+  "scope": "Codex-run assisted AWS deployment and exercises; owner account onboarding and approvals",
+  "architecture": {
+    "region": "eu-north-1",
+    "os": "Ubuntu 24.04 ARM64",
+    "instance": "t4g.small",
+    "vcpus": 2,
+    "memoryGiB": 2,
+    "diskGiB": 12,
+    "diskType": "gp3",
+    "encryptedRootDisk": true,
+    "cpuCreditMode": "standard",
+    "publicIngress": "TCP 22 from one administrator /32",
+    "appAndControl": "IPv4 loopback TCP 3000/7880",
+    "media": "Exact Tailscale IPv4 UDP 7882",
+    "https": "Private Tailscale Serve; normal certificate trust",
+    "funnelEnabled": false,
+    "cloudCredentialsGeneratedSeparately": true
+  },
+  "entitlement": {
+    "liveFreeActiveBeforeCreationAndAfterDeletion": true,
+    "creditAndExpiryHeadroomChecked": true,
+    "paidUpgrade": false,
+    "accountBalancesAndIdentifiersPrivate": true,
+    "historicalUsageAmountFinalized": false
+  },
+  "listPriceEstimate": {
+    "currency": "USD",
+    "computePerHour": 0.0172,
+    "gp3PerGbMonth": 0.0836,
+    "publicIpv4PerHour": 0.005,
+    "threeHourBase": 0.07078,
+    "excludes": ["Data transfer", "Taxes", "Currency conversion"],
+    "source": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/20261114012926/eu-north-1/index.csv"
+  },
+  "serviceExercises": {
+    "accessMode": "local on the actual AWS host",
+    "permissionAndBoundaryChecks": 22,
+    "applicationCrashRecovery": true,
+    "livekitCrashRecovery": true,
+    "foreignListenerRejectedBeforeKill": true,
+    "invalidConfigurationRejectedWithoutLoggingSecrets": true,
+    "normalServiceRestored": true
+  },
+  "cloudLocalModeBackupExercise": {
+    "scheduledAt": "2026-11-17T06:55:07.853071+00:00",
+    "backupJobMs": 581,
+    "separateRestoreMs": 299,
+    "lossRecoveryThroughServedDataMs": 1985,
+    "failedBackupPreservedWorkingDeployment": true,
+    "missingCorruptAndOverlappingRestoreRejected": true,
+    "workingCredentialsPreserved": true,
+    "normalConfigurationRestored": true
+  },
+  "cloudPrivateBackup": {
+    "scope": "Codex-run Linux private-host checks; not media or human listening",
+    "checkedAt": "2026-11-17T07:05:04.374831+00:00",
+    "nativePrivateInterface": true,
+    "exactOwnedAppControlMediaSockets": true,
+    "ownedHealth": true,
+    "media": "not-tested",
+    "scheduledPrivateBackupCapturedAt": "2026-11-17T06:58:44.849483+00:00",
+    "separateRestoreMs": 298,
+    "separateRestoreHashesAndModes": true,
+    "workingCredentialsPreserved": true,
+    "sameDiskBackup": true,
+    "passed": true
+  },
+  "privateMonitoringIncident": {
+    "scope": "Codex-run controlled Linux service outage; web/control only; synthetic data",
+    "accessMode": "private",
+    "startedAt": "2026-11-17T07:05:05.141Z",
+    "fault": "Explicit systemctl stop; no configuration or credential change",
+    "timeline": {
+      "baselineObservedAt": "2026-11-17T07:05:11.759Z",
+      "stopRequestedAt": "2026-11-17T07:05:12.257Z",
+      "stopCompletedAt": "2026-11-17T07:05:12.308Z",
+      "downObservedAt": "2026-11-17T07:05:42.687Z",
+      "diagnosedAt": "2026-11-17T07:05:42.959Z",
+      "startRequestedAt": "2026-11-17T07:05:42.959Z",
+      "healthVerifiedAt": "2026-11-17T07:05:44.147Z",
+      "recoveryObservedAt": "2026-11-17T07:06:13.739Z"
+    },
+    "diagnosis": {
+      "serviceState": "inactive",
+      "mainProcessAbsent": true,
+      "socketsAbsent": true,
+      "monitorTimerStillActive": true,
+      "journalConfirmsExplicitStop": true,
+      "configurationChanged": false
+    },
+    "observations": {
+      "baseline": {
+        "observedAt": "2026-11-17T07:05:11.759Z",
+        "status": "up",
+        "reason": "web-control-ready",
+        "durationMs": 72,
+        "media": "not-tested"
+      },
+      "down": {
+        "observedAt": "2026-11-17T07:05:42.687Z",
+        "status": "down",
+        "reason": "service-not-active",
+        "durationMs": 14,
+        "media": "not-tested"
+      },
+      "recovery": {
+        "observedAt": "2026-11-17T07:06:13.739Z",
+        "status": "up",
+        "reason": "web-control-ready",
+        "durationMs": 71,
+        "media": "not-tested"
+      }
+    },
+    "timingMs": {
+      "detectionAfterStopRequested": 30430,
+      "healthAfterStartRequested": 1188,
+      "recoveryObservationAfterStartRequested": 30780,
+      "observedDownToUp": 31052,
+      "stopCompletedToHealthy": 31839
+    },
+    "passed": true,
+    "normalServiceRestored": true
+  },
+  "remoteMedia": {
+    "syntheticClientsOnOneMac": 2,
+    "cloudHosts": 1,
+    "clientAndServerAddressesDifferent": true,
+    "trustedTls": true,
+    "certificateExceptions": false,
+    "verifiedServeIdentity": true,
+    "forgedDeniedIdentityReplaced": true,
+    "hostOriginAndAdministrativeRouteDenials": true,
+    "actualWssStatuses": [101, 101],
+    "selectedCandidatesMatchCloudPrivateIpAndUdp7882": true,
+    "decodedAudioBothWays": true,
+    "receivedAudio": [
+      [
+        {
+          "bytes": 8466,
+          "samples": 39360,
+          "energy": 0.0016226006738237657
+        }
+      ],
+      [
+        {
+          "bytes": 11351,
+          "samples": 55200,
+          "energy": 0.0013292661527705585
+        }
+      ]
+    ],
+    "muteUnmuteAndCaptureCleanup": true,
+    "initialSuiteSeconds": 24.3,
+    "afterRebootSuiteSeconds": 14.6,
+    "onePostCallPeerPingReportedDirect": true,
+    "physicalListening": false,
+    "separateHomeHumanCall": false
+  },
+  "reboot": {
+    "differentGuestBoot": true,
+    "configurationUnchanged": true,
+    "webControlReadinessObservedAfterMs": 29525,
+    "appHttpsAndBothTimersStartedAutomatically": true,
+    "httpsMediaAndFreshScheduledJobsVerifiedAfterwards": true,
+    "exactHttpsTimerReadinessTimeEstablished": false
+  },
+  "checks": {
+    "macFinal": {
+      "typescriptTests": 22,
+      "pythonTests": 19,
+      "typecheck": true,
+      "build": true,
+      "formatting": true
+    },
+    "cloudSourceCheck": {
+      "typescriptTests": 22,
+      "pythonTests": 18,
+      "typecheck": true,
+      "build": true,
+      "formatting": true
+    },
+    "localVmEarlierInBatch": {
+      "typescriptTests": 19,
+      "pythonTests": 16,
+      "browserCases": 13,
+      "browserSeconds": 40.1
+    },
+    "cloudFormationSchemaLint": true,
+    "independentReviewPasses": 3,
+    "substantiveFindingsResolved": true,
+    "privateHostHeaderRegressionFailedBeforeFix": true,
+    "httpSizeAndTimeoutBoundariesTested": true,
+    "existingBundleSizeWarning": true,
+    "publicTransferredFilesScanned": 113,
+    "configuredCloudSecretsAbsentFromTransferAndJournals": true
+  },
+  "preTeardownPrivateInspection": {
+    "inspectedAt": "2026-11-17T07:17:05.576442+00:00",
+    "ownedPrivateHealth": true,
+    "freshBackupMatches": true,
+    "latestBackupCapturedAt": "2026-11-17T07:11:36.145450+00:00",
+    "allArchivesValidated": true,
+    "backupCount": 6,
+    "publicTransferredFilesScanned": 113,
+    "configuredCloudSecretsAbsentFromPublicTransferAndJournals": true,
+    "funnelInactive": true,
+    "serviceMemoryBytes": 216354816
+  },
+  "finalState": {
+    "stackCreatedAt": "2026-11-17T06:46:49.646688+00:00",
+    "stackDeletedAt": "2026-11-17T07:20:22.262419+00:00",
+    "allCloudApplicationHttpsAndTimerUnitsStoppedBeforeDeletion": true,
+    "cloudTailscaleLoggedOut": true,
+    "originalTailnetPolicySemanticsRestored": true,
+    "stackDeleteComplete": true,
+    "labInstancesTerminated": true,
+    "actualRootVolumesAbsent": true,
+    "labVpcNetworkInterfacesAbsent": true,
+    "publicAddressNotAllocated": true,
+    "importedKeyPairDeleted": true,
+    "accountOwnedSnapshotsAbsentInRegion": true,
+    "labVpcDeleted": true,
+    "retainedChargeableLabResources": false,
+    "freePlanStillActive": true,
+    "historicalUsageCanPostLater": true,
+    "localVmStopped": true,
+    "localAppAndBothTimersStopped": true,
+    "localAppAndBothTimersStillEnabledForGuestBoot": true,
+    "localVmDiskAndPrivateStoresRetained": true,
+    "macTailscaleConnectedAndServeEmpty": true,
+    "macProjectPortsFree": true,
+    "loggedOutCloudDeviceListingMayRemain": true
+  },
+  "limitations": [
+    "Assisted implementation, not independent owner practice or professional duties",
+    "Two synthetic browser clients on one Mac used a real AWS host; no new physical listening or separate-home human call",
+    "Real uninvited/tagged-source clients and physical client-network interruption remain untested",
+    "Private archive validation and separate restore do not apply recovered credentials to a fresh machine",
+    "Backups share the cloud root disk and were removed with the bounded lab; no independent encrypted recovery storage",
+    "Safari interoperability remains unresolved",
+    "Billing/credit usage can lag resource deletion; list-price estimates are not a final invoice"
+  ]
+}

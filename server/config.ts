@@ -63,7 +63,7 @@ export function loadSettings(env: NodeJS.ProcessEnv): Settings {
     octets[1] > 127 ||
     octets.join('.') !== tailscaleIp
   )
-    throw new Error('TAILSCALE_IP must be this Mac’s Tailscale IPv4 address.');
+    throw new Error('TAILSCALE_IP must be this host’s Tailscale IPv4 address.');
   const logins = (env.INVITED_LOGINS ?? '').split(',').map((s) => s.trim());
   if (
     !logins.length ||

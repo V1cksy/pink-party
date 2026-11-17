@@ -1,22 +1,22 @@
 # Linux backups and restoration
 
-The local Linux lab keeps small private snapshots of its synthetic session and generated Linux credentials. [The recovery report](recovery-linux-backups.md) records the Codex-run exercises and observed times. This is file recovery within one VM, with no external storage or cloud deployment.
+Linux hosts keep small private snapshots of the synthetic session and generated host credentials. [The local recovery report](recovery-linux-backups.md) records batch 6; [the cloud report](cloud-report.md) records later AWS exercises. Both cover file recovery within one host, with no independent backup storage.
 
 ## Recovery scope
 
 The application loads `data/session.json` at startup and serves that in-memory value through `/api/session`. Editing or restoring the file requires an application restart. There is no database, upload store, chat history or persistent voice recording. LiveKit room membership is transient.
 
-| Input or state                                                                | Recovery treatment                                                                                                                                                            |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/opt/pink-party/app/data/session.json`                                       | Capture the installed synthetic session, including local changes that differ from Git. Restore as root-owned `0644`, beneath a private directory.                             |
-| `/etc/pink-party/pink-party.env`                                              | Capture the existing Linux local-mode configuration and credentials. Restore as root-owned `0600`, beneath a root-only directory. Never display it or automatically apply it. |
-| Source, lockfile, service units, scripts and public assets                    | Recover from the reviewed Git revision and rebuild through the installer. The source-controlled session is also available in Git, but can differ from the installed file.     |
-| Node.js and LiveKit binaries, dependencies and `dist`                         | Reinstall from pinned/checksum-verified inputs and rebuild. They are outside this backup.                                                                                     |
-| `/var/lib/pink-party/livekit.yaml` via app `.local`                           | Regenerate at service startup from the environment; do not restore this duplicate secret.                                                                                     |
-| Monitor history, private exercise reports, journals and deployment `previous` | Diagnostic/rollback material outside the backup scope. `previous` is replaced by deployment and is not a tested backup system.                                                |
-| Mac private files, Tailscale policy, identity and Serve settings              | Separate from this guest; excluded.                                                                                                                                           |
+| Input or state                                                                | Recovery treatment                                                                                                                                                                    |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/opt/pink-party/app/data/session.json`                                       | Capture the installed synthetic session, including local changes that differ from Git. Restore as root-owned `0644`, beneath a private directory.                                     |
+| `/etc/pink-party/pink-party.env`                                              | Capture the existing Linux local/private configuration and host credentials. Restore as root-owned `0600`, beneath a root-only directory. Never display it or automatically apply it. |
+| Source, lockfile, service units, scripts and public assets                    | Recover from the reviewed Git revision and rebuild through the installer. The source-controlled session is also available in Git, but can differ from the installed file.             |
+| Node.js and LiveKit binaries, dependencies and `dist`                         | Reinstall from pinned/checksum-verified inputs and rebuild. They are outside this backup.                                                                                             |
+| `/var/lib/pink-party/livekit.yaml` via app `.local`                           | Regenerate at service startup from the environment; do not restore this duplicate secret.                                                                                             |
+| Monitor history, private exercise reports, journals and deployment `previous` | Diagnostic/rollback material outside the backup scope. `previous` is replaced by deployment and is not a tested backup system.                                                        |
+| Mac private files, Tailscale policy, identity and Serve settings              | Separate from this guest; excluded.                                                                                                                                                   |
 
-A snapshot contains exactly three regular archive members: `data/session.json`, `private/pink-party.env` and `manifest.json`. The manifest records format version, capture time, byte counts, modes and per-file SHA-256 hashes. A separate `sha256` file checks the whole uncompressed tar. Inputs are limited to 16 KiB each and the archive to 64 KiB. Session validation calls the application's actual TypeScript validator; environment validation accepts only this lab's four generated local-mode fields.
+A snapshot contains exactly three regular archive members: `data/session.json`, `private/pink-party.env` and `manifest.json`. The manifest records format version, capture time, byte counts, modes and per-file SHA-256 hashes. A separate `sha256` file checks the whole uncompressed tar. Inputs are limited to 16 KiB each and the archive to 64 KiB. Session and configuration validation reuse the actual application boundaries. The field set is restricted to four generated local-mode fields or six private-mode fields; duplicate fields, runtime overrides and local-code/private-mode mixtures are rejected. Private origin, interface address and invited identities remain inside the protected archive.
 
 SHA-256 detects accidental changes. It does not authenticate an attacker-controlled archive and checksum. Treat the root-owned store as trusted private material. Backups contain plaintext credentials: do not commit, share, attach or move them to unprotected storage.
 
@@ -56,7 +56,7 @@ Replace `BACKUP_NAME` with the actual `backup-...` directory name. The command a
 
 Restore verifies the archive checksum, exact member set, types, paths, sizes, ownership metadata, permitted modes, manifest and payload hashes before writing any payload. It rejects absolute paths, traversal, links, special files, extra/duplicate members and unexpected permissions. It writes only fixed allowlisted paths without `extractall`, verifies restored bytes/owner/modes, and atomically publishes a new root-only directory. Missing/corrupt inputs publish no destination. A killed manual restore can leave a private `.restore-*` staging directory; inspect and remove it when no restore is running.
 
-The command never changes the working deployment or credentials. To apply only session data after inspecting the restore, close room clients and run sequentially inside Linux:
+The command never changes the working deployment or credentials. To apply only session data on a **local-mode** host after inspecting the restore, close room clients and run sequentially inside Linux:
 
 ```sh
 sudo systemctl stop pink-party-backup.timer pink-party-backup.service
@@ -81,7 +81,7 @@ fi
 sudo systemctl start pink-party-backup.timer
 ```
 
-The health monitor stays active during this operation. Check the served JSON against the chosen synthetic session and inspect a fresh scheduled health sample. Retain the previous session privately before replacement. On failure, use that known-good session, restart and diagnose the journal; do not overwrite credentials as a session-data fix.
+The health monitor stays active during this operation. Check the served JSON against the chosen synthetic session and inspect a fresh scheduled health sample. Retain the previous session privately before replacement. On failure, use that known-good session, restart and diagnose the journal; do not overwrite credentials as a session-data fix. For the separate private-mode restore and outage checks, use [cloud operations](cloud-deployment.md#repeat-the-exercises); requests must retain private authentication.
 
 Private configuration is restored for inspection and exact comparison only in the tested workflow. If an environment file is actually lost, stop the application and backup timer, preserve any surviving configuration privately, inspect the recovered file, and explicitly install it as `/etc/pink-party/pink-party.env` with root ownership and mode `0600` under the root-only `0700` directory. Avoid setup or first-install generation until the original credentials have been recovered. Reusing those credentials regenerates LiveKit YAML at startup. Applying recovered credentials to a fresh machine was not exercised here; a new-machine rebuild also needs the source revision, installer prerequisites and compatible binaries.
 
@@ -101,6 +101,6 @@ Python 3 and its standard library are used for the archive/lock handling; no bac
 
 ## Storage limits
 
-The archive store is on the **same guest disk** as the application and configuration. It survived the controlled file-loss exercise; it does **not** survive deletion/loss of that VM disk, host storage failure or a root compromise. No off-VM copy, encryption-at-rest workflow, remote restore, full-system image, credential rotation or disaster-recovery test is claimed. Seven copies at the active schedule cover a short lab window; a stopped guest makes no new copies. Cloud and independent storage remain later work.
+The archive store is on the **same guest disk** as the application and configuration. It survived controlled file loss and does **not** survive deletion/loss of that VM disk, host storage failure or root compromise. Archives contain plaintext private files. The AWS root disk used provider encryption, but no independent encrypted copy, full-system image, credential rotation or disaster-recovery test is claimed. Seven copies at the active schedule cover a short lab window; a stopped guest makes no new copies. The bounded cloud lab's disk and backups were deleted; the local VM and its stores remain retained. Independent storage remains later work.
 
 References: [Python tar archive safety](https://docs.python.org/3/library/tarfile.html#extraction-filters), [systemd timers](https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html) and [systemd execution restrictions](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html). The installed units are verified against the guest's systemd 255.

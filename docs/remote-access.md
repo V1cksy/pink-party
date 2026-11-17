@@ -1,6 +1,6 @@
 # Private access on macOS
 
-Private mode uses Tailscale and Tailscale Serve. Local mode remains the default. See [current operational validation](validation-batch-3.md) for verified setup and outstanding checks, and [batch 2 validation](validation-batch-2.md) for the implementation tests. No VM, public hosting, Funnel or router port forwarding is used.
+This guide covers native Mac private mode using Tailscale and Tailscale Serve. Local mode remains the default. See [Mac operational validation](validation-batch-3.md) for that setup and [batch 2 validation](validation-batch-2.md) for the implementation tests. For the separate Ubuntu AWS host, use [cloud operations](cloud-deployment.md) and [its results](cloud-report.md). Application services are not exposed publicly; Funnel and router forwarding remain disabled.
 
 ## Install and configure
 

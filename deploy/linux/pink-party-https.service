@@ -1,0 +1,30 @@
+[Unit]
+Description=Pink Party private HTTPS through Tailscale Serve
+Requires=tailscaled.service
+After=tailscaled.service network-online.target
+
+[Service]
+Type=exec
+User=root
+WorkingDirectory=/var/lib/pink-party-https
+EnvironmentFile=/etc/pink-party/pink-party.env
+Environment=PATH=/opt/pink-party/node/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/opt/pink-party/node/bin/node /opt/pink-party/app/scripts/serve-private.ts
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+KillMode=control-group
+UMask=0077
+StateDirectory=pink-party-https
+StateDirectoryMode=0700
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+NoNewPrivileges=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+MemoryMax=128M
+TasksMax=32
+
+[Install]
+WantedBy=multi-user.target

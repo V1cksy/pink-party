@@ -40,6 +40,19 @@ Questions for a later walkthrough:
 - Which observed time measures file restoration, and which includes application startup and API verification?
 - What would an off-VM encrypted copy add, and what new access/key-management duties would it create?
 
+## First cloud deployment and teardown
+
+On 16 and 17 November 2026, the owner selected AWS Free, completed account/CLI and cloud-node onboarding, and approved the temporary cloud-only grant and rollback. Codex implemented the deployment helpers and Linux private-mode support, provisioned an ARM64 Ubuntu host, and performed service, backup, outage, reboot and cross-host synthetic-media exercises. Codex then restored normal configuration/policy and verified deletion of the instance, disk, address and network resources. The [cloud report](cloud-report.md) records actual scope, costs, timings and limits; [operations](cloud-deployment.md) provides repeatable commands.
+
+This adds assisted project evidence for cloud resource planning, CloudFormation, restricted network access, separate credential generation, Linux private hosting and verified teardown. It does not establish independent owner cloud practice, professional cloud duties or a cloud credential. Backups remained on the host disk. Physical listening on the cloud path, separate-home human voice, independent encrypted backup storage and fresh-machine credential recovery remain unverified.
+
+Questions for a later walkthrough:
+
+- Why do credits on a Paid account differ from an active Free plan, and why does powering off a VM leave storage costs?
+- Which checks establish trusted HTTPS, real remote identity, signaling, media reception and human listening?
+- Why can the root monitor supply an identity header locally while a remote browser must use Serve?
+- What did the separate-directory restore protect, and which losses would require independent backup storage?
+
 ## Follow a join request
 
 1. `index.html` contains the page and labelled controls; `src/main.ts` connects them to the voice controller and renders session data and real participant state.

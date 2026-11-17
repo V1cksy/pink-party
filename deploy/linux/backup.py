@@ -110,17 +110,23 @@ def validate_payloads(payloads):
                             input=payloads['data/session.json'], stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL, timeout=5, env={'PATH': os.defpath})
     require(result.returncode == 0, 'Application session validation failed')
-    # This backup format is deliberately limited to the generated Linux local configuration.
+    # Only application configuration is recoverable. No shell or runtime-tool overrides.
     lines = payloads['private/pink-party.env'].decode('ascii').splitlines()
     fields = dict(line.split('=', 1) for line in lines)
-    require(len(lines) == len(fields) == 4 and set(fields) == {
-        'PINK_PARTY_MODE', 'JOIN_CODE', 'LIVEKIT_API_KEY', 'LIVEKIT_API_SECRET'
-    } and fields['PINK_PARTY_MODE'] == 'local', 'Unsupported local configuration')
-    for key, minimum in [('JOIN_CODE', 16), ('LIVEKIT_API_KEY', 12), ('LIVEKIT_API_SECRET', 32)]:
-        value = fields[key]
-        require(bool(re.fullmatch(r'[a-zA-Z0-9_-]+', value))
-                and minimum <= len(value) <= 128 and not value.startswith('replace-'),
-                'Invalid local configuration')
+    common = {'PINK_PARTY_MODE', 'LIVEKIT_API_KEY', 'LIVEKIT_API_SECRET'}
+    expected = common | ({'JOIN_CODE'} if fields.get('PINK_PARTY_MODE') == 'local' else {
+        'PUBLIC_ORIGIN', 'TAILSCALE_IP', 'INVITED_LOGINS'})
+    require(len(lines) == len(fields) and set(fields) == expected,
+            'Unsupported application configuration')
+    config_module = (Path(__file__).resolve().parents[2] / 'server/config.ts').as_uri()
+    result = subprocess.run([node, '--input-type=module', '-e',
+                             'import {loadSettings} from ' + json.dumps(config_module) + ';'
+                             'import {parseEnv} from "node:util";'
+                             'import {readFileSync} from "node:fs";'
+                             'loadSettings(parseEnv(readFileSync(0, "utf8")));'],
+                            input=payloads['private/pink-party.env'], stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL, timeout=5, env={'PATH': os.defpath})
+    require(result.returncode == 0, 'Application configuration validation failed')
 
 
 def validate_backup(directory):

@@ -4,7 +4,7 @@ A private voice room for up to four people to talk while they play. Pick a name,
 
 ![Pink Party’s voice room beside a Stardew Valley game-night plan and pixel-art farmhouse](docs/interface.png)
 
-Built with TypeScript, Vite, Node.js 24 and LiveKit. Runs natively on macOS, with a loopback local mode and a private Tailscale mode, and as a local systemd deployment in an ARM64 Ubuntu VM. There is no public demo.
+Built with TypeScript, Vite, Node.js 24 and LiveKit. Runs natively on macOS and as an ARM64 Ubuntu systemd service, with loopback and private Tailscale modes. A bounded AWS deployment has also been tested and removed. There is no public demo.
 
 ## Why this project
 
@@ -15,6 +15,8 @@ The [Linux deployment](docs/linux-deployment.md) adds a dedicated service accoun
 A separate systemd timer records web/control health even when the application is stopped. A [controlled outage report](docs/incident-linux-monitoring.md) follows scheduled detection, diagnosis and recovery with observed timestamps. The monitor does not test voice reception.
 
 The [backup and recovery lab](docs/recovery-linux-backups.md) adds scheduled private snapshots, archive integrity/path checks and restoration into a separate directory. A synthetic-data loss exercise verifies the recovered session through the running application. Storage remains on the same guest disk.
+
+The [first cloud deployment](docs/cloud-report.md) reproduced the service on AWS with separate credentials, a live Free-plan guard and repeatable teardown. The Mac reached the actual cloud host through trusted HTTPS, verified identity, WSS and private UDP media. Scheduled private monitoring/backups, recovery and automatic startup after a guest reboot were exercised before deleting the VM, disk, address and network resources.
 
 The implementation includes:
 
@@ -31,7 +33,7 @@ In private mode, Tailscale Serve terminates HTTPS and supplies the verified acco
 ```mermaid
 flowchart LR
     B[Browser with Tailscale] <-->|HTTPS / WSS, TCP 443| S[Tailscale Serve]
-    subgraph Host Mac
+    subgraph Host[Private host: Mac or Ubuntu]
         S <-->|Verified identity, loopback| A[Node.js app :3000]
         A <-->|Control / signaling, loopback| L[LiveKit :7880]
     end
@@ -65,6 +67,8 @@ For private access, follow the [Tailscale setup guide](docs/remote-access.md), i
 
 For the Linux lab, follow [VM setup and systemd operations](docs/linux-deployment.md). Its browser and voice checks run inside the VM, with shared Mac folders and application port forwarding disabled. The native Mac private setup remains separate.
 
+For a bounded cloud session, follow the [AWS plan, deployment and cleanup guide](docs/cloud-deployment.md). It requires verified account entitlement and new-node onboarding. No resources are left running for a demo.
+
 ## Checks and known limits
 
 ```sh
@@ -79,7 +83,9 @@ Recorded on 16 November 2026: 14 offline tests, 13 local browser cases and two s
 
 Batch 6 also passed 17 TypeScript tests and eight Python backup tests on Mac/Linux, plus all 13 Linux browser cases. See the [recovery report](docs/recovery-linux-backups.md) for the actual restoration and failure exercises.
 
-A call between physical devices in separate homes remains unverified, as do real uninvited/tagged-peer boundaries, direct/relay routing and recovery after a physical client loses its network. Safari/WebKit reached signaling but failed to establish media; the cause is unresolved. Chrome is the browser verified for human listening.
+Batch 7 passed cross-host synthetic media from one Mac to an actual AWS host, including a repeat after reboot. Final Mac checks passed 22 TypeScript and 19 Python tests; the cloud source check passed 22 and 18 respectively. The [cloud report](docs/cloud-report.md) separates these results from the earlier local-VM checks and records full teardown.
+
+A call between physical devices in separate homes remains unverified, as do real uninvited/tagged-source boundaries and recovery after a physical client loses its network. One Mac-to-cloud peer ping reported direct transport; friends' routes remain untested. Safari/WebKit reached signaling but failed to establish media; the cause is unresolved. Chrome is the browser verified for human listening.
 
 Additional commands and prerequisites:
 
@@ -90,7 +96,7 @@ Additional commands and prerequisites:
 | `npm run diagnose` / `npm run diagnose:private` | Check running services. Health does not prove media reception.     |
 | `npm run measure:private -- 10`                 | Sample app, LiveKit and Tailscale components separately.           |
 
-Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. The [tested recovery scope](docs/recovery-linux-backups.md) covers synthetic files within the VM. Cloud deployment and independent backup storage remain future work.
+Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. The [tested recovery scope](docs/recovery-linux-backups.md) covers synthetic files within a host. Cloud backups also shared their VM disk and were removed with the lab. Independent encrypted backup storage remains future work.
 
 ## Project notes
 
@@ -102,11 +108,14 @@ Raw private evidence and failed-test artifacts stay ignored. See the [operations
 - [Linux deployment](docs/linux-deployment.md) and [validation](docs/validation-linux.md): systemd configuration, permissions, failure exercises and local VM audio checks.
 - [Monitoring incident](docs/incident-linux-monitoring.md): controlled outage, scheduled detection, diagnosis and recovery.
 - [Backup operations](docs/linux-backups.md) and [recovery report](docs/recovery-linux-backups.md): scheduled snapshots, safe restoration and tested synthetic file loss.
+- [Cloud operations](docs/cloud-deployment.md), [report](docs/cloud-report.md) and [validation](docs/validation-cloud.json): verified AWS entitlement, private deployment, cross-host media, recovery and deletion evidence.
 
 ## Contributions
 
 The owner chose the gaming-hangout scope and pink design, completed Tailscale onboarding and HTTPS consent, and performed the confirmed Chrome listening checks. Codex generated the application, configuration, tests and documentation, and carried out the recorded technical verification and interface revision. The earlier technical work included a separate review. The [learning record](docs/learning.md) distinguishes assisted work from personally confirmed practice.
 
 Codex also installed the Linux VM, implemented its deployment, service, scheduled monitoring and backup configuration, and ran the recorded Linux checks, incident and restoration exercises. Independent owner practice on Linux remains unconfirmed.
+
+For AWS, the owner completed account/node onboarding and approvals. Codex prepared the cloud scripts, provisioned the host, performed the deployment and exercises, and verified teardown. No independent owner cloud administration or professional cloud role is claimed.
 
 LiveKit and its SDKs provide voice transport. The interface uses self-hosted Nunito Sans under the [SIL Open Font License](public/fonts/OFL.txt). The farmhouse is an original SVG illustration; it does not use Stardew Valley game assets.

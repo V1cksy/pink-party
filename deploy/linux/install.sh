@@ -146,7 +146,10 @@ monitor_paused=false
 systemctl try-restart systemd-journald@pink-party-backup.service
 systemctl enable --now pink-party-backup.timer
 backup_paused=false
-systemctl reset-failed pink-party.service
+# A fresh inactive unit may be garbage-collected before reset-failed can address it.
+if systemctl is-failed --quiet pink-party.service; then
+  systemctl reset-failed pink-party.service
+fi
 systemctl enable --now pink-party.service
 for attempt in {1..30}; do
   if /opt/pink-party/node/bin/node /opt/pink-party/app/deploy/linux/service-health.ts; then

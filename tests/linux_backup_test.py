@@ -59,6 +59,23 @@ class BackupTest(unittest.TestCase):
             backup.restore_backup(directory, destination)
         self.assertEqual((directory / 'snapshot.tar').stat().st_mode & 0o777, 0o600)
 
+    def test_private_configuration_roundtrip_and_unsafe_overrides_rejected(self):
+        source = self.sources['private/pink-party.env']
+        private = ('PINK_PARTY_MODE=private\nPUBLIC_ORIGIN="https://cloud.example-tail.ts.net"\n'
+                   'TAILSCALE_IP="100.100.100.100"\nINVITED_LOGINS="peach@example.com"\n'
+                   'LIVEKIT_API_KEY="' + 'k' * 24 + '"\nLIVEKIT_API_SECRET="' + 's' * 64 + '"\n')
+        source.write_text(private)
+        directory = self.create()
+        destination = self.restores / 'private'
+        backup.restore_backup(directory, destination)
+        self.assertEqual((destination / 'private/pink-party.env').read_text(), private)
+        for bad in [private + 'PINK_PARTY_TAILSCALE_BIN=/evil\n', private + 'JOIN_CODE=bad\n',
+                    private.replace('https://cloud.example-tail.ts.net', 'http://evil.example'),
+                    private + 'PINK_PARTY_MODE=private\n']:
+            source.write_text(bad)
+            with self.assertRaises(ValueError):
+                self.create()
+
     def test_checksum_and_payload_corruption_rejected_before_writes(self):
         directory = self.create()
         archive = directory / 'snapshot.tar'

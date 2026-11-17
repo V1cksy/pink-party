@@ -1,0 +1,121 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Bounded Pink Party ARM64 private-access lab; no public app ports",
+  "Parameters": {
+    "ImageId": { "Type": "AWS::EC2::Image::Id" },
+    "AdminCidr": { "Type": "String", "AllowedPattern": "[0-9.]+/32" },
+    "PublicKey": {
+      "Type": "String",
+      "AllowedPattern": "ssh-ed25519 [A-Za-z0-9+/=]+( [^\\r\\n]+)?"
+    },
+    "LabId": { "Type": "String", "AllowedPattern": "[a-f0-9]{32}" }
+  },
+  "Resources": {
+    "Vpc": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.77.0.0/24",
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true,
+        "Tags": [{ "Key": "PinkPartyLab", "Value": { "Ref": "LabId" } }]
+      }
+    },
+    "Gateway": { "Type": "AWS::EC2::InternetGateway" },
+    "GatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": { "Ref": "Vpc" },
+        "InternetGatewayId": { "Ref": "Gateway" }
+      }
+    },
+    "Subnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": { "VpcId": { "Ref": "Vpc" }, "CidrBlock": "10.77.0.0/28" }
+    },
+    "RouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": { "VpcId": { "Ref": "Vpc" } }
+    },
+    "Route": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "GatewayAttachment",
+      "Properties": {
+        "RouteTableId": { "Ref": "RouteTable" },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": { "Ref": "Gateway" }
+      }
+    },
+    "RouteAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": { "Ref": "RouteTable" },
+        "SubnetId": { "Ref": "Subnet" }
+      }
+    },
+    "SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "SSH from one administrator only; Tailscale uses outbound transport",
+        "VpcId": { "Ref": "Vpc" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": { "Ref": "AdminCidr" }
+          }
+        ],
+        "SecurityGroupEgress": [{ "IpProtocol": "-1", "CidrIp": "0.0.0.0/0" }]
+      }
+    },
+    "KeyPair": {
+      "Type": "AWS::EC2::KeyPair",
+      "Properties": {
+        "KeyName": { "Fn::Sub": "pink-party-${LabId}" },
+        "PublicKeyMaterial": { "Ref": "PublicKey" }
+      }
+    },
+    "Host": {
+      "Type": "AWS::EC2::Instance",
+      "DependsOn": ["Route", "RouteAssociation"],
+      "Properties": {
+        "ImageId": { "Ref": "ImageId" },
+        "InstanceType": "t4g.small",
+        "KeyName": { "Ref": "KeyPair" },
+        "CreditSpecification": { "CPUCredits": "standard" },
+        "MetadataOptions": {
+          "HttpTokens": "required",
+          "HttpPutResponseHopLimit": 1,
+          "InstanceMetadataTags": "disabled"
+        },
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "VolumeType": "gp3",
+              "VolumeSize": 12,
+              "Encrypted": true,
+              "DeleteOnTermination": true
+            }
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeviceIndex": "0",
+            "AssociatePublicIpAddress": true,
+            "SubnetId": { "Ref": "Subnet" },
+            "GroupSet": [{ "Ref": "SecurityGroup" }],
+            "DeleteOnTermination": true
+          }
+        ],
+        "PropagateTagsToVolumeOnCreation": true,
+        "Tags": [{ "Key": "PinkPartyLab", "Value": { "Ref": "LabId" } }]
+      }
+    }
+  },
+  "Outputs": {
+    "HostId": { "Value": { "Ref": "Host" } },
+    "PublicIp": { "Value": { "Fn::GetAtt": ["Host", "PublicIp"] } },
+    "VpcId": { "Value": { "Ref": "Vpc" } }
+  }
+}

@@ -67,7 +67,7 @@ try {
       .some((n) => n?.address === settings.privateAccess?.tailscaleIp);
     if (!present)
       throw new Error(
-        'Tailscale IPv4 is not assigned to a native interface. Connect the native Tailscale app, then retry.',
+        'Tailscale IPv4 is not assigned to a native interface. Check the native client or Linux tailscaled service, then retry.',
       );
   }
   await access('dist/index.html').catch(() => {

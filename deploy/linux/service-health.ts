@@ -2,6 +2,7 @@ import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import { healthRequest } from './health-request.ts';
 
 const exec = promisify(execFile);
 export async function serviceListener(port: number): Promise<number> {
@@ -51,11 +52,7 @@ export async function inspectServiceHealth(
         )
       ).stdout.trim(),
     listener: serviceListener,
-    request: () =>
-      fetch('http://127.0.0.1:3000/api/health', {
-        signal: AbortSignal.timeout(1000),
-        redirect: 'error',
-      }),
+    request: healthRequest,
   },
 ): Promise<HealthObservation> {
   try {

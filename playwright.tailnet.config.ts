@@ -2,10 +2,14 @@ import { defineConfig } from '@playwright/test';
 import { loadEnvFile } from 'node:process';
 import { resolve } from 'node:path';
 import { loadSettings } from './server/config.ts';
+import { readRemoteTarget } from './deploy/cloud/target.ts';
 
-loadEnvFile('.env.private');
-const settings = loadSettings(process.env);
-if (!settings.privateAccess) throw new Error('Private settings required.');
+const remote = process.env.PINK_PARTY_CLOUD_TARGET;
+if (!remote) loadEnvFile('.env.private');
+const access = remote
+  ? await readRemoteTarget(remote)
+  : loadSettings(process.env).privateAccess;
+if (!access) throw new Error('Private settings required.');
 
 export default defineConfig({
   testDir: './tests/tailnet-browser',
@@ -14,7 +18,7 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   reporter: 'list',
   use: {
-    baseURL: settings.privateAccess.origin,
+    baseURL: access.origin,
     browserName: 'chromium',
     ignoreHTTPSErrors: false,
     launchOptions: {

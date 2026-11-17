@@ -2,7 +2,7 @@
 
 Pink Party runs as a systemd service in an ARM64 Ubuntu 24.04 VM. This lab covers service accounts, permissions, startup, logs and failure recovery. See the [actual results](validation-linux.md).
 
-The Mac private-access setup remains separate. Linux uses local mode, with a browser inside the VM for synthetic voice tests. Tailscale is not installed in this guest; it is not a public server or cloud deployment.
+The Mac private-access setup remains separate. This Lima guest uses local mode, with a browser inside the VM for synthetic voice tests. Tailscale is not installed in this guest. A separate AWS host exercised Linux private mode in [batch 7](cloud-report.md); follow [cloud operations](cloud-deployment.md) for its extra units, account boundaries and teardown.
 
 ## Environment and access
 

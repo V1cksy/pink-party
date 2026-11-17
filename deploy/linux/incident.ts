@@ -15,7 +15,7 @@ const directory = '/var/lib/pink-party-monitor';
 const lock = '/run/pink-party-verification.lock';
 assert.equal(process.getuid?.(), 0, 'Run with sudo in the Linux VM');
 assert.equal(process.platform, 'linux');
-assert.equal(loadSettings(process.env).privateAccess, undefined);
+const settings = loadSettings(process.env);
 const command = async (file: string, args: string[]) =>
   (
     await exec(file, args, { timeout: 20_000, maxBuffer: 1024 * 1024 })
@@ -43,7 +43,8 @@ async function scheduled(status: 'up' | 'down', after: string) {
 }
 const report: Record<string, unknown> = {
   scope:
-    'Codex-run controlled local VM outage; web/control only; synthetic data',
+    'Codex-run controlled Linux service outage; web/control only; synthetic data',
+  accessMode: settings.privateAccess ? 'private' : 'local',
   startedAt: now(),
   fault: 'Explicit systemctl stop; no configuration or credential change',
 };

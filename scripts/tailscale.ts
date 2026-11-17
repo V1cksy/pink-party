@@ -12,32 +12,43 @@ export async function tailscale(args: string[]) {
     ).stdout;
   } catch {
     throw new Error(
-      'Tailscale command failed. Install/open the native app, approve its network extension and sign in. Check tailscale status in your own terminal.',
+      'Tailscale command failed. Check the native client or Linux tailscaled service and sign-in state in your own terminal.',
     );
   }
 }
 
-export async function networkStatus() {
-  const status = JSON.parse(await tailscale(['status', '--json']));
+export function deviceFromStatus(status: any) {
   if (status.BackendState !== 'Running' || !status.Self?.Online)
     throw new Error('Tailscale must be connected and signed in.');
   const dns = status.Self.DNSName?.replace(/\.$/, '');
   const ip = status.Self.TailscaleIPs?.find((value: string) =>
     value.includes('.'),
   );
-  const login = status.User?.[status.Self.UserID]?.LoginName;
-  if (!dns || !ip || !login)
+  if (!dns || !ip)
+    throw new Error('Cannot discover this device’s Tailscale DNS and IPv4.');
+  return { origin: `https://${dns}`, ip: ip as string };
+}
+
+export async function deviceStatus() {
+  return deviceFromStatus(JSON.parse(await tailscale(['status', '--json'])));
+}
+
+export async function networkStatus() {
+  const raw = JSON.parse(await tailscale(['status', '--json']));
+  const status = deviceFromStatus(raw);
+  const login = raw.User?.[raw.Self.UserID]?.LoginName;
+  if (!login)
     throw new Error(
       'Cannot discover this device’s Tailscale DNS, IPv4 and owner login. Use an untagged signed-in device.',
     );
-  return { origin: `https://${dns}`, ip: ip as string, login: login as string };
+  return { ...status, login: login as string };
 }
 
 export async function verifyPrivateNetwork(config: PrivateAccess) {
-  const status = await networkStatus();
+  const status = await deviceStatus();
   if (config.origin !== status.origin || config.tailscaleIp !== status.ip)
     throw new Error(
-      'Private configuration differs from the connected Tailscale device. Rerun npm run setup:private.',
+      'Private configuration differs from the connected Tailscale device. Regenerate it using this host’s private-access guide.',
     );
 }
 
