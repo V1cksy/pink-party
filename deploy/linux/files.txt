@@ -21,4 +21,5 @@ README.md
 .nvmrc
 .node-version
 .gitignore
+.github
 AGENTS.md

@@ -32,4 +32,16 @@ Choose the exact run and commit before reading its result. Review individual ste
 
 For a controlled failure exercise, create a task-specific temporary branch from reviewed `main`, add a clearly labelled deliberately failing test, push that branch and manually dispatch the workflow against it. Confirm failure reaches Actions and later media steps do not execute. Retain the run URL and inspected result, then delete only that task-created branch/worktree. Do not merge the deliberate failure or change the owner's working configuration.
 
-This stage is Codex-run assisted project work. Actual hosted runs and their limits will be recorded after execution; configuration alone is not a completed CI result.
+## Observed runs: 17 November 2026
+
+Codex implemented and performed this assisted portfolio stage after the owner asked to continue. This does not establish independent owner CI administration or professional duties.
+
+The [normal main push](https://github.com/V1cksy/pink-party/actions/runs/44097086312) at `f35148b` succeeded on the standard ARM64 runner: 22 TypeScript tests, 42 Python tests, typecheck, build, formatting and all 13 browser cases. The hosted job took 134 seconds from job start to completion, including setup/cleanup; the synthetic browser suite took 38.8 seconds. Its two-way decoded audio, four-client capacity and cleanup assertions are separate from the readiness probe.
+
+A [controlled failure run](https://github.com/V1cksy/pink-party/actions/runs/44097196468) used an isolated task branch with one explicitly marked failing test. Actions reported failure on that marker and never reached environment generation, application startup or the browser stage. The deliberate test was never merged. The task-created remote/local branch and worktree were removed after evidence capture; main retained the passing implementation.
+
+Both run artifact inventories were empty. No repository visibility, Actions policy, branch protection, deployment, AWS resource or Tailscale setting was changed. The original local VM remained stopped, with its disk mtime unchanged; owner environments, retained ciphertext and recovery key matched the private baseline. No local application was started for this stage. Read-only job/run records and raw logs are retained privately; the public [validation summary](validation-ci.json) stores inspected results and run links.
+
+Local verification passed the same 22 TypeScript/42 Python tests, typecheck/build/format, workflow lint and shell syntax. Two new guard tests protect existing configuration/state from CI cleanup. Independent review found and resolved an omitted explicit `lsof` dependency for media resource checks. The public deployment manifest now retains `.github` so filtered source archives also contain the workflow; archive checks excluded private/generated paths. The existing bundle-size warning remains.
+
+These observations cover hosted verification, failure propagation and the tested source revision. The workflow does not deploy or establish systemd, recovery-key custody, cloud-host or physical-audio evidence. Those prior stages remain separate.

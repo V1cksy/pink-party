@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-11-17",
+  "scope": "Codex-run assisted GitHub Actions implementation and hosted exercises",
+  "workflow": ".github/workflows/verify.yml",
+  "runnerLabel": "ubuntu-24.04-arm",
+  "repositoryVerifiedPublic": true,
+  "actionsAlreadyEnabled": true,
+  "privateRepositoryJobSkipped": true,
+  "standardPublicRunnerFreeBoundaryVerified": true,
+  "largerRunnerOrPaidFeature": false,
+  "permissions": {
+    "contents": "read",
+    "otherPermissions": "none",
+    "persistCheckoutCredentials": false,
+    "checkoutCommit": "d23441a48e516b6c34aea4fa41551a30e30af803"
+  },
+  "jobTimeoutMinutes": 20,
+  "browserInstallTimeoutMinutes": 10,
+  "concurrency": "Cancel prior run on same Git ref",
+  "normalRun": {
+    "url": "https://github.com/V1cksy/pink-party/actions/runs/44097086312",
+    "sourceSha": "f35148baee14840361cc8e0ff498682058ea1181",
+    "event": "push",
+    "conclusion": "success",
+    "jobStartedAt": "2026-11-17T13:52:32Z",
+    "jobCompletedAt": "2026-11-17T13:54:46Z",
+    "jobSeconds": 134,
+    "typeScriptTests": 22,
+    "pythonTests": 42,
+    "typecheckBuildFormat": true,
+    "browserCases": 13,
+    "browserSeconds": 38.8,
+    "decodedSyntheticAudioFourClientsMuteAndCleanup": true,
+    "uploadedArtifacts": 0
+  },
+  "failureExercise": {
+    "url": "https://github.com/V1cksy/pink-party/actions/runs/44097196468",
+    "sourceSha": "9f8213d0c2149d0f8eb293801a3b96d2cabe32bc",
+    "event": "workflow_dispatch",
+    "conclusion": "failure",
+    "markedDeliberateTestFailureObserved": true,
+    "environmentGenerationApplicationAndBrowserStageNotReached": true,
+    "deliberateTestMerged": false,
+    "temporaryRemoteLocalBranchAndWorktreeRemoved": true,
+    "uploadedArtifacts": 0
+  },
+  "localChecks": {
+    "typeScriptTests": 22,
+    "pythonTests": 42,
+    "guardTests": 2,
+    "typecheckBuildFormat": true,
+    "workflowLint": true,
+    "shellSyntax": true,
+    "publicArchiveIncludesWorkflowAndExcludesPrivateState": true,
+    "independentReviewPasses": 1,
+    "missingExplicitLsofDependencyFixed": true,
+    "existingBundleSizeWarning": true,
+    "publicFilesScanned": 138,
+    "localMarkdownTargetsAndWhitespace": true
+  },
+  "privacy": {
+    "repositorySecretsOrOwnerEnvironmentsTransferred": false,
+    "awsOrTailscaleCredentialsUsed": false,
+    "recoveryKeyOrVaultTransferred": false,
+    "generatedTestCredentialsMasked": true,
+    "rawServiceLogsAndScreenshotsUploaded": false,
+    "privateRunLogsAndMetadataRetained": true,
+    "ownerValuesAbsentFromPublicSourceAndDownloadedHostedLogs": true
+  },
+  "ownerFinalState": {
+    "sourceVmStayedStopped": true,
+    "sourceDiskMtimeUnchanged": true,
+    "ownerEnvironmentCiphertextAndKeyBaselineUnchanged": true,
+    "localProjectServicesStarted": false,
+    "noNewAwsResourceOrPurchase": true,
+    "noTailscaleOrServeMutation": true,
+    "noRepositoryPolicyOrVisibilityChange": true
+  },
+  "limitations": [
+    "Hosted synthetic source/media checks only; no deployment or physical listening",
+    "Branch protection unchanged; failed checks do not prevent a direct push",
+    "Standard public runner pricing/visibility boundary must be rechecked before changing runner or repository visibility",
+    "Assisted project work, not independent owner CI practice or professional duties"
+  ]
+}

@@ -67,6 +67,19 @@ Questions for a later walkthrough:
 - What do authentication, SHA-256 consistency and provenance each establish?
 - How do the recovered marker, process environment and decoded media distinguish restoration from a default install or HTTP-only check?
 
+## Hosted continuous verification
+
+On 17 November 2026, after the owner asked to continue, Codex added a GitHub Actions workflow for source and synthetic media checks on a standard public Ubuntu ARM64 runner. Codex verified a successful hosted run, then a deliberately failing test on a separate temporary branch and confirmed that later application/media work did not execute. The failure branch/worktree were removed. [The CI record](continuous-verification.md) links actual runs, permissions, cost boundary and limitations.
+
+This adds assisted project evidence for continuous integration, checksum-pinned dependencies, test failure propagation, minimal workflow permissions and ephemeral fixture handling. It does not establish independent owner administration or deployment automation. The retained Linux VM and private recovery material were not used by the runner.
+
+Questions for a later walkthrough:
+
+- What does a green hosted run establish, and which operational claims need separate evidence?
+- How do failed exit codes stop later work, and why test that on an isolated branch?
+- Why use a pinned read-only checkout, disposable credentials and no private host files?
+- What would change if the repository became private or the runner type changed?
+
 ## Follow a join request
 
 1. `index.html` contains the page and labelled controls; `src/main.ts` connects them to the voice controller and renders session data and real participant state.
