@@ -293,5 +293,13 @@ class ScheduledRecoveryTest(unittest.TestCase):
         self.assertTrue(collector.inspect(self.config)['healthy'])
         self.assertEqual(len(self.inventory()), len(before) + 1)
 
+    def test_corrupt_failure_reason_cannot_turn_an_error_into_healthy_status(self):
+        self.collect()
+        state = f.read_state(self.state)
+        state.update(outcome='error', reason='fresh-authenticated-copy')
+        f.atomic_json(self.state / 'status.json', state)
+        self.assertFalse(collector.inspect(self.config)['healthy'])
+        self.assertTrue(collector.inspect(self.config)['reason'].startswith('job-error:'))
+
 
 if __name__ == '__main__': unittest.main()

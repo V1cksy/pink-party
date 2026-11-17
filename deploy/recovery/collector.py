@@ -139,11 +139,12 @@ def collect(config, previous, transfer=vault.request_offer):
 
 def inspect(config):
     at = now()
+    healthy = False
     try:
         state = read_state(config['state'])
         if state and state['outcome'] == 'error':
             age(state['attemptedAt'], at, ATTEMPT_MAX)
-            raise Fault(state['reason'])
+            raise Fault('job-error:' + state['reason'])
         record = check_state(state, at, ATTEMPT_MAX)
         source_healthy(record['source'], at)
         age(record['validatedAt'], at, ATTEMPT_MAX)
@@ -153,6 +154,7 @@ def inspect(config):
             data = backup.read_regular(target, encrypted.CIPHER_LIMIT, 0o600)
             require(backup.digest(data) == record['cipherDigest'], 'local-copy-changed')
         reason = 'fresh-authenticated-copy'
+        healthy = True
     except (OSError, ValueError, KeyError, TypeError) as error:
         reason = str(error) if isinstance(error, Fault) else 'state-or-copy-invalid'
         state = None
@@ -161,7 +163,7 @@ def inspect(config):
         except (OSError, ValueError):
             pass
     success = state['success'] if state else None
-    return {'observedAt': at, 'healthy': reason == 'fresh-authenticated-copy', 'reason': reason,
+    return {'observedAt': at, 'healthy': healthy, 'reason': reason,
             'attemptedAt': state['attemptedAt'] if state else None,
             'finishedAt': state['finishedAt'] if state else None,
             'lastSuccessfulExportAt': success['exportedAt'] if success else None,

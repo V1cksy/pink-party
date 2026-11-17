@@ -135,7 +135,7 @@
   "checks": {
     "linuxTypeScriptTests": 22,
     "linuxPythonTests": 59,
-    "macNewRegressionTests": 17,
+    "macNewRegressionTests": 18,
     "linuxTypecheckBuildFormat": true,
     "shellSyntaxPythonParseWorkflowLint": true,
     "independentReviewPasses": 3,
@@ -143,11 +143,13 @@
     "hostedWorkflowUnchanged": true,
     "publicRunnerNoSecretsNoArtifactsBoundaryUnchanged": true,
     "macTypeScriptTests": 22,
-    "macPythonTests": 59,
+    "macPythonTests": 60,
     "macTypecheckBuildFormat": true,
     "publicBuildFilesScanned": 159,
     "configuredPrivateValuesAbsent": true,
-    "filteredDeploymentArchiveChecked": true
+    "filteredDeploymentArchiveChecked": true,
+    "nativeLinuxBeforeFinalMacInspectionGuard": true,
+    "corruptFailureLabelRegressionFailedBeforeFixPassedAfter": true
   },
   "normalBeforeShutdown": {
     "verifiedAt": "2026-11-17T15:50:29.515347+00:00",
@@ -190,5 +192,16 @@
     "No external watchdog/notifications; scheduling intentionally stopped after cleanup",
     "Publication/retirement/state are not a multi-file transaction; no power-loss durability test",
     "No repeated fresh-VM rebuild or new physical voice test"
-  ]
+  ],
+  "firstHostedRun": {
+    "url": "https://github.com/V1cksy/pink-party/actions/runs/44120329826",
+    "sourceSha": "ea147ec301cfa0df1886bc1f59617349a4a8bb77",
+    "conclusion": "success",
+    "jobSeconds": 160,
+    "typeScriptTests": 22,
+    "pythonTests": 59,
+    "browserCases": 13,
+    "browserSeconds": 39.1,
+    "uploadedArtifacts": 0
+  }
 }
