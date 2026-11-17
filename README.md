@@ -71,6 +71,8 @@ For a bounded cloud session, follow the [AWS plan, deployment and cleanup guide]
 
 ## Checks and known limits
 
+[GitHub Actions](https://github.com/V1cksy/pink-party/actions/workflows/verify.yml) runs source and synthetic media checks on pushes/pull requests to main. See [continuous verification](docs/continuous-verification.md) for runner, permission, cost and evidence boundaries.
+
 ```sh
 npm run check
 npx playwright install chromium

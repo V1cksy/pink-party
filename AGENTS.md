@@ -20,3 +20,5 @@ A gaming hangout using vanilla TypeScript, Vite, Node.js 24 and native LiveKit. 
 - Use readable functions and standard library helpers. Add dependencies only for a demonstrated need.
 - Keep docs/validation.md factual. Separate synthetic media checks from human listening, and assisted implementation from the owner's confirmed work.
 - Follow Conventional Commits and stage only task files. Preserve unrelated changes.
+
+- Follow docs/continuous-verification.md for hosted CI. scripts/ci-linux.sh is destructive only inside a fresh disposable Linux ARM64 Actions checkout; never run it over owner configuration. Keep the standard public-runner boundary, pinned checkout/read-only token, no secrets/artifact upload and loopback synthetic media. CI does not deploy or establish owner practice.
