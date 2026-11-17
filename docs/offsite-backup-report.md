@@ -12,8 +12,10 @@ I added a scheduled SFTP stage after authenticated Mac collection. It keeps up t
 | Unavailable, denied, corrupt and stale inputs | The real local SFTP process failed against a missing directory. Injected access and quota errors, missing or changed ciphertext, wrong or unavailable keys, full retention, corrupt state, stale capture and overlapping jobs kept health false. Independent retrieval rejected truncated ciphertext and a wrong key before publishing output. |
 | Live launchd failure                          | A temporary user agent ran with a valid synthetic collection and an unreachable loopback SFTP endpoint. The worker recorded failure in 2.254 seconds. The observation arrived 18.013 seconds after agent enablement with a 15-second exercise interval. The fixture agent was then removed.                                                    |
 
-## Pending live verification
+## Portfolio scope and retained state
 
-The documented ciphertext and age identity are both on the source Mac. The next exercise requires an authorized off-device SFTP area, independent read access and an approved independent custody location for the age identity. No external destination, upload, account grant or remote quota was exercised. The source VM stayed stopped, and no recovery VM was created. The existing pinned ciphertext, age identity, normal source disk and protected stores were kept.
+I closed batch 11 at local validation. The public ARM64 implementation check passed 22 TypeScript tests, 66 Python tests and 13 synthetic browser cases with zero uploaded artifacts. [Implementation check](https://github.com/V1cksy/pink-party/actions/runs/44168716981)
 
-The fixture covers application-level transfer and file restoration. Independent custody, successful scheduled off-device retrieval, fresh-guest service recovery and recovery on a different physical computer remain unverified. The existing source service permissions and hosted workflow are intact. The offsite user agent and the earlier collection agent are unloaded and uninstalled.
+At closeout, the pinned export and all seven rolling copies authenticated again. The source VM stayed stopped with its disk and protected stores retained. Both Mac user agents were unloaded and uninstalled.
+
+The fixture verifies SFTP publication and exact file restoration on one Mac. A successful scheduled transfer to off-device storage and a fresh guest recovered using independently held credentials and identity remain unverified. The retained ciphertext and identity still share one physical Mac.

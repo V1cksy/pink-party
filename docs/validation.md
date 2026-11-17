@@ -66,4 +66,4 @@ The [learning notes](learning.md) explain the implementation and further exercis
 
 ## Off-device backup preparation
 
-The batch-11 fixture uses a real OpenSSH SFTP subprocess and the existing age/archive validators. A live Mac user-agent exercise observed scheduled failure against an unreachable loopback endpoint. See the [batch-11 report](offsite-backup-report.md) for measured results and the pending off-device checks.
+The batch-11 fixture uses a real OpenSSH SFTP subprocess and the existing age/archive validators. A Mac user agent recorded a scheduled failure against an unreachable loopback endpoint. Batch 11 closed with local validation. See the [batch-11 report](offsite-backup-report.md) for the measured results and the recovery boundary.

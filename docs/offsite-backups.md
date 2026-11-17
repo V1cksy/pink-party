@@ -4,6 +4,8 @@ The opt-in Mac uploader takes a completed [authenticated collection](scheduled-e
 
 ## Access and custody
 
+The batch-11 portfolio exercise ends with the local SFTP fixture. Use this procedure for a separate live exercise once the storage and custody below are available.
+
 Use an already authorized storage host on a different physical device. Verify the account's quota, retention and access terms before enabling transfer. The target needs a dedicated directory, SFTP-only write access confined to that area, private regular files, and an atomic same-directory rename. Set a server-side quota with space for eight files of 128 KiB plus the small marker and filesystem overhead. Avoid provider versioning or hidden trash unless its separate capacity and retirement are understood and bounded.
 
 Use one writer credential and one writer instance for the directory. The local lock serializes jobs that share the same state directory. Two machines or configurations pointing at the same SFTP directory are outside that lock. The storage administrator should enforce confinement via a chroot or provider equivalent. An initial working directory alone gives no confinement. Use a separate, independently retrievable SFTP credential scoped to reading the same files for recovery. Verify it can list and read the 0600 objects and cannot mutate them. On an OpenSSH host, a restricted read-only SFTP key can use the same confined storage UID and a forced read-only subsystem. Check the server's actual configuration. [OpenSSH SFTP manual](https://man.openbsd.org/sftp.1)
@@ -75,4 +77,4 @@ python3 -B deploy/recovery/launchagent.py remove --offsite
 python3 -B deploy/recovery/launchagent.py remove
 ```
 
-Disable the optional source export schedule. Keep the source disk and protected stores. Before deleting the dedicated disposable recovery guest, save private evidence, stop its project units and use `stop-vm.py pink-party-recovery-b11`. Only delete that task-created instance after the helper records a current VZ stopped event and Lima reports Stopped. Remove temporary recovery inputs according to their custody plan, and preserve the approved independent identity and retained encrypted copies. See the [batch-11 report](offsite-backup-report.md) for executed and pending checks.
+Disable the optional source export schedule. Keep the source disk and protected stores. Before deleting the dedicated disposable recovery guest, save private evidence, stop its project units and use `stop-vm.py pink-party-recovery-b11`. Only delete that task-created instance after the helper records a current VZ stopped event and Lima reports Stopped. Remove temporary recovery inputs according to their custody plan, and preserve the approved independent identity and retained encrypted copies. See the [batch-11 report](offsite-backup-report.md) for local results and the recovery boundary.

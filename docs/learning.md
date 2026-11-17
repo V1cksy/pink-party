@@ -144,3 +144,5 @@ The vault and identity still share the physical Mac. This stage protects access 
 ## Off-device backup preparation (batch 11)
 
 I separated publication from proof of recovery. The uploader downloads and authenticates the complete ciphertext before retiring an older copy. The reader can retrieve using its own SSH configuration and age identity, with the Mac collection store unavailable. My local fixture covered partial uploads, a lost rename response, stale data and failure on a full rolling store. The [operations guide](offsite-backups.md) covers recovery inputs and access. The [batch-11 report](offsite-backup-report.md) records which parts ran.
+
+I closed this exercise with local validation. To prove recovery after losing the Mac, I would need to retrieve the ciphertext and obtain the reader credential, pinned host key and age identity independently of it.
