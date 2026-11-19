@@ -106,6 +106,8 @@ Batch 8 adds encrypted off-VM export and a fresh Ubuntu rebuild using recovered 
 
 Raw private evidence and failed-test artifacts stay ignored. See the [operations guide](docs/remote-access.md#repeat-the-real-serve-check) for handling them. The original [file-recovery exercise](docs/recovery-linux-backups.md) covered one host. The [later fresh-VM recovery](docs/recovery-off-vm.md) uses encrypted storage outside the source guest. Its vault and separate key remain on the same Mac; off-device storage and recovery after Mac loss remain future work. Cloud backups shared their VM disk and were removed with that lab.
 
+Batch 11’s closeout hosted check passed 22 TypeScript tests, 66 Python tests and all 13 synthetic browser cases in 40.1 seconds, with zero uploaded artifacts. See the [hosted run](https://github.com/V1cksy/pink-party/actions/runs/44173546388).
+
 ## Project notes
 
 - [Local development](docs/local-development.md): setup, environment, troubleshooting and teardown.
