@@ -28,7 +28,7 @@ The implementation includes:
 - Permission recovery, join cancellation, mute state and reconnection. Leaving or failing a join releases microphone tracks and attached audio. See the [voice controller](src/voice.ts) and [browser tests](tests/browser/recovery.spec.ts).
 - Coordinated startup and shutdown, configuration validation and diagnostics. A failed backend stops its companion. See the [supervisor](scripts/start.ts) and [startup regression test](tests/startup.test.ts).
 
-The [off-device backup workflow](docs/offsite-backups.md) adds an SFTP upload and independent retrieval command. I tested transfer and file restoration with a local OpenSSH fixture. Live off-device storage and independent key custody are pending. [Batch-11 report](docs/offsite-backup-report.md)
+The [off-device backup workflow](docs/offsite-backups.md) adds scheduled SFTP upload and independent retrieval. Batch 11 tested upload and exact restoration against a local OpenSSH fixture. A scheduled transfer to off-device storage and recovery with independently held credentials remain unverified. See [the Batch-11 report](docs/offsite-backup-report.md).
 
 ## Connection paths
 
